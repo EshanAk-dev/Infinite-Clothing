@@ -137,7 +137,7 @@ const ProductDetails = ({ productId }) => {
                   `${selectedProduct.price.toFixed(2)}`}
               </p>
               <p className="text-xl text-gray-500 mb-2">
-                ${selectedProduct.discountPrice.toFixed(2)}
+                Rs.{selectedProduct.discountPrice.toFixed(2)}
               </p>
               <p className="text-gray-600 mb-4">
                 {selectedProduct.description}

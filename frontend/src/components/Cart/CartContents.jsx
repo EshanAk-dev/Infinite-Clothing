@@ -82,7 +82,7 @@ const CartContents = ({ cart, userId, guestId }) => {
             </div>
           </div>
           <div>
-            <p>Rs.{product.price.toLocaleString()}</p>
+            <p>Rs.{parseFloat(product.price.toLocaleString()).toFixed(2)}</p>
             <button
               onClick={() =>
                 handleRemoveFromCart(
