@@ -5,6 +5,8 @@ import {
   FaStore,
   FaTshirt,
   FaUser,
+  FaHome,
+  FaChartLine
 } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -18,86 +20,126 @@ const AdminSidebar = () => {
   const handleLogout = () => {
     dispatch(logout());
     dispatch(clearCart());
-    navigate("/")
+    navigate("/");
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <Link to="/admin" className="text-2xl font-medium">
-          INFINITE
+    <div className="h-full w-64 bg-gray-800 text-white p-6 flex flex-col">
+      {/* Logo and Title */}
+      <div className="mb-8">
+        <Link 
+          to="/admin" 
+          className="text-2xl font-bold flex items-center space-x-2"
+        >
+          <span className="bg-blue-600 p-2 rounded-lg">
+            <FaHome className="text-white" />
+          </span>
+          <span>INFINITE</span>
         </Link>
+        <p className="text-sm text-gray-400 mt-2">Admin Dashboard</p>
       </div>
-      <h2 className="text-xl font-medium mb-6 text-left">Admin Dashboard</h2>
 
-      <nav className="flex flex-col space-y-2">
+      {/* Navigation */}
+      <nav className="flex-1 space-y-2">
+        {/* Dashboard */}
+        <NavLink
+          to="/admin/dashboard"
+          className={({ isActive }) =>
+            `flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              isActive
+                ? "bg-blue-600 text-white shadow-md"
+                : "text-gray-300 hover:bg-gray-700"
+            }`
+          }
+        >
+          <FaChartLine className="text-lg" />
+          <span>Dashboard</span>
+        </NavLink>
+
         {/* Users */}
         <NavLink
           to="/admin/users"
           className={({ isActive }) =>
-            isActive
-              ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
-              : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded flex items-center space-x-2"
+            `flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              isActive
+                ? "bg-blue-600 text-white shadow-md"
+                : "text-gray-300 hover:bg-gray-700"
+            }`
           }
         >
-          <FaUser /> <span>Users</span>
+          <FaUser className="text-lg" />
+          <span>Users</span>
         </NavLink>
 
         {/* Products */}
         <NavLink
           to="/admin/products"
           className={({ isActive }) =>
-            isActive
-              ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
-              : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded flex items-center space-x-2"
+            `flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              isActive
+                ? "bg-blue-600 text-white shadow-md"
+                : "text-gray-300 hover:bg-gray-700"
+            }`
           }
         >
-          <FaBoxOpen /> <span>Products</span>
+          <FaBoxOpen className="text-lg" />
+          <span>Products</span>
         </NavLink>
 
         {/* Orders */}
         <NavLink
           to="/admin/orders"
           className={({ isActive }) =>
-            isActive
-              ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
-              : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded flex items-center space-x-2"
+            `flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              isActive
+                ? "bg-blue-600 text-white shadow-md"
+                : "text-gray-300 hover:bg-gray-700"
+            }`
           }
         >
-          <FaClipboardList /> <span>Orders</span>
+          <FaClipboardList className="text-lg" />
+          <span>Orders</span>
         </NavLink>
 
         {/* Customized T-Shirts orders */}
         <NavLink
-          to="/admin/cutomized-orders"
+          to="/admin/customized-orders"
           className={({ isActive }) =>
-            isActive
-              ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
-              : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded flex items-center space-x-2"
+            `flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              isActive
+                ? "bg-blue-600 text-white shadow-md"
+                : "text-gray-300 hover:bg-gray-700"
+            }`
           }
         >
-          <FaTshirt /> <span>Customized Orders</span>
+          <FaTshirt className="text-lg" />
+          <span>Customized Orders</span>
         </NavLink>
 
         {/* Shop */}
         <NavLink
           to="/"
           className={({ isActive }) =>
-            isActive
-              ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
-              : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded flex items-center space-x-2"
+            `flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              isActive
+                ? "bg-blue-600 text-white shadow-md"
+                : "text-gray-300 hover:bg-gray-700"
+            }`
           }
         >
-          <FaStore /> <span>Shop</span>
+          <FaStore className="text-lg" />
+          <span>Shop</span>
         </NavLink>
       </nav>
 
-      <div className="mt-6">
+      {/* Logout Button */}
+      <div className="mt-auto pt-4">
         <button
           onClick={handleLogout}
-          className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded flex items-center justify-center space-x-2"
+          className="w-full flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg transition-colors shadow hover:shadow-md"
         >
-          <FaSignOutAlt /> <span>Logout</span>
+          <FaSignOutAlt />
+          <span>Logout</span>
         </button>
       </div>
     </div>

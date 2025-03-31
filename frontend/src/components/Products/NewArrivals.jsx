@@ -12,6 +12,7 @@ const NewArrivals = () => {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
 
   const [newArrivals, setNewArrivals] = useState([]);
+  
   // Fetch new arrivals
   useEffect(() => {
     const fetchNewArrivals = async () => {
@@ -49,7 +50,7 @@ const NewArrivals = () => {
   // Functions for scroll buttons
   const scroll = (direction) => {
     const scrollAmount = direction === "left" ? -300 : 300;
-    scrollRef.current.scrollBy({ left: scrollAmount, behaviour: "smooth" });
+    scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
   };
 
   // Update Scroll Buttons
@@ -64,13 +65,6 @@ const NewArrivals = () => {
       setCanScrollLeft(leftScroll > 0);
       setCanScrollRight(rightScrollable);
     }
-
-    // console.log({
-    //   scrollLeft: container.scrollLeft,
-    //   clientWidth: container.clientWidth,
-    //   containerScrollWidth: container.scrollWidth,
-    //   offsetLeft: scrollRef.current.offsetLeft,
-    // });
   };
 
   useEffect(() => {
@@ -83,70 +77,93 @@ const NewArrivals = () => {
   }, [newArrivals]);
 
   return (
-    <section className="py-0 px-4 lg:px-0 lg:mr-10 sm:mr-5 mb-10">
-      <div className="container mx-auto text-center mb-10 relative">
-        <h2 className="text-3xl font-bold mb-4">Explore New Arrivals</h2>
-        <p className="text-lg text-gray-600 mb-8">
-          Discover the latest trends and must-have pieces to refresh your style.
-          Shop now and stay ahead of fashion!
-        </p>
+    <section className="py-12 px-4 lg:px-8 mb-16 bg-gray-50">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">New Arrivals</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Discover the latest trends and must-have pieces to refresh your wardrobe.
+          </p>
+        </div>
 
-        {/* Scroll Buttons */}
-        <div className="absolute right-0 bottom-[-30px] flex space-x-2 mt-2">
+        <div className="relative">
+          {/* Scroll Buttons */}
           <button
             onClick={() => scroll("left")}
             disabled={!canScrollLeft}
-            className={`p-2 rounded border ${
-              canScrollLeft
-                ? "bg-white text-black"
-                : "bg-gray-200 text-gray-400"
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full bg-white shadow-md flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] ${
+              canScrollLeft 
+                ? "opacity-100 hover:scale-110 active:scale-95" 
+                : "opacity-0 pointer-events-none"
             }`}
           >
-            <FiChevronLeft className="text-2xl" />
+            <FiChevronLeft className="text-2xl text-gray-700" />
           </button>
+          
           <button
             onClick={() => scroll("right")}
             disabled={!canScrollRight}
-            className={`p-2 rounded border ${
-              canScrollRight
-                ? "bg-white text-black"
-                : "bg-gray-200 text-gray-400"
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full bg-white shadow-md flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] ${
+              canScrollRight 
+                ? "opacity-100 hover:scale-110 active:scale-95" 
+                : "opacity-0 pointer-events-none"
             }`}
           >
-            <FiChevronRight className="text-2xl" />
+            <FiChevronRight className="text-2xl text-gray-700" />
           </button>
-        </div>
-      </div>
 
-      {/* Scrollable Content */}
-      <div
-        ref={scrollRef}
-        className={`container lg:ml-5 sm:ml-0 overflow-x-auto flex space-x-4 md:space-x-6 relative ${
-          isDragging ? "cursor-grabbing" : "cursor-grab"
-        }`}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUpOrLeave}
-      >
-        {newArrivals.map((product) => (
+          {/* Scrollable Content */}
           <div
-            key={product._id}
-            className="min-w-[100%] sm:min-w-[50%] lg:min-w-[25%] relative"
+            ref={scrollRef}
+            className={`overflow-x-auto flex space-x-6 pb-6 scrollbar-hide ${
+              isDragging ? "cursor-grabbing" : "cursor-grab"
+            }`}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUpOrLeave}
+            onMouseLeave={handleMouseUpOrLeave}
           >
-            <img
-              src={product.images[0]?.url}
-              alt={product.images[0]?.altText || product.name}
-              className="w-full h-[430px] object-cover rounded-lg"
-              draggable="false"
-            />
-            <div className="absolute bottom-0 left-0 right-0 bg-opacity-50 backdrop-blur-md text-white p-4 rounded-b-lg">
-              <Link to={`/product/${product._id}`} className="block">
-                <h4 className="font-medium">{product.name}</h4>
-                <p className="mt-1">${product.price.toFixed(2)}</p>
-              </Link>
-            </div>
+            {newArrivals.map((product) => (
+              <div
+                key={product._id}
+                className="flex-shrink-0 w-64 sm:w-72 md:w-80"
+              >
+                <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] h-full flex flex-col hover:-translate-y-1.5">
+                  <div className="relative pt-[125%] overflow-hidden">
+                    <img
+                      src={product.images[0]?.url}
+                      alt={product.images[0]?.altText || product.name}
+                      className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] hover:scale-105"
+                      draggable="false"
+                    />
+                    <div className="absolute inset-0 bg-black opacity-0 hover:opacity-5 transition-opacity duration-300" />
+                  </div>
+                  <div className="p-4 flex-grow flex flex-col">
+                    <h3 className="font-medium text-gray-900 mb-2 line-clamp-2 transition-colors duration-200 hover:text-gray-700">
+                      {product.name}
+                    </h3>
+                    <div className="mt-auto">
+                      <p className="text-lg font-semibold text-gray-900 transition-colors duration-200 hover:text-gray-800">
+                        Rs.{product.discountPrice.toFixed(2)}
+                        {product.originalPrice && (
+                          <span className="text-sm text-gray-500 line-through ml-2">
+                            Rs.{product.originalPrice.toFixed(2)}
+                          </span>
+                        )}
+                      </p>
+                      <Link
+                        to={`/product/${product._id}`}
+                        className="mt-3 inline-block w-full py-2.5 text-center rounded-md bg-gray-900 text-white hover:bg-gray-800 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-md active:translate-y-0"
+                      >
+                        View Details
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </section>
   );

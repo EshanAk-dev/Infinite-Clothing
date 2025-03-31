@@ -1,17 +1,15 @@
-import { useEffect, useState } from "react";
-import { MdUpdate, MdDelete } from "react-icons/md";
+import { useState } from "react";
+import { MdAdd, MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { fetchProductDetails, updateProduct } from "../../redux/slices/productSlice";
+import { useNavigate } from "react-router-dom";
+import { createProduct } from "../../redux/slices/adminProductSlice";
 import axios from "axios";
 
-const EditProductPage = () => {
+const AddNewProductPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams();
-  const { selectedProduct, loading, error } = useSelector(
-    (state) => state.products
-  );
+  const { user } = useSelector((state) => state.auth);
+  const { loading, error } = useSelector((state) => state.adminProducts);
 
   const [productData, setProductData] = useState({
     name: "",
@@ -40,25 +38,25 @@ const EditProductPage = () => {
       height: 0,
     },
     weight: 0,
+    user: user?._id,
   });
 
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchProductDetails(id));
-    }
-  }, [dispatch, id]);
+  if (loading) return (
+    <div className="flex justify-center items-center h-64">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+  );
 
-  useEffect(() => {
-    if (selectedProduct) {
-      setProductData({
-        ...selectedProduct,
-        dimensions: selectedProduct.dimensions || { length: 0, width: 0, height: 0 },
-        tags: selectedProduct.tags || [],
-      });
-    }
-  }, [selectedProduct]);
+  if (error) return (
+    <div className="max-w-7xl mx-auto p-6">
+      <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded" role="alert">
+        <p className="font-bold">Error</p>
+        <p>{error}</p>
+      </div>
+    </div>
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -115,29 +113,14 @@ const EditProductPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateProduct({ id, productData }));
+    dispatch(createProduct(productData));
     navigate("/admin/products");
   };
-
-  if (loading) return (
-    <div className="flex justify-center items-center h-64">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-    </div>
-  );
-
-  if (error) return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded" role="alert">
-        <p className="font-bold">Error</p>
-        <p>{error}</p>
-      </div>
-    </div>
-  );
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Edit Product</h2>
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Add New Product</h2>
         <button 
           onClick={() => navigate("/admin/products")}
           className="text-sm text-gray-600 hover:text-gray-800"
@@ -564,8 +547,8 @@ const EditProductPage = () => {
               type="submit"
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              <MdUpdate className="-ml-1 mr-2 h-5 w-5" />
-              Update Product
+              <MdAdd className="-ml-1 mr-2 h-5 w-5" />
+              Add Product
             </button>
           </div>
         </form>
@@ -574,4 +557,4 @@ const EditProductPage = () => {
   );
 };
 
-export default EditProductPage;
+export default AddNewProductPage;
