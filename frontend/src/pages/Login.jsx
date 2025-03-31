@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import login from "../assets/login.jpg";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { loginUser } from "../redux/slices/authSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { mergeCart } from "../redux/slices/cartSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,10 +12,30 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user, guestId } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart);
+
+  // Get redirect parameter and check it's checkout or other
+  const redirect = new URLSearchParams(location.search).get("redirect") || "/";
+  const isCheckoutRedirect = redirect.includes("checkout");
+
+  useEffect(() => {
+    if (user) {
+      if (cart?.products.length > 0 && guestId) {
+        dispatch(mergeCart({ guestId, user })).then(() => {
+          navigate(isCheckoutRedirect ? "/checkout" : "/");
+        });
+      } else {
+        navigate(isCheckoutRedirect ? "/checkout" : "/");
+      }
+    }
+  }, [user, guestId, cart, navigate, isCheckoutRedirect, dispatch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser({email, password}));
+    dispatch(loginUser({ email, password }));
   };
 
   return (
@@ -72,7 +93,7 @@ const Login = () => {
           </button>
           <p className="mt-6 text-center text-gray-700 text-sm">
             Don&apos;t have an account? &nbsp;
-            <Link to="/register" className="text-blue-500 underline">
+            <Link to={`/register?redirect=${encodeURIComponent(redirect)}`} className="text-blue-500 underline">
               Register
             </Link>
           </p>
