@@ -26,7 +26,7 @@ export const updateOrderStatus = createAsyncThunk(
   "adminOrders/updateOrderStatus",
   async ({ id, status }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
+      const response = await axios.put(
         `${API_URL}/api/admin/orders/${id}`,
         { status },
         {

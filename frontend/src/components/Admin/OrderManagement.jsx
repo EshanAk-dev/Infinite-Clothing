@@ -1,26 +1,36 @@
 import { MdCheckCircle, MdVisibility } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  fetchAllOrders,
+  updateOrderStatus,
+} from "../../redux/slices/adminOrderSlice";
+import { useEffect } from "react";
 
 const OrderManagement = () => {
-  const orders = [
-    {
-      _id: 1253632,
-      user: {
-        name: "Eshan",
-      },
-      totalPrice: 120,
-      status: "Processing",
-    },
-  ];
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { user } = useSelector((state) => state.auth);
+  const { orders, loading, error } = useSelector((state) => state.adminOrders);
+
+  useEffect(() => {
+    if (!user || user.role !== "admin") {
+      navigate("/");
+    } else {
+      dispatch(fetchAllOrders());
+    }
+  }, [dispatch, user, navigate]);
 
   const handleStatusChange = (orderId, status) => {
-    console.log({ id: orderId, status });
+    dispatch(updateOrderStatus({ id: orderId, status }));
   };
 
+  if (loading) return <p>Loading ...</p>
+  if (error) return <p >Error: {error}</p>
   return (
     <div className="max-w-7xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6 uppercase">Order Management</h2>
-
       <div className="overflow-x-auto shadow-md sm:rounded-lg">
         <table className="min-w-full text-left text-gray-500">
           <thead className="bg-gray-100 text-xs uppercase text-gray-700">
@@ -53,7 +63,7 @@ const OrderManagement = () => {
                       className="bg-gray-50 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500
                       focus:border-blue-500 block p-2.5"
                     >
-                      <option value="Processiong">Processing</option>
+                      <option value="Processing">Processing</option>
                       <option value="Shipped">Shipped</option>
                       <option value="Delivered">Delivered</option>
                       <option value="Cancelled">Cancelled</option>
@@ -85,7 +95,7 @@ const OrderManagement = () => {
             ) : (
               <tr>
                 <td colSpan={5} className="p-4 text-center text-gray-500">
-                    No orders found.
+                  No orders found.
                 </td>
               </tr>
             )}

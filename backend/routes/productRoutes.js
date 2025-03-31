@@ -80,7 +80,7 @@ router.put("/:id", protect, admin, async (req, res) => {
       collections,
       material,
       gender,
-      images,
+      images, // Ensure this is handled
       isFeatured,
       isPublished,
       tags,
@@ -93,8 +93,8 @@ router.put("/:id", protect, admin, async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
-      // Update product fileds
-      product.name = name || product.name; // Assign new value or retain old value if new one not provided
+      // Update product fields
+      product.name = name || product.name;
       product.description = description || product.description;
       product.price = price || product.price;
       product.discountPrice = discountPrice || product.discountPrice;
@@ -112,8 +112,12 @@ router.put("/:id", protect, admin, async (req, res) => {
         isPublished !== undefined ? isPublished : product.isPublished;
       product.tags = tags || product.tags;
       product.dimensions = dimensions || product.dimensions;
-      product.weiweight = weight || product.weiweight;
+      product.weight = weight || product.weight;
       product.sku = sku || product.sku;
+
+      if (images && images.length > 0) {
+        product.images = images;
+      }
 
       // Save the updated product
       const updatedProduct = await product.save();
@@ -126,6 +130,7 @@ router.put("/:id", protect, admin, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
 
 // @route DELETE /api/products/:id
 // @desc Delete product by it's ID

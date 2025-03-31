@@ -11,7 +11,7 @@ export const fetchUsers = createAsyncThunk("admin/fetchUsers", async () => {
       },
     }
   );
-  response.data;
+  return response.data;
 });
 
 // Add create user action
@@ -48,14 +48,14 @@ export const updateUser = createAsyncThunk(
         },
       }
     );
-    response.data;
+    return response.data.updatedUser;
   }
 );
 
 // Delete a user
 export const deleteUser = createAsyncThunk(
   "admin/deleteUser",
-  async ({ id }) => {
+  async ( id ) => {
     await axios.delete(
       `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`,
       {
