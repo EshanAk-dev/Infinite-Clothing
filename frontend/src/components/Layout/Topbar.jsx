@@ -18,7 +18,7 @@ const Topbar = () => {
             </a>
         </div>
         <div className="text-sm text-center flex-grow">
-            <span>We proudly offer worldwide shipping!</span>
+            <span>We proudly offer island wide shipping!</span>
         </div>
         <div className="text-sm hidden md:block">
             <a href="te':+94710701158" className="hover:text-gray-300">

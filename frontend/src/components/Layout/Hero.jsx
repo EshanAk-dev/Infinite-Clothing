@@ -15,7 +15,7 @@ const Hero = () => {
           Elevated Elegance
           </h1>
           <p className="text-sm tracking-tighter md:text-lg mb-6">
-            Explore our new trendy outfits with fast worldwide shipping.
+            Explore our new trendy outfits with fast island wide shipping.
           </p>
           <Link to="#" className="bg-gray-200 text-gray-950 px-6 py-2 rounded-sm text-lg">Shop Now</Link>
         </div>

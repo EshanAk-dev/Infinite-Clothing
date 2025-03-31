@@ -11,22 +11,41 @@ const ProductGrid = ({products, loading, error}) => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {products.map((product, index) => (
-        <Link key={index} to={`/product/${product._id}`} className="block">
-          <div className="bg-white p-4 rounded-lg">
-            <div className="w-full h-96 mb-4">
-              <img
-                src={product.images[0].url}
-                alt={product.images[0].altText || product.name}
-                className="w-full h-full object-cover rounded-lg"
-              />
-            </div>
-            <h3 className="text-sm mb-2">{product.name}</h3>
-            <p className="text-gray-500 font-medium text-sm tracking-tighter">${product.price.toFixed(2)}</p>
-          </div>
-        </Link>
-      ))}
-    </div>
+  {products.map((product, index) => (
+    <Link
+      key={index}
+      to={`/product/${product._id}`}
+      className="block group"
+    >
+      <div
+        className="bg-white p-3 rounded-xl shadow-lg border border-gray-200 
+        transition-transform duration-500 ease-out hover:scale-105 hover:shadow-2xl"
+      >
+        {/* Product Image */}
+        <div className="w-full h-72 rounded-lg overflow-hidden">
+          <img
+            src={product.images[0].url}
+            alt={product.images[0].altText || product.name}
+            className="w-full h-full object-cover transition-opacity duration-500 ease-out group-hover:opacity-90"
+          />
+        </div>
+
+        {/* Product Info */}
+        <h3 className="text-md font-normal text-gray-800 group-hover:text-blue-600 transition-colors duration-300 ease-in-out mt-1">
+          {product.name}
+        </h3>
+
+        <p className="text-gray-600 font-medium text-sm">
+          Rs.{" "}
+          <span className="text-md font-bold text-gray-900">
+            {product.price.toFixed(2)}
+          </span>
+        </p>
+      </div>
+    </Link>
+  ))}
+</div>
+
   );
 };
 

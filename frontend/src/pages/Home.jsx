@@ -20,7 +20,7 @@ const Home = () => {
     dispatch(
       fetchProductsByFilters({
         gender: "Women",
-        category: "Bottom Wear",
+        category: "Top Wear",
         limit: 8,
       })
     );
@@ -45,12 +45,12 @@ const Home = () => {
       <NewArrivals />
 
       {/* Best Seller Section */}
-      <h2 className="text-3xl text-center font-bold mb-0">Best Seller</h2>
+      {/* <h2 className="text-3xl text-center font-bold mb-0">Best Seller</h2>
       {bestSellerProduct ? (
         <ProductDetails productId={bestSellerProduct._id} />
       ) : (
         <p className="text-center">Loading best seller product ...</p>
-      )}
+      )} */}
 
       <div className="container mx-auto">
         <h2 className="text-3xl text-center font-bold mb-4">
