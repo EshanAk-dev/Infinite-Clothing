@@ -144,10 +144,10 @@ const NewArrivals = () => {
                     </h3>
                     <div className="mt-auto">
                       <p className="text-lg font-semibold text-gray-900 transition-colors duration-200 hover:text-gray-800">
-                        Rs.{product.discountPrice.toFixed(2)}
-                        {product.originalPrice && (
+                        Rs.{product.price.toFixed(2)}
+                        {product.discountPrice && (
                           <span className="text-sm text-gray-500 line-through ml-2">
-                            Rs.{product.originalPrice.toFixed(2)}
+                            Rs.{product.discountPrice.toFixed(2)}
                           </span>
                         )}
                       </p>

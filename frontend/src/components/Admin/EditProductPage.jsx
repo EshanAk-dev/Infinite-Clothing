@@ -198,7 +198,7 @@ const EditProductPage = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Discount Price</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Old Price</label>
                     <div className="relative">
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">Rs.</span>
                       <input

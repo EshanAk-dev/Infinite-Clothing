@@ -164,13 +164,13 @@ const AdminProductDetails = ({ productId }) => {
                 </h1>
                 
                 <div className="flex items-center space-x-3 mb-4">
-                  {selectedProduct.price > selectedProduct.discountPrice && (
+                  {selectedProduct.discountPrice > selectedProduct.price && (
                     <span className="text-lg text-gray-500 line-through">
-                      Rs.{selectedProduct.price.toFixed(2)}
+                      Rs.{selectedProduct.discountPrice.toFixed(2)}
                     </span>
                   )}
                   <span className="text-xl font-semibold text-gray-900">
-                    Rs.{selectedProduct.discountPrice.toFixed(2)}
+                    Rs.{selectedProduct.price.toFixed(2)}
                   </span>
                 </div>
                 

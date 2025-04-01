@@ -205,7 +205,7 @@ const Checkout = () => {
           <div className="mb-4">
             <label className="block text-gray-700">Phone Number</label>
             <input
-              type="tel"
+              type="text"
               value={shippingAddress.phone}
               onChange={(e) =>
                 setShippingAddress({
@@ -261,7 +261,7 @@ const Checkout = () => {
                 <div>
                   <h3 className="text-md">{product.name}</h3>
                   <p className="text-gray-500">Size: {product.size}</p>
-                  <p className="text-gray-500">Color: {product.color}</p>
+                  <p className="text-gray-500">Color: {product.colors}</p>
                 </div>
               </div>
               <p className="text-xl">Rs.{parseFloat(product.price?.toLocaleString()).toFixed(2)}</p>
@@ -270,7 +270,7 @@ const Checkout = () => {
         </div>
         <div className="flex justify-between items-center text-lg mb-4">
           <p>Subtotal</p>
-          <p>Rs.{parseFloat(cart.totalPrice?.toLocaleString()).toFixed(2)}</p>
+          <p>Rs.{parseFloat(cart.totalPrice?.toFixed(2).toLocaleString())}</p>
         </div>
         <div className="flex justify-between items-center text-lg">
           <p>Shipping</p>
