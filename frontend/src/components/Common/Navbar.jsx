@@ -15,7 +15,7 @@ const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [navDrawerOpen, setNavDrawerOpen] = useState(false);
   const { cart } = useSelector((state) => state.cart);
-  const { user } = useSelector((state) => state.auth)
+  const { user } = useSelector((state) => state.auth);
 
   const cartItemCount =
     cart?.products?.reduce((total, product) => total + product.quantity, 0) ||
@@ -29,77 +29,78 @@ const Navbar = () => {
     setDrawerOpen(!drawerOpen);
   };
 
+  // NavLink component with hover underline effect
+  const NavLink = ({ to, children, ...props }) => (
+    <Link
+      to={to}
+      className="relative text-gray-700 hover:text-black text-sm uppercase group transition-colors duration-200"
+      {...props}
+    >
+      {children}
+      <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
+    </Link>
+  );
+
+  // MobileNavLink component for drawer
+  const MobileNavLink = ({ to, children, onClick }) => (
+    <Link
+      to={to}
+      onClick={onClick}
+      className="block text-gray-700 hover:text-black text-lg relative py-2 group transition-colors duration-200"
+    >
+      {children}
+      <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
+    </Link>
+  );
+
   return (
     <>
-      <nav className="container mx-auto flex items-center justify-between py-4 px-6">
+      <nav className="container mx-auto flex items-center justify-between py-5 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <div>
-          <Link to="/" className="text-2xl font-medium uppercase">
+          <Link to="/" className="text-2xl font-medium uppercase tracking-tight">
             Infinite
           </Link>
         </div>
 
         {/* Navigation Links */}
-        <div className="hidden md:flex space-x-6">
-          <Link
-            to="/"
-            className="text-gray-700 hover:text-black text-sm uppercase"
-          >
-            Home
-          </Link>
-          <Link
-            to="/collections/all?gender=Men"
-            className="text-gray-700 hover:text-black text-sm uppercase"
-          >
-            Men
-          </Link>
-          <Link
-            to="/collections/all?gender=Women"
-            className="text-gray-700 hover:text-black text-sm uppercase"
-          >
-            Women
-          </Link>
-          <Link
-            to="/collections/all?category=Top+Wear"
-            className="text-gray-700 hover:text-black text-sm uppercase"
-          >
-            Top Wear
-          </Link>
-          <Link
-            to="/collections/all?category=Bottom+Wear"
-            className="text-gray-700 hover:text-black text-sm uppercase"
-          >
+        <div className="hidden md:flex space-x-8">
+          <NavLink to="/">Home</NavLink>
+          <NavLink to="/collections/all">All</NavLink>
+          <NavLink to="/collections/all?gender=Men">Men</NavLink>
+          <NavLink to="/collections/all?gender=Women">Women</NavLink>
+          <NavLink to="/collections/all?category=Top+Wear">Top Wear</NavLink>
+          <NavLink to="/collections/all?category=Bottom+Wear">
             Bottom Wear
-          </Link>
-          <Link
-            to="#"
-            className="text-gray-700 hover:text-black text-sm uppercase"
-          >
-            Customize T-Shirt
-          </Link>
+          </NavLink>
+          <NavLink to="#">Customize T-Shirt</NavLink>
         </div>
 
         {/* Icons in the right */}
         <div className="flex items-center space-x-5">
-          {user && user.role == "admin" && (
+          {user && user.role === "admin" && (
             <Link
               to="/admin"
-              className="flex items-center bg-black px-2 py-1 rounded text-sm text-white"
+              className="flex items-center px-3 py-1.5 rounded-md text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 transition-colors duration-200 shadow-sm hover:shadow-md group"
             >
-              <MdAdminPanelSettings className="mr-1" /> Admin
+              <MdAdminPanelSettings className="text-lg text-blue-400 group-hover:text-blue-300 transition-colors duration-200 mr-1" />
+              <span>Admin</span>
             </Link>
           )}
 
-          <Link to="/profile" className="hover:text-black">
+          <Link
+            to="/profile"
+            className="hover:text-black transition-colors duration-200"
+          >
             <HiOutlineUser className="h-6 w-6 text-gray-700" />
           </Link>
           <button
             onClick={toggleCartDrawer}
-            className="relative hover:text-black"
+            className="relative hover:text-black transition-colors duration-200"
           >
             <HiOutlineShoppingBag className="h-6 w-6 text-gray-700" />
             {cartItemCount > 0 && (
-              <span className="absolute -top-1 bg-black text-white text-xs rounded-full px-2 py-0.5">
+              <span className="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {cartItemCount}
               </span>
             )}
@@ -111,7 +112,10 @@ const Navbar = () => {
           </div>
 
           {/* Hamburger Icon for Mobile */}
-          <button onClick={toggleNavDrawer} className="md:hidden">
+          <button
+            onClick={toggleNavDrawer}
+            className="md:hidden hover:text-black transition-colors duration-200"
+          >
             <HiBars3BottomRight className="h-6 w-6 text-gray-700" />
           </button>
         </div>
@@ -128,59 +132,51 @@ const Navbar = () => {
       >
         {/* Close Button */}
         <div className="flex justify-end p-4">
-          <button onClick={toggleNavDrawer}>
-            {" "}
-            {/* <-- Fix: Add onClick event */}
+          <button
+            onClick={toggleNavDrawer}
+            className="hover:text-black transition-colors duration-200"
+          >
             <IoMdClose className="h-6 w-6 text-gray-600" />
           </button>
         </div>
 
         {/* Navigation Links Inside Drawer */}
-        <div className="p-4">
-          <h2 className="text-xl font-semibold mb-4">Menu</h2>
+        <div className="p-6">
+          <h2 className="text-xl font-semibold mb-6">Menu</h2>
           <nav className="space-y-4">
-            <Link
-              to="/"
-              onClick={toggleNavDrawer}
-              className="block text-gray-700 hover:text-black text-lg"
-            >
+            <MobileNavLink to="/" onClick={toggleNavDrawer}>
               Home
-            </Link>
-            <Link
+            </MobileNavLink>
+            <MobileNavLink to="/collections/all" onClick={toggleNavDrawer}>
+              All
+            </MobileNavLink>
+            <MobileNavLink
               to="/collections/all?gender=Men"
               onClick={toggleNavDrawer}
-              className="block text-gray-700 hover:text-black text-lg"
             >
               Men
-            </Link>
-            <Link
+            </MobileNavLink>
+            <MobileNavLink
               to="/collections/all?gender=Women"
               onClick={toggleNavDrawer}
-              className="block text-gray-700 hover:text-black text-lg"
             >
               Women
-            </Link>
-            <Link
+            </MobileNavLink>
+            <MobileNavLink
               to="/collections/all?category=Top+Wear"
               onClick={toggleNavDrawer}
-              className="block text-gray-700 hover:text-black text-lg"
             >
               Top Wear
-            </Link>
-            <Link
+            </MobileNavLink>
+            <MobileNavLink
               to="/collections/all?category=Bottom+Wear"
               onClick={toggleNavDrawer}
-              className="block text-gray-700 hover:text-black text-lg"
             >
               Bottom Wear
-            </Link>
-            <Link
-              to="#"
-              onClick={toggleNavDrawer}
-              className="block text-gray-700 hover:text-black text-lg"
-            >
+            </MobileNavLink>
+            <MobileNavLink to="#" onClick={toggleNavDrawer}>
               Customize T-Shirt
-            </Link>
+            </MobileNavLink>
           </nav>
         </div>
       </div>

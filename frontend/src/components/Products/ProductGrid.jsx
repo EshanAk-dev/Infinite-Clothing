@@ -1,51 +1,94 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const ProductGrid = ({ products, loading, error }) => {
-  if (loading) return <p className="text-center py-8 animate-pulse">Loading...</p>;
-  if (error) return <p className="text-center py-8 text-red-500">Error: {error}</p>;
+  if (loading) return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4 lg:px-8">
+      {[...Array(8)].map((_, i) => (
+        <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm h-full">
+          <div className="relative pt-[125%] bg-gray-100 animate-pulse"></div>
+          <div className="p-4 space-y-3">
+            <div className="h-5 bg-gray-100 rounded animate-pulse"></div>
+            <div className="h-4 bg-gray-100 rounded animate-pulse w-3/4"></div>
+            <div className="h-10 bg-gray-100 rounded animate-pulse mt-4"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  if (error) return (
+    <div className="text-center py-12">
+      <div className="inline-flex items-center justify-center bg-red-100 text-red-700 p-4 rounded-lg max-w-md mx-auto">
+        <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p>Error loading products: {error}</p>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4 lg:px-8">
-      {products.map((product) => (
-        <div
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-4 lg:px-8">
+      {products.map((product, index) => (
+        <motion.div
           key={product._id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.05, duration: 0.3 }}
           className="flex-shrink-0 group"
         >
-          <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] h-full flex flex-col transform group-hover:-translate-y-1.5">
-            {/* Product Image */}
+          <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] h-full flex flex-col border border-gray-100 hover:border-gray-200">
+            {/* Product Image with hover effect */}
             <div className="relative pt-[125%] overflow-hidden">
               <img
                 src={product.images[0]?.url}
                 alt={product.images[0]?.altText || product.name}
-                className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-105"
+                className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-110"
+                loading="lazy"
               />
+              {/* Overlay effects */}
               <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+              {product.discountPrice && (
+                <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  {Math.round(((product.discountPrice - product.price) / product.discountPrice) * 100)}% OFF
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
-            <div className="p-4 flex-grow flex flex-col">
-              <h3 className="font-medium text-gray-900 mb-2 line-clamp-2 transition-colors duration-200 group-hover:text-gray-700">
-                {product.name}
-              </h3>
+            <div className="p-5 flex-grow flex flex-col">
+              <div className="mb-2">
+                <h3 className="font-medium text-gray-900 line-clamp-2 transition-colors duration-200 group-hover:text-gray-700">
+                  {product.name}
+                </h3>
+                {product.brand && (
+                  <p className="text-xs text-gray-500 mt-1">{product.brand}</p>
+                )}
+              </div>
+              
               <div className="mt-auto">
-                <p className="text-lg font-semibold text-gray-900 transition-colors duration-200 group-hover:text-gray-800">
-                  Rs.{product.price.toFixed(2)}
+                <div className="flex items-center gap-2 mb-3">
+                  <p className="text-lg font-bold text-gray-900">
+                    Rs.{product.price.toFixed(2)}
+                  </p>
                   {product.discountPrice && (
-                    <span className="text-sm text-gray-500 line-through ml-2">
+                    <span className="text-sm text-gray-500 line-through">
                       Rs.{product.discountPrice.toFixed(2)}
                     </span>
                   )}
-                </p>
+                </div>
+                
                 <Link
                   to={`/product/${product._id}`}
-                  className="mt-3 inline-block w-full py-2.5 text-center rounded-md bg-gray-900 text-white hover:bg-gray-800 transition-all duration-300 ease-out transform hover:-translate-y-0.5 hover:shadow-md active:translate-y-0"
+                  className="block w-full py-2.5 text-center rounded-md bg-gradient-to-r from-gray-900 to-gray-700 text-white hover:from-gray-800 hover:to-gray-600 transition-all duration-300 shadow-sm hover:shadow-md active:opacity-90"
                 >
-                  View Details
+                  Select options
                 </Link>
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
   );

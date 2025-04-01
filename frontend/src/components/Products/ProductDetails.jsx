@@ -9,6 +9,7 @@ import {
 } from "../../redux/slices/productSlice";
 import { addToCart } from "../../redux/slices/cartSlice";
 import { FiPlus, FiMinus, FiShoppingCart } from "react-icons/fi";
+import { motion } from "framer-motion";
 
 const ProductDetails = ({ productId }) => {
   const { id } = useParams();
@@ -87,7 +88,10 @@ const ProductDetails = ({ productId }) => {
   if (error) {
     return (
       <div className="max-w-6xl mx-auto p-6">
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded" role="alert">
+        <div
+          className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded"
+          role="alert"
+        >
           <p className="font-bold">Error</p>
           <p>{error}</p>
         </div>
@@ -122,7 +126,7 @@ const ProductDetails = ({ productId }) => {
                   </button>
                 ))}
               </div>
-              
+
               {/* Main Image */}
               <div className="w-full lg:flex-1">
                 <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
@@ -132,7 +136,7 @@ const ProductDetails = ({ productId }) => {
                     className="w-full h-full object-contain"
                   />
                 </div>
-                
+
                 {/* Mobile Thumbnails */}
                 <div className="lg:hidden flex space-x-2 mt-4 overflow-x-auto py-2">
                   {selectedProduct.images.map((image, index) => (
@@ -162,7 +166,7 @@ const ProductDetails = ({ productId }) => {
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
                   {selectedProduct.name}
                 </h1>
-                
+
                 <div className="flex items-center space-x-3 mb-4">
                   {selectedProduct.discountPrice > selectedProduct.price && (
                     <span className="text-lg text-gray-500 line-through">
@@ -173,12 +177,16 @@ const ProductDetails = ({ productId }) => {
                     Rs.{selectedProduct.price.toFixed(2)}
                   </span>
                 </div>
-                
-                <p className="text-gray-600 mb-6">{selectedProduct.description}</p>
-                
+
+                <p className="text-gray-600 mb-6">
+                  {selectedProduct.description}
+                </p>
+
                 {/* Color Selection */}
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-900 mb-2">Color</h3>
+                  <h3 className="text-sm font-medium text-gray-900 mb-2">
+                    Color
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedProduct.colors.map((color) => (
                       <button
@@ -195,10 +203,12 @@ const ProductDetails = ({ productId }) => {
                     ))}
                   </div>
                 </div>
-                
+
                 {/* Size Selection */}
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-900 mb-2">Size</h3>
+                  <h3 className="text-sm font-medium text-gray-900 mb-2">
+                    Size
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedProduct.sizes.map((size) => (
                       <button
@@ -215,10 +225,12 @@ const ProductDetails = ({ productId }) => {
                     ))}
                   </div>
                 </div>
-                
+
                 {/* Quantity Selector */}
                 <div className="mb-8">
-                  <h3 className="text-sm font-medium text-gray-900 mb-2">Quantity</h3>
+                  <h3 className="text-sm font-medium text-gray-900 mb-2">
+                    Quantity
+                  </h3>
                   <div className="flex items-center border border-gray-300 rounded-md w-max">
                     <button
                       onClick={() => handleQuantityChange("minus")}
@@ -237,9 +249,9 @@ const ProductDetails = ({ productId }) => {
                     </button>
                   </div>
                 </div>
-                
+
                 {/* Add to Cart Button */}
-                <button
+                <motion.button
                   onClick={handleAddToCart}
                   disabled={isButtonDisabled}
                   className={`w-full flex items-center justify-center py-3 px-6 rounded-md font-medium transition-colors ${
@@ -247,46 +259,88 @@ const ProductDetails = ({ productId }) => {
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-700 text-white"
                   }`}
+                  whileHover={!isButtonDisabled ? { scale: 1.02 } : {}}
+                  whileTap={!isButtonDisabled ? { scale: 0.98 } : {}}
                 >
-                  <FiShoppingCart className="mr-2 h-5 w-5" />
-                  {isButtonDisabled ? "Adding..." : "Add to Cart"}
-                </button>
+                  {isButtonDisabled ? (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                      className="flex items-center"
+                    >
+                      <FiShoppingCart className="h-5 w-5 mr-2" />
+                      Adding...
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      initial={false}
+                      whileHover={{
+                        transition: { staggerChildren: 0.1 },
+                      }}
+                      className="flex items-center"
+                    >
+                      <motion.span
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="mr-2"
+                      >
+                        <FiShoppingCart className="h-5 w-5" />
+                      </motion.span>
+                      <motion.span>Add to Cart</motion.span>
+                    </motion.div>
+                  )}
+                </motion.button>
               </div>
-              
+
               {/* Product Details */}
               <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Details</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Product Details
+                </h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-gray-500">Brand</p>
-                    <p className="text-gray-900">{selectedProduct.brand || "N/A"}</p>
+                    <p className="text-gray-900">
+                      {selectedProduct.brand || "N/A"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Material</p>
-                    <p className="text-gray-900">{selectedProduct.material || "N/A"}</p>
+                    <p className="text-gray-900">
+                      {selectedProduct.material || "N/A"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Category</p>
-                    <p className="text-gray-900">{selectedProduct.category || "N/A"}</p>
+                    <p className="text-gray-900">
+                      {selectedProduct.category || "N/A"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Gender</p>
-                    <p className="text-gray-900">{selectedProduct.gender || "Unisex"}</p>
+                    <p className="text-gray-900">
+                      {selectedProduct.gender || "Unisex"}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          
+
           {/* Similar Products */}
           <div className="border-t border-gray-200 px-6 py-8 bg-gray-50">
             <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">
               You May Also Like
             </h2>
-            <ProductGrid 
-              products={similarProducts} 
-              loading={loading} 
-              error={error} 
+            <ProductGrid
+              products={similarProducts}
+              loading={loading}
+              error={error}
             />
           </div>
         </div>
