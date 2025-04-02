@@ -10,7 +10,10 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,6 +38,16 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+    
+    // Clear any previous errors
+    setPasswordError("");
+    
     dispatch(registerUser({ name, email, password }));
   };
 
@@ -116,6 +129,40 @@ const Register = () => {
               <p className="text-xs text-gray-500 mt-1">
                 Password must be at least 6 characters
               </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={`w-full px-4 py-3 border ${
+                    passwordError ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all pr-12`}
+                  placeholder="••••••••"
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600 transition-colors"
+                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOffIcon size={20} />
+                  ) : (
+                    <EyeIcon size={20} />
+                  )}
+                </button>
+              </div>
+              {passwordError && (
+                <p className="text-xs text-red-500 mt-1">{passwordError}</p>
+              )}
             </div>
 
             <button
