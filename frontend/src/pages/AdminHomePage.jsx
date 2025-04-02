@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { fetchAdminProducts } from "../redux/slices/adminProductSlice";
 import { fetchAllOrders } from "../redux/slices/adminOrderSlice";
 import {
-  FiDollarSign,
   FiPackage,
   FiShoppingCart,
   FiUsers ,
@@ -84,7 +83,7 @@ const AdminHomePage = () => {
               </h3>
             </div>
             <div className="p-3 rounded-lg bg-blue-100 text-blue-600">
-              <FiDollarSign className="text-2xl" />
+              <span className="text-2xl font-bold">LKR</span>
             </div>
           </div>
         </div>

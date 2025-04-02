@@ -294,7 +294,7 @@ const Checkout = () => {
                   <div>
                     <h4 className="font-medium">{product.name}</h4>
                     <p className="text-sm text-gray-500">Size: {product.size}</p>
-                    <p className="text-sm text-gray-500">Color: {product.colors}</p>
+                    <p className="text-sm text-gray-500">Color: {product.color}</p>
                     <p className="text-sm text-gray-500">Qty: {product.quantity}</p>
                   </div>
                 </div>

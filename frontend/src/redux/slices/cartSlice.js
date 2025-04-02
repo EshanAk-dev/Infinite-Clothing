@@ -192,7 +192,7 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || "Failed to remove item";
       })
-      // Handle erge cart, guest to user
+      // Handle merge cart, guest to user
       .addCase(mergeCart.pending, (state) => {
         state.loading = true;
         state.error = null;

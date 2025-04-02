@@ -35,7 +35,7 @@ router.post("/", async (req, res) => {
         (p) =>
           p.productId.toString() === productId &&
           p.size === size &&
-          p.color === color
+          p.color === color // Ensure color is part of the matching condition
       );
 
       // Check that product present in the cart
@@ -43,13 +43,14 @@ router.post("/", async (req, res) => {
         // If product is already exists, update the qty
         cart.products[productIndex].quantity += quantity;
       } else {
-        // Add new product
+        // Add new product with color
         cart.products.push({
           productId,
           name: product.name,
           image: product.images[0].url,
           price: product.price,
           size,
+          color, // Ensure color is added here
           quantity,
         });
       }

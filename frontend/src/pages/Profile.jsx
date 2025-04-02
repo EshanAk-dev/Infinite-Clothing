@@ -1,4 +1,4 @@
-import { LogOut, User, Mail, Shield } from "lucide-react";
+import { LogOut, User, Mail } from "lucide-react";
 import MyOrdersPage from "./MyOrdersPage";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -48,11 +48,6 @@ const Profile = () => {
                   <span>{user?.email}</span>
                 </div>
                 
-                <div className="flex items-center space-x-3 text-gray-700">
-                  <Shield size={18} className="text-gray-400" />
-                  <span>Account created: {new Date(user?.createdAt).toLocaleDateString()}</span>
-                </div>
-                
                 <div className="pt-4">
                   <button 
                     onClick={handleLogout} 
@@ -71,7 +66,6 @@ const Profile = () => {
               <ul className="space-y-3">
                 <li className="hover:bg-gray-50 p-2 rounded-lg cursor-pointer">Change Password</li>
                 <li className="hover:bg-gray-50 p-2 rounded-lg cursor-pointer">Payment Methods</li>
-                <li className="hover:bg-gray-50 p-2 rounded-lg cursor-pointer">Notification Preferences</li>
               </ul>
             </div>
           </div>

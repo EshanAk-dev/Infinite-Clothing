@@ -4,7 +4,7 @@ import login from "../assets/login.jpg";
 import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
 import { loginUser } from "../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { mergeCart } from "../redux/slices/cartSlice";
+import { mergeCart, fetchCart } from "../redux/slices/cartSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -22,13 +22,19 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      if (cart?.products.length > 0 && guestId) {
-        dispatch(mergeCart({ guestId, user })).then(() => {
-          navigate(isCheckoutRedirect ? "/checkout" : "/");
-        });
-      } else {
+      const handleSuccessfulLogin = async () => {
+        if (cart?.products.length > 0 && guestId) {
+          // If guest cart has items, merge with user cart
+          await dispatch(mergeCart({ guestId, user }));
+        }
+        
+        // Always fetch the latest user cart after login/merge
+        await dispatch(fetchCart({ userId: user._id }));
+        
         navigate(isCheckoutRedirect ? "/checkout" : "/");
-      }
+      };
+
+      handleSuccessfulLogin();
     }
   }, [user, guestId, cart, navigate, isCheckoutRedirect, dispatch]);
 
