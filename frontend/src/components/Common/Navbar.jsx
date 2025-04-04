@@ -73,7 +73,7 @@ const Navbar = () => {
           <NavLink to="/collections/all?category=Bottom+Wear">
             Bottom Wear
           </NavLink>
-          <NavLink to="#">Customize T-Shirt</NavLink>
+          <NavLink to="/cutomize-t-shirts">Customize T-Shirt</NavLink>
         </div>
 
         {/* Icons in the right */}
@@ -174,7 +174,7 @@ const Navbar = () => {
             >
               Bottom Wear
             </MobileNavLink>
-            <MobileNavLink to="#" onClick={toggleNavDrawer}>
+            <MobileNavLink to="/cutomize-t-shirts" onClick={toggleNavDrawer}>
               Customize T-Shirt
             </MobileNavLink>
           </nav>

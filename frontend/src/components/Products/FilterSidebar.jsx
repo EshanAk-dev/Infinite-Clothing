@@ -8,8 +8,8 @@ const FilterSidebar = () => {
   const [filters, setFilters] = useState({
     category: "",
     gender: "",
-    color: "",
-    size: [],
+    colors: "",
+    sizes: [],
     material: [],
     brand: [],
     minPrice: 0,
@@ -20,8 +20,8 @@ const FilterSidebar = () => {
   const [expandedSections, setExpandedSections] = useState({
     category: true,
     gender: true,
-    color: true,
-    size: true,
+    colors: true,
+    sizes: true,
     material: true,
     brand: true,
     price: true
@@ -50,8 +50,8 @@ const FilterSidebar = () => {
     setFilters({
       category: params.category || "",
       gender: params.gender || "",
-      color: params.color || "",
-      size: params.size ? params.size.split(",") : [],
+      colors: params.colors || "",
+      sizes: params.sizes ? params.sizes.split(",") : [],
       material: params.material ? params.material.split(",") : [],
       brand: params.brand ? params.brand.split(",") : [],
       minPrice: params.minPrice || 0,
@@ -108,8 +108,8 @@ const FilterSidebar = () => {
     setFilters({
       category: "",
       gender: "",
-      color: "",
-      size: [],
+      colors: "",
+      sizes: [],
       material: [],
       brand: [],
       minPrice: 0,
@@ -239,25 +239,25 @@ const FilterSidebar = () => {
       <div className="mb-6">
         <div 
           className="flex justify-between items-center cursor-pointer mb-3"
-          onClick={() => toggleSection("color")}
+          onClick={() => toggleSection("colors")}
         >
           <h4 className="font-medium text-gray-900">Colors</h4>
           <span className="text-gray-500">
-            {expandedSections.color ? "−" : "+"}
+            {expandedSections.colors ? "−" : "+"}
           </span>
         </div>
-        {expandedSections.color && (
+        {expandedSections.colors && (
           <div className="grid grid-cols-5 gap-2">
             {colors.map(color => (
               <button
                 key={color.value}
                 type="button"
                 onClick={() => {
-                  const newFilters = { ...filters, color: filters.color === color.value ? "" : color.value };
+                  const newFilters = { ...filters, colors: filters.colors === color.value ? "" : color.value };
                   setFilters(newFilters);
                   updateURLParams(newFilters);
                 }}
-                className={`w-8 h-8 rounded-full border-2 ${filters.color === color.value ? "border-indigo-600 ring-2 ring-indigo-200" : "border-gray-200"} transition-all`}
+                className={`w-8 h-8 rounded-full border-2 ${filters.colors === color.value ? "border-indigo-600 ring-2 ring-indigo-200" : "border-gray-200"} transition-all`}
                 style={{ backgroundColor: color.value }}
                 aria-label={color.name}
                 title={color.name}
@@ -271,23 +271,23 @@ const FilterSidebar = () => {
       <div className="mb-6">
         <div 
           className="flex justify-between items-center cursor-pointer mb-3"
-          onClick={() => toggleSection("size")}
+          onClick={() => toggleSection("sizes")}
         >
           <h4 className="font-medium text-gray-900">Sizes</h4>
           <span className="text-gray-500">
-            {expandedSections.size ? "−" : "+"}
+            {expandedSections.sizes ? "−" : "+"}
           </span>
         </div>
-        {expandedSections.size && (
+        {expandedSections.sizes && (
           <div className="grid grid-cols-3 gap-2">
             {sizes.map(size => (
               <div key={size} className="flex items-center">
                 <input
                   type="checkbox"
                   id={`size-${size}`}
-                  name="size"
+                  name="sizes"
                   value={size}
-                  checked={filters.size.includes(size)}
+                  checked={filters.sizes.includes(size)}
                   onChange={handleFilterChange}
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                 />

@@ -24,6 +24,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
 import AddNewProductPage from "./components/Admin/AddNewProductPage";
+import TShirtCustomizer from "./components/Customize T-Shirts/TShirtCustomizer";
 
 const App = () => {
   return (
@@ -50,6 +51,7 @@ const App = () => {
             />
             <Route path="order/:id" element={<OrderDetailsPage />} />
             <Route path="my-orders" element={<MyOrdersPage />} />
+            <Route path="cutomize-t-shirts" element={<TShirtCustomizer />} />
           </Route>
 
           {/* Admin Section */}
