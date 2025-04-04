@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import ProductGrid from "../Products/ProductGrid";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,8 +6,7 @@ import {
   fetchProductDetails,
   fetchSimilarProducts,
 } from "../../redux/slices/productSlice";
-import { addToCart } from "../../redux/slices/cartSlice";
-import { FiPlus, FiMinus, FiShoppingCart } from "react-icons/fi";
+import { FiPlus, FiMinus } from "react-icons/fi";
 
 const AdminProductDetails = ({ productId }) => {
   const { id } = useParams();
@@ -16,12 +14,10 @@ const AdminProductDetails = ({ productId }) => {
   const { selectedProduct, loading, error, similarProducts } = useSelector(
     (state) => state.products
   );
-  const { user, guestId } = useSelector((state) => state.auth);
   const [mainImage, setMainImage] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const productFetchId = productId || id;
 
@@ -43,37 +39,6 @@ const AdminProductDetails = ({ productId }) => {
   const handleQuantityChange = (action) => {
     if (action === "plus") setQuantity((prev) => prev + 1);
     if (action === "minus" && quantity > 1) setQuantity((prev) => prev - 1);
-  };
-
-  // Add to Cart function
-  const handleAddToCart = () => {
-    if (!selectedSize || !selectedColor) {
-      toast.error("Please select a color and size before adding to cart!", {
-        duration: 1500,
-      });
-      return;
-    }
-
-    setIsButtonDisabled(true);
-
-    dispatch(
-      addToCart({
-        productId: productFetchId,
-        quantity,
-        size: selectedSize,
-        color: selectedColor,
-        guestId,
-        userId: user?._id,
-      })
-    )
-      .then(() => {
-        toast.success("Product added to the cart!", {
-          duration: 2000,
-        });
-      })
-      .finally(() => {
-        setIsButtonDisabled(false);
-      });
   };
 
   if (loading) {
@@ -237,20 +202,6 @@ const AdminProductDetails = ({ productId }) => {
                     </button>
                   </div>
                 </div>
-                
-                {/* Add to Cart Button */}
-                <button
-                  onClick={handleAddToCart}
-                  disabled={isButtonDisabled}
-                  className={`w-full flex items-center justify-center py-3 px-6 rounded-md font-medium transition-colors ${
-                    isButtonDisabled
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700 text-white"
-                  }`}
-                >
-                  <FiShoppingCart className="mr-2 h-5 w-5" />
-                  {isButtonDisabled ? "Adding..." : "Add to Cart"}
-                </button>
               </div>
               
               {/* Product Details */}

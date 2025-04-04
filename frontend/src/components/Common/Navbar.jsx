@@ -57,9 +57,13 @@ const Navbar = () => {
     <>
       <nav className="container mx-auto flex items-center justify-between py-5 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <div>
-          <Link to="/" className="text-2xl font-medium uppercase tracking-tight">
-            Infinite
+        <div className="lg:ml-10">
+          <Link to="/">
+            <img
+              src="/src/assets/infinite-logo.png"
+              alt="Infinite Logo"
+              className="h-12"
+            />
           </Link>
         </div>
 
@@ -77,7 +81,7 @@ const Navbar = () => {
         </div>
 
         {/* Icons in the right */}
-        <div className="flex items-center space-x-5">
+        <div className="flex items-center lg:mr-10 space-x-5">
           {user && user.role === "admin" && (
             <Link
               to="/admin"
@@ -143,37 +147,49 @@ const Navbar = () => {
         {/* Navigation Links Inside Drawer */}
         <div className="p-6">
           <h2 className="text-xl font-semibold mb-6">Menu</h2>
-          <nav className="space-y-4">
+          <nav className="space-y-1">
             <MobileNavLink to="/" onClick={toggleNavDrawer}>
               Home
             </MobileNavLink>
+            <hr className="my-2 border-gray-200" />
+
             <MobileNavLink to="/collections/all" onClick={toggleNavDrawer}>
               All
             </MobileNavLink>
+            <hr className="my-2 border-gray-200" />
+
             <MobileNavLink
               to="/collections/all?gender=Men"
               onClick={toggleNavDrawer}
             >
               Men
             </MobileNavLink>
+            <hr className="my-2 border-gray-200" />
+
             <MobileNavLink
               to="/collections/all?gender=Women"
               onClick={toggleNavDrawer}
             >
               Women
             </MobileNavLink>
+            <hr className="my-2 border-gray-200" />
+
             <MobileNavLink
               to="/collections/all?category=Top+Wear"
               onClick={toggleNavDrawer}
             >
               Top Wear
             </MobileNavLink>
+            <hr className="my-2 border-gray-200" />
+
             <MobileNavLink
               to="/collections/all?category=Bottom+Wear"
               onClick={toggleNavDrawer}
             >
               Bottom Wear
             </MobileNavLink>
+            <hr className="my-2 border-gray-200" />
+
             <MobileNavLink to="/cutomize-t-shirts" onClick={toggleNavDrawer}>
               Customize T-Shirt
             </MobileNavLink>

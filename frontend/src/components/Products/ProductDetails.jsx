@@ -50,7 +50,15 @@ const ProductDetails = ({ productId }) => {
   const handleAddToCart = () => {
     if (!selectedSize || !selectedColor) {
       toast.error("Please select a color and size before adding to cart!", {
-        duration: 1500,
+        duration: 2000,
+        style: {
+          background: "#fef2f2",
+          color: "#b91c1c",
+          border: "1px solid #fca5a5",
+          borderRadius: "8px",
+          padding: "16px",
+        },
+        icon: "⚠️",
       });
       return;
     }
@@ -70,6 +78,13 @@ const ProductDetails = ({ productId }) => {
       .then(() => {
         toast.success("Product added to the cart!", {
           duration: 2000,
+          style: {
+            background: "#ecfdf5",
+            color: "#065f46",
+            border: "1px solid #6ee7b7",
+            borderRadius: "8px",
+            padding: "16px",
+          },
         });
       })
       .finally(() => {
