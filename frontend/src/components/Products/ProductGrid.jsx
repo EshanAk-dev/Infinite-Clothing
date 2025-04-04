@@ -41,14 +41,16 @@ const ProductGrid = ({ products, loading, error }) => {
           <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] h-full flex flex-col border border-gray-100 hover:border-gray-200">
             {/* Product Image with hover effect */}
             <div className="relative pt-[125%] overflow-hidden">
-              <img
-                src={product.images[0]?.url}
-                alt={product.images[0]?.altText || product.name}
-                className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-110"
-                loading="lazy"
-              />
-              {/* Overlay effects */}
-              <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+              <Link to={`/product/${product._id}`}>
+                <img
+                  src={product.images[0]?.url}
+                  alt={product.images[0]?.altText || product.name}
+                  className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-110"
+                  loading="lazy"
+                />
+                {/* Overlay effects */}
+                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+              </Link>
               {product.discountPrice && (
                 <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                   {Math.round(((product.discountPrice - product.price) / product.discountPrice) * 100)}% OFF

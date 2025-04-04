@@ -2,7 +2,8 @@ import { MdDelete, MdEdit, MdVisibility } from "react-icons/md";
 import { MdAdd } from 'react-icons/md';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   deleteProduct,
   fetchAdminProducts,
@@ -14,13 +15,43 @@ const ProductManagement = () => {
     (state) => state.adminProducts
   );
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 6;
+
+  // Sort products by createdAt in descending order
+  const sortedProducts = [...products].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
   useEffect(() => {
     dispatch(fetchAdminProducts());
   }, [dispatch]);
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this product?"))
+    if (window.confirm("Are you sure you want to delete this product?")) {
       dispatch(deleteProduct(id));
+      toast.success("Product deleted successfully!", {
+        style: {
+          background: "#ecfdf5",
+          color: "#065f46",
+          border: "1px solid #6ee7b7",
+          borderRadius: "8px",
+          padding: "16px",
+        },
+      });
+    }
   };
 
   if (loading) return (
@@ -74,8 +105,8 @@ const ProductManagement = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {products.length > 0 ? (
-                products.map((product) => (
+              {currentProducts.length > 0 ? (
+                currentProducts.map((product) => (
                   <tr
                     key={product._id}
                     className="hover:bg-gray-50 transition-colors duration-150"
@@ -155,6 +186,45 @@ const ProductManagement = () => {
             </tbody>
           </table>
         </div>
+      </div>
+      <div className="flex justify-center mt-6">
+        <nav className="inline-flex space-x-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 rounded-md ${
+              currentPage === 1
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-4 py-2 rounded-md ${
+                currentPage === index + 1
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-4 py-2 rounded-md ${
+              currentPage === totalPages
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Next
+          </button>
+        </nav>
       </div>
     </div>
   );

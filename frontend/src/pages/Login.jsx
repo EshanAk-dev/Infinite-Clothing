@@ -5,6 +5,7 @@ import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
 import { loginUser } from "../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { mergeCart, fetchCart } from "../redux/slices/cartSlice";
+import infiniteLogo from "../assets/infinite-logo.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -52,7 +53,11 @@ const Login = () => {
           className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-gray-100"
         >
           <div className="flex justify-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-800">INFINITE</h2>
+            <img
+              src={infiniteLogo}
+              alt="Infinite Logo"
+              className="h-20 w-25 mb-0"
+            />
           </div>
           
           <div className="text-center mb-8">
@@ -122,7 +127,7 @@ const Login = () => {
           </div>
 
           <div className="mt-8 text-center text-sm text-gray-600">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               to={`/register?redirect=${encodeURIComponent(redirect)}`}
               className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
@@ -141,7 +146,7 @@ const Login = () => {
           alt="Login visual"
           className="w-full h-full object-cover"
         />
-        <div className="absolute bottom-10 left-10 right-10 text-white z-20">
+        <div className="absolute bottom-32 left-10 right-10 text-white z-20">
           <h3 className="text-2xl font-bold mb-2">Discover Infinite Possibilities</h3>
           <p className="text-gray-300">
             Join our community and explore a world of exclusive products and offers.

@@ -6,9 +6,6 @@ import { motion } from "framer-motion";
 
 const NewArrivals = () => {
   const scrollRef = useRef(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [newArrivals, setNewArrivals] = useState([]);
@@ -33,31 +30,13 @@ const NewArrivals = () => {
     fetchNewArrivals();
   }, []);
 
-  // Mouse drag handlers
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setStartX(e.pageX - scrollRef.current.offsetLeft);
-    setScrollLeft(scrollRef.current.scrollLeft);
-    document.body.style.cursor = 'grabbing';
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5; // Increase scroll sensitivity
-    scrollRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleMouseUpOrLeave = () => {
-    setIsDragging(false);
-    document.body.style.cursor = '';
-  };
-
   // Scroll functions
   const scroll = (direction) => {
     const container = scrollRef.current;
-    const scrollAmount = direction === "left" ? -container.offsetWidth * 0.8 : container.offsetWidth * 0.8;
+    const scrollAmount =
+      direction === "left"
+        ? -container.offsetWidth * 0.2
+        : container.offsetWidth * 0.2;
     container.scrollBy({ left: scrollAmount, behavior: "smooth" });
   };
 
@@ -66,7 +45,8 @@ const NewArrivals = () => {
     const container = scrollRef.current;
     if (container) {
       const leftScroll = container.scrollLeft;
-      const rightScrollable = container.scrollWidth > leftScroll + container.clientWidth + 1;
+      const rightScrollable =
+        container.scrollWidth > leftScroll + container.clientWidth + 1;
       setCanScrollLeft(leftScroll > 0);
       setCanScrollRight(rightScrollable);
     }
@@ -84,6 +64,16 @@ const NewArrivals = () => {
       };
     }
   }, [newArrivals]);
+
+  useEffect(() => {
+    const autoScroll = setInterval(() => {
+      if (canScrollRight) {
+        scroll("right");
+      }
+    }, 4000);
+
+    return () => clearInterval(autoScroll);
+  }, [canScrollRight]);
 
   // Loading skeleton
   if (loading) {
@@ -109,7 +99,7 @@ const NewArrivals = () => {
   return (
     <section className="py-16 px-4 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -119,7 +109,8 @@ const NewArrivals = () => {
             New Arrivals
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Discover the latest trends and must-have pieces to refresh your wardrobe
+            Discover the latest trends and must-have pieces to refresh your
+            wardrobe
           </p>
         </motion.div>
 
@@ -138,7 +129,7 @@ const NewArrivals = () => {
           >
             <FiChevronLeft className="text-2xl text-gray-700" />
           </motion.button>
-          
+
           <motion.button
             onClick={() => scroll("right")}
             disabled={!canScrollRight}
@@ -156,13 +147,7 @@ const NewArrivals = () => {
           {/* Scrollable content with enhanced shadows */}
           <div
             ref={scrollRef}
-            className={`overflow-x-auto flex space-x-8 pb-8 scrollbar-hide ${
-              isDragging ? "cursor-grabbing" : "cursor-grab"
-            }`}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUpOrLeave}
-            onMouseLeave={handleMouseUpOrLeave}
+            className="overflow-x-auto flex space-x-8 pb-8 scrollbar-hide"
           >
             {newArrivals.map((product, index) => (
               <motion.div
@@ -175,23 +160,30 @@ const NewArrivals = () => {
                 <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col group">
                   {/* Product image with gradient overlay */}
                   <div className="relative pt-[125%] overflow-hidden">
-                    <img
-                      src={product.images[0]?.url}
-                      alt={product.images[0]?.altText || product.name}
-                      className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      draggable="false"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
+                    <Link to={`/product/${product._id}`}>
+                      <img
+                        src={product.images[0]?.url}
+                        alt={product.images[0]?.altText || product.name}
+                        className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        draggable="false"
+                        loading="lazy"
+                      />
+
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </Link>
                     {/* Discount badge */}
                     {product.discountPrice && (
                       <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                        {Math.round(((product.discountPrice - product.price) / product.discountPrice) * 100)}% OFF
+                        {Math.round(
+                          ((product.discountPrice - product.price) /
+                            product.discountPrice) *
+                            100
+                        )}
+                        % OFF
                       </div>
                     )}
                   </div>
-                  
+
                   {/* Product info */}
                   <div className="p-5 flex-grow flex flex-col">
                     <div className="mb-3">
@@ -199,10 +191,12 @@ const NewArrivals = () => {
                         {product.name}
                       </h3>
                       {product.brand && (
-                        <p className="text-sm text-gray-500 mt-1">{product.brand}</p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {product.brand}
+                        </p>
                       )}
                     </div>
-                    
+
                     <div className="mt-auto">
                       <div className="flex items-center gap-2 mb-4">
                         <p className="text-xl font-bold text-gray-900">
@@ -214,7 +208,7 @@ const NewArrivals = () => {
                           </span>
                         )}
                       </div>
-                      
+
                       <Link
                         to={`/product/${product._id}`}
                         className="block w-full py-3 text-center rounded-md bg-gradient-to-r from-gray-900 to-gray-700 text-white hover:from-gray-800 hover:to-gray-600 transition-all duration-300 shadow-sm hover:shadow-md active:opacity-90"

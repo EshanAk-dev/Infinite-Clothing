@@ -5,7 +5,7 @@ import {
   fetchAllOrders,
   updateOrderStatus,
 } from "../../redux/slices/adminOrderSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const OrderManagement = () => {
   const dispatch = useDispatch();
@@ -13,6 +13,21 @@ const OrderManagement = () => {
 
   const { user } = useSelector((state) => state.auth);
   const { orders, loading, error } = useSelector((state) => state.adminOrders);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 6;
+
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+  const totalPages = Math.ceil(orders.length / ordersPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
 
   useEffect(() => {
     if (!user || user.role !== "admin") {
@@ -88,8 +103,8 @@ const OrderManagement = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {orders.length > 0 ? (
-                orders.map((order) => (
+              {currentOrders.length > 0 ? (
+                currentOrders.map((order) => (
                   <tr key={order._id} className="hover:bg-gray-50 transition-colors duration-150">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">#{order._id.slice(-8)}</div>
@@ -170,6 +185,45 @@ const OrderManagement = () => {
             </tbody>
           </table>
         </div>
+      </div>
+      <div className="flex justify-center mt-6">
+        <nav className="inline-flex space-x-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 rounded-md ${
+              currentPage === 1
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-4 py-2 rounded-md ${
+                currentPage === index + 1
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-4 py-2 rounded-md ${
+              currentPage === totalPages
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Next
+          </button>
+        </nav>
       </div>
     </div>
   );

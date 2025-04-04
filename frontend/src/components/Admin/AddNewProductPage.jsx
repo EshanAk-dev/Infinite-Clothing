@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { createProduct } from "../../redux/slices/adminProductSlice";
 import axios from "axios";
+import { toast } from "sonner"; // Import toast notification
 
 const AddNewProductPage = () => {
   const dispatch = useDispatch();
@@ -113,8 +114,33 @@ const AddNewProductPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(createProduct(productData));
-    navigate("/admin/products");
+    dispatch(createProduct(productData))
+      .unwrap()
+      .then(() => {
+        toast.success("Product added successfully!", {
+          style: {
+            background: "#ecfdf5",
+            color: "#065f46",
+            border: "1px solid #6ee7b7",
+            borderRadius: "8px",
+            padding: "16px",
+          },
+        });
+        navigate("/admin/products");
+      })
+      .catch((err) => {
+        toast.error("Failed to add product!", {
+          style: {
+            background: "#fef2f2",
+            color: "#b91c1c",
+            border: "1px solid #fca5a5",
+            borderRadius: "8px",
+            padding: "16px",
+          },
+          icon: "⚠️",
+        });
+        console.error(err);
+      });
   };
 
   return (

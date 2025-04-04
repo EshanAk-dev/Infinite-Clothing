@@ -28,7 +28,7 @@ const AdminSidebar = () => {
       {/* Logo and Title */}
       <div className="mb-8">
         <Link 
-          to="/admin" 
+          to="/admin/dashboard" 
           className="text-2xl font-bold flex items-center space-x-2"
         >
           <span className="bg-blue-600 p-2 rounded-lg">

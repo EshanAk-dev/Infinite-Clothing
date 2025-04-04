@@ -270,7 +270,7 @@ router.get("/best-seller", async (req, res) => {
 router.get("/new-arrivals", async (req, res) => {
   try {
     // Fetch least 8 products
-    const newArrivals = await Product.find().sort({createdAt: -1}).limit(9);
+    const newArrivals = await Product.find().sort({createdAt: -1}).limit(15);
     res.json(newArrivals)
   } catch (error) {
     console.error(error);

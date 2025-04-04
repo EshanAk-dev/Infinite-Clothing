@@ -5,6 +5,7 @@ import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
 import { registerUser } from "../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { mergeCart } from "../redux/slices/cartSlice";
+import infiniteLogo from "../assets/infinite-logo.png";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -38,16 +39,16 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Validate passwords match
     if (password !== confirmPassword) {
       setPasswordError("Passwords do not match");
       return;
     }
-    
+
     // Clear any previous errors
     setPasswordError("");
-    
+
     dispatch(registerUser({ name, email, password }));
   };
 
@@ -60,11 +61,17 @@ const Register = () => {
           className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-gray-100"
         >
           <div className="flex justify-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-800">INFINITE</h2>
+            <img
+              src={infiniteLogo}
+              alt="Infinite Logo"
+              className="h-20 w-25 mb-0"
+            />
           </div>
-          
+
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Join Us Today! 🎉</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Join Us Today! 🎉
+            </h2>
             <p className="text-gray-600">
               Create your account to unlock exclusive features
             </p>
@@ -151,7 +158,9 @@ const Register = () => {
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600 transition-colors"
-                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  aria-label={
+                    showConfirmPassword ? "Hide password" : "Show password"
+                  }
                 >
                   {showConfirmPassword ? (
                     <EyeOffIcon size={20} />
@@ -201,10 +210,13 @@ const Register = () => {
           alt="Registration visual"
           className="w-full h-full object-cover"
         />
-        <div className="absolute bottom-10 left-10 right-10 text-white z-20">
-          <h3 className="text-2xl font-bold mb-2">Start Your Journey With Us</h3>
+        <div className="absolute bottom-72 left-10 right-10 text-white z-20">
+          <h3 className="text-2xl font-bold mb-2">
+            Start Your Journey With Us
+          </h3>
           <p className="text-gray-300">
-            Register now to access personalized recommendations and exclusive deals.
+            Register now to access personalized recommendations and exclusive
+            deals.
           </p>
         </div>
       </div>
