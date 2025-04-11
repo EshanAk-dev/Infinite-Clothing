@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion"; // Import Framer Motion
+import { motion } from "framer-motion";
 
 const TShirtCustomizer = () => {
   const [color, setColor] = useState("#ffffff");
@@ -39,7 +39,7 @@ const TShirtCustomizer = () => {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw T-shirt shape with shadow
+    // Draw T-shirt shape
     ctx.shadowColor = "rgba(0,0,0,0.2)";
     ctx.shadowBlur = 10;
     ctx.shadowOffsetY = 5;
@@ -48,7 +48,7 @@ const TShirtCustomizer = () => {
     ctx.beginPath();
 
     if (view === "front") {
-      // Draw front of t-shirt (larger size)
+      // Draw front of t-shirt
       ctx.moveTo(200, 70); // Left shoulder
       ctx.lineTo(130, 110); // Left sleeve
       ctx.lineTo(160, 160); // Left armpit
@@ -60,7 +60,7 @@ const TShirtCustomizer = () => {
       ctx.lineTo(290, 100); // Right neck
       ctx.lineTo(240, 100); // Left neck
     } else {
-      // Draw back of t-shirt (larger size)
+      // Draw back of t-shirt
       ctx.moveTo(200, 70); // Left shoulder
       ctx.lineTo(130, 110); // Left sleeve
       ctx.lineTo(160, 160); // Left armpit
@@ -185,7 +185,7 @@ const TShirtCustomizer = () => {
       id: Date.now().toString(),
       image: designUrl,
       name: "Preset Design",
-      position: { x: 265, y: 220 }, // Adjusted center position
+      position: { x: 265, y: 220 },
       scale: 1,
       rotation: 0,
       opacity: 1,

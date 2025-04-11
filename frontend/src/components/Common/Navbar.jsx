@@ -84,7 +84,7 @@ const Navbar = () => {
         <div className="flex items-center lg:mr-10 space-x-5">
           {user && user.role === "admin" && (
             <Link
-              to="/admin"
+              to="/admin/dashboard"
               className="flex items-center px-3 py-1.5 rounded-md text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 transition-colors duration-200 shadow-sm hover:shadow-md group"
             >
               <MdAdminPanelSettings className="text-lg text-blue-400 group-hover:text-blue-300 transition-colors duration-200 mr-1" />

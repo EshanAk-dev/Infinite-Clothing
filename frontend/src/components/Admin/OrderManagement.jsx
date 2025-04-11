@@ -1,11 +1,13 @@
-import { MdCheckCircle, MdVisibility } from "react-icons/md";
+import { MdCheckCircle, MdVisibility, MdDelete } from "react-icons/md"; // Added MdDelete import
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import {
   fetchAllOrders,
   updateOrderStatus,
+  deleteOrder, // Added deleteOrder import
 } from "../../redux/slices/adminOrderSlice";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const OrderManagement = () => {
   const dispatch = useDispatch();
@@ -19,7 +21,10 @@ const OrderManagement = () => {
 
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const currentOrders = orders
+    .slice()
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(indexOfFirstOrder, indexOfLastOrder);
 
   const totalPages = Math.ceil(orders.length / ordersPerPage);
 
@@ -39,6 +44,21 @@ const OrderManagement = () => {
 
   const handleStatusChange = (orderId, status) => {
     dispatch(updateOrderStatus({ id: orderId, status }));
+  };
+
+  const handleDeleteOrder = (orderId) => {
+    if (window.confirm("Are you sure you want to delete this order?")) {
+      dispatch(deleteOrder(orderId));
+      toast.success("Order deleted successfully!", {
+        style: {
+          background: "#ecfdf5",
+          color: "#065f46",
+          border: "1px solid #6ee7b7",
+          borderRadius: "8px",
+          padding: "16px",
+        },
+      });
+    }
   };
 
   if (loading) return (
@@ -164,6 +184,13 @@ const OrderManagement = () => {
                           title="Mark as Delivered"
                         >
                           <MdCheckCircle className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteOrder(order._id)} // Added delete button
+                          className="text-red-600 hover:text-red-900 p-2 rounded-md hover:bg-red-50 transition-colors"
+                          title="Delete Order"
+                        >
+                          <MdDelete className="h-5 w-5" />
                         </button>
                       </div>
                     </td>
