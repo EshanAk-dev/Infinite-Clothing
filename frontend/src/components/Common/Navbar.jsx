@@ -190,7 +190,7 @@ const Navbar = () => {
             </MobileNavLink>
             <hr className="my-2 border-gray-200" />
 
-            <MobileNavLink to="/cutomize-t-shirts" onClick={toggleNavDrawer}>
+            <MobileNavLink to="/customize-t-shirts" onClick={toggleNavDrawer}>
               Customize T-Shirt
             </MobileNavLink>
           </nav>

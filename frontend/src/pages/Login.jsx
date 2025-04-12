@@ -20,7 +20,7 @@ const Login = () => {
 
   const redirect = new URLSearchParams(location.search).get("redirect") || "/";
   const isCheckoutRedirect = redirect.includes("checkout");
-  const isCuctomizeRedirect = redirect.includes("cutomize-t-shirts");
+  const isCustomizeRedirect = redirect.includes("customize-t-shirts");
   const isProfileRedirect = redirect.includes("profile");
 
   useEffect(() => {
@@ -30,19 +30,34 @@ const Login = () => {
           // If guest cart has items, merge with user cart
           await dispatch(mergeCart({ guestId, user }));
         }
-        
+
         // Always fetch the latest user cart after login/merge
         await dispatch(fetchCart({ userId: user._id }));
-        
-        navigate(isCheckoutRedirect ? "/checkout" : "/");
-        navigate(isCuctomizeRedirect ? "/cutomize-t-shirts" : "/");
-        navigate(isProfileRedirect ? "/profile" : "/");
+
+        // Redirect based on the redirect parameter
+        if (isCheckoutRedirect) {
+          navigate("/checkout");
+        } else if (isCustomizeRedirect) {
+          navigate("/customize-t-shirts");
+        } else if (isProfileRedirect) {
+          navigate("/profile");
+        } else {
+          navigate("/");
+        }
       };
 
       handleSuccessfulLogin();
     }
-  }, [user, guestId, cart, navigate, isCheckoutRedirect, isCuctomizeRedirect, isProfileRedirect, dispatch]);
-
+  }, [
+    user,
+    guestId,
+    cart,
+    navigate,
+    isCheckoutRedirect,
+    isCustomizeRedirect,
+    isProfileRedirect,
+    dispatch,
+  ]);
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(loginUser({ email, password }));
@@ -63,9 +78,11 @@ const Login = () => {
               className="h-20 w-25 mb-0"
             />
           </div>
-          
+
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back! 👋</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Welcome Back! 👋
+            </h2>
             <p className="text-gray-600">
               Enter your credentials to access your account
             </p>
@@ -151,9 +168,12 @@ const Login = () => {
           className="w-full h-full object-cover"
         />
         <div className="absolute bottom-32 left-10 right-10 text-white z-20">
-          <h3 className="text-2xl font-bold mb-2">Discover Infinite Possibilities</h3>
+          <h3 className="text-2xl font-bold mb-2">
+            Discover Infinite Possibilities
+          </h3>
           <p className="text-gray-300">
-            Join our community and explore a world of exclusive products and offers.
+            Join our community and explore a world of exclusive products and
+            offers.
           </p>
         </div>
       </div>

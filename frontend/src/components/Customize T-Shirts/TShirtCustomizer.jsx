@@ -31,7 +31,7 @@ const TShirtCustomizer = () => {
   useEffect(() => {
     // Redirect to login if user is not authenticated
     if (!user) {
-      navigate("/login?redirect=cutomize-t-shirts");
+      navigate("/login?redirect=customize-t-shirts");
     }
   }, [user, navigate]);
 
