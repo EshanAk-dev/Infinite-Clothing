@@ -13,7 +13,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate("/login");
+      navigate("/login?redirect=profile");
     }
   }, [user, navigate]);
 

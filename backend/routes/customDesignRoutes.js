@@ -1,0 +1,145 @@
+// routes/customDesignRoutes.js
+const express = require("express");
+const router = express.Router();
+const { protect } = require("../middleware/authMiddleware");
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const CustomDesign = require("../models/CustomDesign");
+
+// Configure Cloudinary (already done in uploadRoutes, but ensuring it's here)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Memory storage for multer
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+
+// @route POST /api/custom-designs
+// @access Private
+// @desc Save custom design
+router.post("/", protect, upload.fields([
+  { name: 'frontDesignImage', maxCount: 1 },
+  { name: 'backDesignImage', maxCount: 1 }
+]), async (req, res) => {
+  try {
+    const { color, designs } = req.body;
+    const user = req.user._id;
+
+    if (!req.files.frontDesignImage || !req.files.backDesignImage) {
+      return res.status(400).json({ message: "Both front and back images are required" });
+    }
+
+    // Upload front image to Cloudinary
+    const frontResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "custom-designs" },
+        (error, result) => {
+          if (result) {
+            resolve(result);
+          } else {
+            reject(error);
+          }
+        }
+      );
+      stream.end(req.files.frontDesignImage[0].buffer);
+    });
+
+    // Upload back image to Cloudinary
+    const backResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "custom-designs" },
+        (error, result) => {
+          if (result) {
+            resolve(result);
+          } else {
+            reject(error);
+          }
+        }
+      );
+      stream.end(req.files.backDesignImage[0].buffer);
+    });
+
+    // Create new custom design with both views
+    const customDesign = new CustomDesign({
+      user,
+      color,
+      designs: JSON.parse(designs),
+      frontImageUrl: frontResult.secure_url,
+      frontCloudinaryId: frontResult.public_id,
+      backImageUrl: backResult.secure_url,
+      backCloudinaryId: backResult.public_id,
+    });
+
+    await customDesign.save();
+    res.status(201).json(customDesign);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// @route GET /api/custom-designs
+// @desc Get user's custom designs
+// @access Private
+router.get("/", protect, async (req, res) => {
+  try {
+    const designs = await CustomDesign.find({ user: req.user._id }).sort({
+      createdAt: -1,
+    });
+    res.json(designs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// @route GET /api/custom-designs/:id
+// @desc Get a specific custom design
+// @access Private
+router.get("/:id", protect, async (req, res) => {
+  try {
+    const design = await CustomDesign.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+
+    if (!design) {
+      return res.status(404).json({ message: "Design not found" });
+    }
+
+    res.json(design);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// @route DELETE /api/custom-designs/:id
+// @desc Delete a custom design
+// @access Private
+router.delete("/:id", protect, async (req, res) => {
+  try {
+    const design = await CustomDesign.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+
+    if (!design) {
+      return res.status(404).json({ message: "Design not found" });
+    }
+
+    // Delete from Cloudinary
+    await cloudinary.uploader.destroy(design.cloudinaryId);
+
+    res.json({ message: "Design removed" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+module.exports = router;

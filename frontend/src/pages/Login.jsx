@@ -20,6 +20,8 @@ const Login = () => {
 
   const redirect = new URLSearchParams(location.search).get("redirect") || "/";
   const isCheckoutRedirect = redirect.includes("checkout");
+  const isCuctomizeRedirect = redirect.includes("cutomize-t-shirts");
+  const isProfileRedirect = redirect.includes("profile");
 
   useEffect(() => {
     if (user) {
@@ -33,11 +35,13 @@ const Login = () => {
         await dispatch(fetchCart({ userId: user._id }));
         
         navigate(isCheckoutRedirect ? "/checkout" : "/");
+        navigate(isCuctomizeRedirect ? "/cutomize-t-shirts" : "/");
+        navigate(isProfileRedirect ? "/profile" : "/");
       };
 
       handleSuccessfulLogin();
     }
-  }, [user, guestId, cart, navigate, isCheckoutRedirect, dispatch]);
+  }, [user, guestId, cart, navigate, isCheckoutRedirect, isCuctomizeRedirect, isProfileRedirect, dispatch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

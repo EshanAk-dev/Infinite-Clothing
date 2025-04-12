@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+  saveCustomDesign,
+  resetDesignState,
+} from "../../redux/slices/customDesignSlice";
 
 const TShirtCustomizer = () => {
   const [color, setColor] = useState("#ffffff");
@@ -13,7 +19,21 @@ const TShirtCustomizer = () => {
   const [showGrid, setShowGrid] = useState(true);
   const [activeTab, setActiveTab] = useState("design");
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+  const { loading, error, success } = useSelector(
+    (state) => state.customDesign
+  );
+
   const canvasRef = useRef(null);
+
+  useEffect(() => {
+    // Redirect to login if user is not authenticated
+    if (!user) {
+      navigate("/login?redirect=cutomize-t-shirts");
+    }
+  }, [user, navigate]);
 
   const availableColors = [
     { hex: "#ffffff", name: "White" },
@@ -301,19 +321,64 @@ const TShirtCustomizer = () => {
     }));
   };
 
-  const submitDesign = () => {
+  // Update the submitDesign function
+  const submitDesign = async () => {
     const canvas = canvasRef.current;
-    const imageData = canvas.toDataURL("image/png");
 
-    // In a real app, you would send this to your backend
-    console.log("Design submitted:", {
-      color,
-      designs,
-      view,
-    });
+    // Temporarily disable grid and selection frame
+    const previousShowGrid = showGrid;
+    const previousSelectedDesignId = selectedDesignId;
+    setShowGrid(false);
+    setSelectedDesignId(null);
 
-    alert("Your custom t-shirt design has been submitted!");
+    // Wait for the canvas to update
+    setTimeout(async () => {
+      // Save current view
+      const currentView = view;
+
+      // Get front image
+      setView("front");
+      const frontImageData = await new Promise((resolve) => {
+        setTimeout(() => resolve(canvas.toDataURL("image/png")), 100);
+      });
+
+      // Get back image
+      setView("back");
+      const backImageData = await new Promise((resolve) => {
+        setTimeout(() => resolve(canvas.toDataURL("image/png")), 100);
+      });
+
+      try {
+        await dispatch(
+          saveCustomDesign({
+            color,
+            designs,
+            frontImageData,
+            backImageData,
+          })
+        ).unwrap();
+
+        // Show success message
+        alert("Your custom t-shirt design has been saved successfully!");
+      } catch (err) {
+        console.error("Failed to save design:", err);
+        alert("Failed to save design. Please try again.");
+      } finally {
+        // Restore original view, grid and selection frame
+        setView(currentView);
+        setShowGrid(previousShowGrid);
+        setSelectedDesignId(previousSelectedDesignId);
+      }
+    }, 100);
   };
+
+  // Add useEffect to handle success/error messages
+  useEffect(() => {
+    if (success) {
+      // Reset success state after showing message
+      dispatch(resetDesignState());
+    }
+  }, [success, dispatch]);
 
   const downloadDesign = () => {
     const canvas = canvasRef.current;
@@ -651,21 +716,52 @@ const TShirtCustomizer = () => {
             <div className="space-y-3 mt-6">
               <button
                 onClick={submitDesign}
-                className="w-full py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center justify-center"
+                disabled={loading}
+                className={`w-full py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center justify-center ${
+                  loading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Submit Design
+                {loading ? (
+                  <>
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 mr-2"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Submit Design
+                  </>
+                )}
               </button>
               <button
                 onClick={downloadDesign}
