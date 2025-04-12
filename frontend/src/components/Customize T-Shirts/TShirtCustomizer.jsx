@@ -180,26 +180,6 @@ const TShirtCustomizer = () => {
     }
   };
 
-  const handlePresetDesign = (designUrl) => {
-    const newDesign = {
-      id: Date.now().toString(),
-      image: designUrl,
-      name: "Preset Design",
-      position: { x: 265, y: 220 },
-      scale: 1,
-      rotation: 0,
-      opacity: 1,
-    };
-
-    setDesigns((prev) => ({
-      ...prev,
-      [view]: [...prev[view], newDesign],
-    }));
-
-    // Select the newly added design
-    setSelectedDesignId(newDesign.id);
-  };
-
   const handleCanvasMouseDown = (e) => {
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
