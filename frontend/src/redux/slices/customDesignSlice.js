@@ -5,12 +5,15 @@ import axios from "axios";
 // Async Thunk to save custom design
 export const saveCustomDesign = createAsyncThunk(
   "customDesign/save",
-  async ({ color, designs, frontImageData, backImageData }, { rejectWithValue }) => {
+  async (
+    { color, designs, frontImageData, backImageData },
+    { rejectWithValue }
+  ) => {
     try {
       // Convert front and back images to blobs
       const frontBlob = await fetch(frontImageData).then((res) => res.blob());
       const backBlob = await fetch(backImageData).then((res) => res.blob());
-      
+
       const formData = new FormData();
       formData.append("frontDesignImage", frontBlob, "front-design.png");
       formData.append("backDesignImage", backBlob, "back-design.png");
@@ -74,10 +77,31 @@ export const deleteCustomDesign = createAsyncThunk(
   }
 );
 
+// Async Thunk to view custom design by ID
+export const fetchDesignById = createAsyncThunk(
+  "customDesign/fetchById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/custom-designs/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const customDesignSlice = createSlice({
   name: "customDesign",
   initialState: {
     designs: [],
+    currentDesign: null,
     loading: false,
     error: null,
     success: false,
@@ -120,19 +144,23 @@ const customDesignSlice = createSlice({
         state.error = action.payload?.message || "Failed to fetch designs";
       })
       // Delete design
-      .addCase(deleteCustomDesign.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(deleteCustomDesign.fulfilled, (state, action) => {
-        state.loading = false;
         state.designs = state.designs.filter(
           (design) => design._id !== action.payload
         );
       })
-      .addCase(deleteCustomDesign.rejected, (state, action) => {
+      // View design by ID
+      .addCase(fetchDesignById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchDesignById.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || "Failed to delete design";
+        state.currentDesign = action.payload;
+      })
+      .addCase(fetchDesignById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to fetch design";
       });
   },
 });

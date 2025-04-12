@@ -77,7 +77,7 @@ const Navbar = () => {
           <NavLink to="/collections/all?category=Bottom+Wear">
             Bottom Wear
           </NavLink>
-          <NavLink to="/cutomize-t-shirts">Customize T-Shirt</NavLink>
+          <NavLink to="/customize-t-shirts">Customize T-Shirt</NavLink>
         </div>
 
         {/* Icons in the right */}

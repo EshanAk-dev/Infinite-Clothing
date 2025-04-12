@@ -440,9 +440,29 @@ const TShirtCustomizer = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
-            Custom T-Shirt Designer
-          </h1>
+          <div className="flex justify-center items-center gap-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+              Custom T-Shirt Designer
+            </h1>
+            <button
+              onClick={() => navigate("/my-custom-designs")}
+              className="fixed top-30 right-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center shadow-lg"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              My Designs
+            </button>
+          </div>
           <p className="text-gray-600 mt-2">
             Create your unique style with multiple designs on each side
           </p>

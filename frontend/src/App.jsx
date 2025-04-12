@@ -25,6 +25,8 @@ import store from "./redux/store";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
 import AddNewProductPage from "./components/Admin/AddNewProductPage";
 import TShirtCustomizer from "./components/Customize T-Shirts/TShirtCustomizer";
+import MyCustomDesigns from "./components/Customize T-Shirts/MyCustomDesigns";
+import CustomDesign from "./components/Customize T-Shirts/CustomDesign";
 
 const App = () => {
   return (
@@ -51,7 +53,9 @@ const App = () => {
             />
             <Route path="order/:id" element={<OrderDetailsPage />} />
             <Route path="my-orders" element={<MyOrdersPage />} />
-            <Route path="cutomize-t-shirts" element={<TShirtCustomizer />} />
+            <Route path="customize-t-shirts" element={<TShirtCustomizer />} />
+            <Route path="/my-custom-designs" element={<MyCustomDesigns />} />
+            <Route path="/my-custom-designs/:id" element={<CustomDesign />} />
           </Route>
 
           {/* Admin Section */}

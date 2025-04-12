@@ -12,8 +12,32 @@ const customDesignSchema = new mongoose.Schema(
       required: true,
     },
     designs: {
-      type: Object,
-      required: true,
+      front: [
+        {
+          image: String,
+          name: String,
+          position: {
+            x: Number,
+            y: Number,
+          },
+          scale: Number,
+          rotation: Number,
+          opacity: Number,
+        },
+      ],
+      back: [
+        {
+          image: String,
+          name: String,
+          position: {
+            x: Number,
+            y: Number,
+          },
+          scale: Number,
+          rotation: Number,
+          opacity: Number,
+        },
+      ],
     },
     frontImageUrl: {
       type: String,
