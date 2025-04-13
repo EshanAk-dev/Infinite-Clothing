@@ -240,8 +240,8 @@ const AdminOrderDetails = () => {
 {/* Order Summary */}
 <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
   <div className="flex justify-end">
-    <div className="w-full max-w-md space-y-2">
-      <div className="flex justify-between pt-2 border-t border-gray-200">
+    <div className="w-full max-w-md lg:mr-28 space-y-2">
+      <div className="flex justify-between pt-2  border-t border-gray-200">
         <span className="text-base font-semibold">Total</span>
         <span className="text-base font-semibold">Rs.{orderDetails.totalPrice.toFixed(2)}</span>
       </div>

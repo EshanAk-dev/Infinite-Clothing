@@ -6,6 +6,7 @@ import {
   saveCustomDesign,
   resetDesignState,
 } from "../../redux/slices/customDesignSlice";
+import { toast } from "sonner";
 
 const TShirtCustomizer = () => {
   const [color, setColor] = useState("#ffffff");
@@ -321,7 +322,7 @@ const TShirtCustomizer = () => {
     }));
   };
 
-  // Update the submitDesign function
+  // Submit design function
   const submitDesign = async () => {
     const canvas = canvasRef.current;
 
@@ -359,10 +360,30 @@ const TShirtCustomizer = () => {
         ).unwrap();
 
         // Show success message
-        alert("Your custom t-shirt design has been saved successfully!");
+        toast.success(
+          "Your custom design has been saved successfully!",
+          {
+            style: {
+              background: "#ecfdf5",
+              color: "#065f46",
+              border: "1px solid #6ee7b7",
+              borderRadius: "8px",
+              padding: "16px",
+            },
+          }
+        );
       } catch (err) {
         console.error("Failed to save design:", err);
-        alert("Failed to save design. Please try again.");
+        toast.error("Failed to save design. Please try again!", {
+          style: {
+            background: "#fef2f2",
+            color: "#b91c1c",
+            border: "1px solid #fca5a5",
+            borderRadius: "8px",
+            padding: "16px",
+          },
+          icon: "⚠️",
+        });
       } finally {
         // Restore original view, grid and selection frame
         setView(currentView);

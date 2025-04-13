@@ -6,7 +6,7 @@ const Hero = () => {
   return (
     <section className="relative overflow-hidden">
       {/* Hero Image with Gradient Overlay */}
-      <div className="relative w-full h-[80vh] min-h-[400px] max-h-[800px]">
+      <div className="relative w-full h-[87vh] min-h-[400px] max-h-[800px]">
         <img
           src={heroImg}
           alt="Infinite Fashion Collection"
