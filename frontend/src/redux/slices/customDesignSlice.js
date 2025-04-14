@@ -6,7 +6,7 @@ import axios from "axios";
 export const saveCustomDesign = createAsyncThunk(
   "customDesign/save",
   async (
-    { color, designs, frontImageData, backImageData },
+    { color, designs, frontImageData, backImageData, shippingAddress, quantity = 1, price = 2000 },
     { rejectWithValue }
   ) => {
     try {
@@ -19,6 +19,9 @@ export const saveCustomDesign = createAsyncThunk(
       formData.append("backDesignImage", backBlob, "back-design.png");
       formData.append("color", color);
       formData.append("designs", JSON.stringify(designs));
+      formData.append("shippingAddress", JSON.stringify(shippingAddress));
+      formData.append("quantity", quantity);
+      formData.append("price", price);
 
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/custom-designs`,

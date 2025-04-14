@@ -1,12 +1,11 @@
-// routes/customDesignRoutes.js
 const express = require("express");
 const router = express.Router();
-const { protect } = require("../middleware/authMiddleware");
+const { protect, admin } = require("../middleware/authMiddleware");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const CustomDesign = require("../models/CustomDesign");
 
-// Configure Cloudinary (already done in uploadRoutes, but ensuring it's here)
+// Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -17,7 +16,6 @@ cloudinary.config({
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-
 // @route POST /api/custom-designs
 // @access Private
 // @desc Save custom design
@@ -26,12 +24,22 @@ router.post("/", protect, upload.fields([
   { name: 'backDesignImage', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    const { color, designs } = req.body;
+    const { 
+      color, 
+      designs, 
+      shippingAddress, 
+      quantity = 1,
+      price = 2000 
+    } = req.body;
+    
     const user = req.user._id;
 
     if (!req.files.frontDesignImage || !req.files.backDesignImage) {
       return res.status(400).json({ message: "Both front and back images are required" });
     }
+
+    // Calculate total price
+    const totalPrice = price * quantity;
 
     // Upload front image to Cloudinary
     const frontResult = await new Promise((resolve, reject) => {
@@ -63,7 +71,7 @@ router.post("/", protect, upload.fields([
       stream.end(req.files.backDesignImage[0].buffer);
     });
 
-    // Create new custom design with both views
+    // Create new custom design
     const customDesign = new CustomDesign({
       user,
       color,
@@ -72,10 +80,56 @@ router.post("/", protect, upload.fields([
       frontCloudinaryId: frontResult.public_id,
       backImageUrl: backResult.secure_url,
       backCloudinaryId: backResult.public_id,
+      shippingAddress: JSON.parse(shippingAddress),
+      status: "Processing",
+      price,
+      quantity,
+      totalPrice
     });
 
     await customDesign.save();
     res.status(201).json(customDesign);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// @route PUT /api/custom-designs/:id/status
+// @desc Update design status (admin only)
+// @access Private/Admin
+router.put("/:id/status", protect, admin, async (req, res) => {
+  try {
+    const { status } = req.body;
+    
+    if (!["Approved", "Rejected", "Processing", "Shipped", "Delivered", "Cancelled"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    const design = await CustomDesign.findOneAndUpdate(
+      { _id: req.params.id },
+      { status },
+      { new: true }
+    );
+
+    if (!design) {
+      return res.status(404).json({ message: "Design not found" });
+    }
+
+    res.json(design);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// @route GET /api/custom-designs/admin
+// @desc Get all custom designs (admin only)
+// @access Private/Admin
+router.get("/admin/all", protect, admin, async (req, res) => {
+  try {
+    const designs = await CustomDesign.find().sort({ createdAt: -1 });
+    res.json(designs);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
@@ -132,8 +186,9 @@ router.delete("/:id", protect, async (req, res) => {
       return res.status(404).json({ message: "Design not found" });
     }
 
-    // Delete from Cloudinary
-    await cloudinary.uploader.destroy(design.cloudinaryId);
+    // Delete both images from Cloudinary
+    await cloudinary.uploader.destroy(design.frontCloudinaryId);
+    await cloudinary.uploader.destroy(design.backCloudinaryId);
 
     res.json({ message: "Design removed" });
   } catch (error) {

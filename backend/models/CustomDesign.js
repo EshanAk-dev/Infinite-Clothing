@@ -55,6 +55,33 @@ const customDesignSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    shippingAddress: {
+      name: { type: String, required: true },
+      address: { type: String, required: true },
+      city: { type: String, required: true },
+      postalCode: { type: String, required: true },
+      country: { type: String, required: true },
+      phone: { type: String, required: true },
+    },
+    status: {
+      type: String,
+      enum: ["Approved","Rejected","Processing", "Shipped", "Delivered", "Cancelled"],
+      default: "Processing",
+    },
+    price: {
+      type: Number,
+      required: true,
+      default: 2000,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      default: 1,
+    },
+    totalPrice: {
+      type: Number,
+      required: true,
+    }
   },
   { timestamps: true }
 );

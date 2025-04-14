@@ -29,6 +29,16 @@ const TShirtCustomizer = () => {
 
   const canvasRef = useRef(null);
 
+  const [shippingAddress, setShippingAddress] = useState({
+    name: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    country: "",
+    phone: "",
+  });
+  const [quantity, setQuantity] = useState(1);
+
   useEffect(() => {
     // Redirect to login if user is not authenticated
     if (!user) {
@@ -324,6 +334,29 @@ const TShirtCustomizer = () => {
 
   // Submit design function
   const submitDesign = async () => {
+    // Validate shipping information
+    if (
+      !shippingAddress.name ||
+      !shippingAddress.address ||
+      !shippingAddress.city ||
+      !shippingAddress.postalCode ||
+      !shippingAddress.country ||
+      !shippingAddress.phone
+    ) {
+      toast.error("Please complete shipping information before submitting", {
+        style: {
+          background: "#fef2f2",
+          color: "#b91c1c",
+          border: "1px solid #fca5a5",
+          borderRadius: "8px",
+          padding: "16px",
+        },
+        icon: "⚠️",
+      });
+      setActiveTab("shipping");
+      return;
+    }
+
     const canvas = canvasRef.current;
 
     // Temporarily disable grid and selection frame
@@ -356,22 +389,22 @@ const TShirtCustomizer = () => {
             designs,
             frontImageData,
             backImageData,
+            shippingAddress,
+            quantity,
+            price: 2000, // Default price from the model
           })
         ).unwrap();
 
         // Show success message
-        toast.success(
-          "Your custom design has been saved successfully!",
-          {
-            style: {
-              background: "#ecfdf5",
-              color: "#065f46",
-              border: "1px solid #6ee7b7",
-              borderRadius: "8px",
-              padding: "16px",
-            },
-          }
-        );
+        toast.success("Your custom design has been saved successfully!", {
+          style: {
+            background: "#ecfdf5",
+            color: "#065f46",
+            border: "1px solid #6ee7b7",
+            borderRadius: "8px",
+            padding: "16px",
+          },
+        });
       } catch (err) {
         console.error("Failed to save design:", err);
         toast.error("Failed to save design. Please try again!", {
@@ -518,6 +551,16 @@ const TShirtCustomizer = () => {
               >
                 Settings
               </button>
+              <button
+                className={`px-4 py-2 font-medium ${
+                  activeTab === "shipping"
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-500"
+                }`}
+                onClick={() => setActiveTab("shipping")}
+              >
+                Shipping
+              </button>
             </div>
 
             {activeTab === "design" ? (
@@ -560,11 +603,11 @@ const TShirtCustomizer = () => {
                     accept="image/*"
                     onChange={handleDesignUpload}
                     className="w-full text-sm text-gray-500 
-                      file:mr-4 file:py-2 file:px-4
-                      file:rounded-md file:border-0
-                      file:text-sm file:font-semibold
-                      file:bg-blue-50 file:text-blue-700
-                      hover:file:bg-blue-100"
+          file:mr-4 file:py-2 file:px-4
+          file:rounded-md file:border-0
+          file:text-sm file:font-semibold
+          file:bg-blue-50 file:text-blue-700
+          hover:file:bg-blue-100"
                   />
 
                   {/* Thumbnails for uploaded designs */}
@@ -626,7 +669,7 @@ const TShirtCustomizer = () => {
                   </div>
                 </div>
               </>
-            ) : (
+            ) : activeTab === "settings" ? (
               <>
                 {/* Color selection */}
                 <div className="mb-6">
@@ -750,7 +793,152 @@ const TShirtCustomizer = () => {
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                   </label>
                 </div>
+                {/* Quantity selector */}
+                <div className="mb-6">
+                  <h3 className="font-semibold mb-2">Quantity</h3>
+                  <div className="flex items-center">
+                    <button
+                      onClick={() =>
+                        setQuantity((prev) => Math.max(1, prev - 1))
+                      }
+                      className="px-3 py-1 bg-gray-200 text-gray-700 rounded-l-md hover:bg-gray-300"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      min="1"
+                      value={quantity}
+                      onChange={(e) =>
+                        setQuantity(Math.max(1, parseInt(e.target.value) || 1))
+                      }
+                      className="w-16 text-center py-1 border-t border-b border-gray-300"
+                    />
+                    <button
+                      onClick={() => setQuantity((prev) => prev + 1)}
+                      className="px-3 py-1 bg-gray-200 text-gray-700 rounded-r-md hover:bg-gray-300"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
               </>
+            ) : (
+              activeTab === "shipping" && (
+                <div className="shipping-form space-y-4">
+                  <h3 className="font-semibold mb-2">Shipping Information</h3>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      value={shippingAddress.name}
+                      onChange={(e) =>
+                        setShippingAddress({
+                          ...shippingAddress,
+                          name: e.target.value,
+                        })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Address
+                    </label>
+                    <input
+                      type="text"
+                      value={shippingAddress.address}
+                      onChange={(e) =>
+                        setShippingAddress({
+                          ...shippingAddress,
+                          address: e.target.value,
+                        })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      value={shippingAddress.city}
+                      onChange={(e) =>
+                        setShippingAddress({
+                          ...shippingAddress,
+                          city: e.target.value,
+                        })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Postal Code
+                      </label>
+                      <input
+                        type="text"
+                        value={shippingAddress.postalCode}
+                        onChange={(e) =>
+                          setShippingAddress({
+                            ...shippingAddress,
+                            postalCode: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Country
+                      </label>
+                      <input
+                        type="text"
+                        value={shippingAddress.country}
+                        onChange={(e) =>
+                          setShippingAddress({
+                            ...shippingAddress,
+                            country: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      value={shippingAddress.phone}
+                      onChange={(e) =>
+                        setShippingAddress({
+                          ...shippingAddress,
+                          phone: e.target.value,
+                        })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                  </div>
+                </div>
+              )
             )}
 
             {/* Submit buttons */}
@@ -884,6 +1072,22 @@ const TShirtCustomizer = () => {
               </div>
             </div>
 
+            {/* Price information */}
+            <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-md">
+              <div className="flex justify-between mb-2">
+                <span>Base price per item:</span>
+                <span>Rs.{(2000).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span>Quantity:</span>
+                <span>{quantity}</span>
+              </div>
+              <div className="flex justify-between font-semibold text-lg">
+                <span>Total:</span>
+                <span>Rs.{((2000 * quantity)).toFixed(2)}</span>
+              </div>
+            </div>
+
             {/* Instructions */}
             <div className="bg-blue-50 p-4 rounded-lg mt-4 border border-blue-100">
               <h3 className="font-semibold text-blue-800 mb-2">Design Tips</h3>
@@ -950,6 +1154,22 @@ const TShirtCustomizer = () => {
                   </svg>
                   <span>
                     Add multiple designs to each side for complex creations
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <svg
+                    className="h-4 w-4 mt-0.5 mr-2 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span>
+                    Complete shipping information before submitting designs.
                   </span>
                 </li>
               </ul>
