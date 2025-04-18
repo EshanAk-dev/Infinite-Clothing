@@ -47,18 +47,45 @@ const TShirtCustomizer = () => {
   }, [user, navigate]);
 
   const availableColors = [
-    { hex: "#ffffff", name: "White" },
-    { hex: "#000000", name: "Black" },
-    { hex: "#ff0000", name: "Red" },
-    { hex: "#0000ff", name: "Blue" },
-    { hex: "#ffff00", name: "Yellow" },
-    { hex: "#00ff00", name: "Green" },
-    { hex: "#ff00ff", name: "Magenta" },
-    { hex: "#00ffff", name: "Cyan" },
-    { hex: "#808080", name: "Gray" },
-    { hex: "#ffa500", name: "Orange" },
-    { hex: "#964B00", name: "Brown" },
-    { hex: "#800080", name: "Purple" },
+    // Basic neutrals
+    { hex: "#FFFFFF", name: "Pure White" },
+    { hex: "#F5F5F5", name: "Soft White" },
+    { hex: "#000000", name: "Jet Black" },
+    { hex: "#1A1A1A", name: "Charcoal" },
+    { hex: "#424242", name: "Dark Gray" },
+    { hex: "#9E9E9E", name: "Medium Gray" },
+    { hex: "#E0E0E0", name: "Light Gray" },
+
+    // Blues
+    { hex: "#0D47A1", name: "Navy Blue" },
+    { hex: "#1976D2", name: "Classic Blue" },
+    { hex: "#03A9F4", name: "Sky Blue" },
+
+    // Reds/Pinks
+    { hex: "#B71C1C", name: "Deep Red" },
+    { hex: "#FF5252", name: "Coral Red" },
+    { hex: "#E91E63", name: "Hot Pink" },
+
+    // Greens
+    { hex: "#1B5E20", name: "Forest Green" },
+    { hex: "#388E3C", name: "Kelly Green" },
+
+    // Yellows/Oranges
+    { hex: "#F57F17", name: "Golden Yellow" },
+    { hex: "#FFD600", name: "Lemon Yellow" },
+
+    // Purples
+    { hex: "#4A148C", name: "Royal Purple" },
+    { hex: "#7B1FA2", name: "Violet" },
+
+    // Earth tones
+    { hex: "#8D6E63", name: "Taupe" },
+    { hex: "#D7CCC8", name: "Sand" },
+
+    // Special colors
+    { hex: "#263238", name: "Graphite" },
+    { hex: "#006064", name: "Deep Teal" },
+    { hex: "#607D8B", name: "Slate Blue" },
   ];
 
   useEffect(() => {
@@ -70,16 +97,20 @@ const TShirtCustomizer = () => {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw T-shirt shape
-    ctx.shadowColor = "rgba(0,0,0,0.2)";
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetY = 5;
+    // Define T-shirt base color and shading colors
+    const baseColor = color;
+    const shadowColor = addShade(baseColor, -20);
+    const highlightColor = addShade(baseColor, 20);
 
-    ctx.fillStyle = color;
-    ctx.beginPath();
+    // Shadow settings
+    ctx.shadowColor = "rgba(0,0,0,0.3)";
+    ctx.shadowBlur = 15;
+    ctx.shadowOffsetY = 8;
 
     if (view === "front") {
-      // Draw front of t-shirt
+      // Draw front of t-shirt base shape
+      ctx.fillStyle = baseColor;
+      ctx.beginPath();
       ctx.moveTo(200, 70); // Left shoulder
       ctx.lineTo(130, 110); // Left sleeve
       ctx.lineTo(160, 160); // Left armpit
@@ -88,10 +119,72 @@ const TShirtCustomizer = () => {
       ctx.lineTo(370, 160); // Right armpit
       ctx.lineTo(400, 110); // Right sleeve
       ctx.lineTo(330, 70); // Right shoulder
-      ctx.lineTo(290, 100); // Right neck
-      ctx.lineTo(240, 100); // Left neck
+
+      // Crew neck curve - front
+      ctx.quadraticCurveTo(265, 90, 200, 70);
+
+      ctx.closePath();
+      ctx.fill();
+
+      // Remove shadow for details
+      ctx.shadowColor = "transparent";
+
+      // Draw crew neck ribbing
+      ctx.beginPath();
+      ctx.moveTo(200, 70); // Left neck start
+      ctx.quadraticCurveTo(265, 90, 330, 70); // Outer neck curve
+      ctx.quadraticCurveTo(265, 105, 200, 75); // Inner neck curve
+      ctx.closePath();
+      ctx.fillStyle = shadowColor;
+      ctx.fill();
+
+      // Add sleeve seams
+      ctx.beginPath();
+      ctx.moveTo(200, 70); // Left shoulder
+      ctx.lineTo(160, 160); // Left armpit
+      ctx.moveTo(330, 70); // Right shoulder
+      ctx.lineTo(370, 160); // Right armpit
+      ctx.strokeStyle = shadowColor;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Add fabric shading with gradient
+      const gradientBody = ctx.createLinearGradient(265, 100, 265, 370);
+      gradientBody.addColorStop(0, baseColor);
+      gradientBody.addColorStop(0.4, highlightColor);
+      gradientBody.addColorStop(0.7, baseColor);
+      gradientBody.addColorStop(1, shadowColor);
+
+      ctx.fillStyle = gradientBody;
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.moveTo(200, 70); // Left shoulder
+      ctx.lineTo(160, 160); // Left armpit
+      ctx.lineTo(160, 370); // Left bottom
+      ctx.lineTo(370, 370); // Right bottom
+      ctx.lineTo(370, 160); // Right armpit
+      ctx.lineTo(330, 70); // Right shoulder
+      ctx.quadraticCurveTo(265, 90, 200, 70); // Crew neck
+      ctx.closePath();
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Add crew neck ribbing detail
+      ctx.beginPath();
+      ctx.moveTo(205, 74); // Left neck inner
+      ctx.quadraticCurveTo(265, 95, 325, 74); // Inner neck curve
+      ctx.strokeStyle = isDarkColor(baseColor)
+        ? addShade(baseColor, 10)
+        : shadowColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Add wrinkles/fabric texture
+      addFabricTexture(ctx, color, 265, 200, 150, 100);
     } else {
-      // Draw back of t-shirt
+      // Draw back of t-shirt - crew neck
+      ctx.fillStyle = baseColor;
+      ctx.beginPath();
       ctx.moveTo(200, 70); // Left shoulder
       ctx.lineTo(130, 110); // Left sleeve
       ctx.lineTo(160, 160); // Left armpit
@@ -100,43 +193,123 @@ const TShirtCustomizer = () => {
       ctx.lineTo(370, 160); // Right armpit
       ctx.lineTo(400, 110); // Right sleeve
       ctx.lineTo(330, 70); // Right shoulder
-      ctx.lineTo(265, 80); // Neck
+
+      // Crew neck curve - back (higher than front)
+      ctx.quadraticCurveTo(265, 80, 200, 70);
+
+      ctx.closePath();
+      ctx.fill();
+
+      // Remove shadow for details
+      ctx.shadowColor = "transparent";
+
+      // Draw crew neck ribbing - back
+      ctx.beginPath();
+      ctx.moveTo(200, 70); // Left neck start
+      ctx.quadraticCurveTo(265, 80, 330, 70); // Outer neck curve
+      ctx.quadraticCurveTo(265, 90, 200, 75); // Inner neck curve
+      ctx.closePath();
+      ctx.fillStyle = shadowColor;
+      ctx.fill();
+
+      // Add sleeve seams
+      ctx.beginPath();
+      ctx.moveTo(200, 70); // Left shoulder
+      ctx.lineTo(160, 160); // Left armpit
+      ctx.moveTo(330, 70); // Right shoulder
+      ctx.lineTo(370, 160); // Right armpit
+      ctx.strokeStyle = shadowColor;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Add tag/label at back
+      ctx.fillStyle = "#eeeeee";
+      ctx.fillRect(255, 85, 20, 15);
+
+      // Add fabric shading with gradient
+      const gradientBody = ctx.createLinearGradient(265, 100, 265, 370);
+      gradientBody.addColorStop(0, baseColor);
+      gradientBody.addColorStop(0.3, highlightColor);
+      gradientBody.addColorStop(0.6, baseColor);
+      gradientBody.addColorStop(1, shadowColor);
+
+      ctx.fillStyle = gradientBody;
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.moveTo(200, 70); // Left shoulder
+      ctx.lineTo(160, 160); // Left armpit
+      ctx.lineTo(160, 370); // Left bottom
+      ctx.lineTo(370, 370); // Right bottom
+      ctx.lineTo(370, 160); // Right armpit
+      ctx.lineTo(330, 70); // Right shoulder
+      ctx.quadraticCurveTo(265, 80, 200, 70); // Crew neck
+      ctx.closePath();
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Add crew neck ribbing detail - back
+      ctx.beginPath();
+      ctx.moveTo(205, 74); // Left neck inner
+      ctx.quadraticCurveTo(265, 85, 325, 74); // Inner neck curve
+      ctx.strokeStyle = isDarkColor(baseColor)
+        ? addShade(baseColor, 10)
+        : shadowColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Add wrinkles/fabric texture
+      addFabricTexture(ctx, color, 265, 200, 150, 100);
     }
 
-    ctx.closePath();
-    ctx.fill();
+    // Add sleeve ends
+    ctx.beginPath();
+    ctx.moveTo(130, 110); // Left sleeve end
+    ctx.lineTo(160, 160); // Left armpit
+    ctx.moveTo(400, 110); // Right sleeve end
+    ctx.lineTo(370, 160); // Right armpit
+    ctx.strokeStyle = shadowColor;
+    ctx.lineWidth = 1.5;
     ctx.stroke();
-    ctx.shadowColor = "transparent";
+
+    // Add bottom hem
+    ctx.beginPath();
+    ctx.moveTo(160, 360);
+    ctx.lineTo(370, 360);
+    ctx.strokeStyle = shadowColor;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Border for the entire t-shirt to define shape better
+    ctx.beginPath();
+    if (view === "front") {
+      ctx.moveTo(200, 70); // Left shoulder
+      ctx.lineTo(130, 110); // Left sleeve
+      ctx.lineTo(160, 160); // Left armpit
+      ctx.lineTo(160, 370); // Left bottom
+      ctx.lineTo(370, 370); // Right bottom
+      ctx.lineTo(370, 160); // Right armpit
+      ctx.lineTo(400, 110); // Right sleeve
+      ctx.lineTo(330, 70); // Right shoulder
+      ctx.quadraticCurveTo(265, 90, 200, 70); // Crew neck
+    } else {
+      ctx.moveTo(200, 70); // Left shoulder
+      ctx.lineTo(130, 110); // Left sleeve
+      ctx.lineTo(160, 160); // Left armpit
+      ctx.lineTo(160, 370); // Left bottom
+      ctx.lineTo(370, 370); // Right bottom
+      ctx.lineTo(370, 160); // Right armpit
+      ctx.lineTo(400, 110); // Right sleeve
+      ctx.lineTo(330, 70); // Right shoulder
+      ctx.quadraticCurveTo(265, 80, 200, 70); // Crew neck
+    }
+    ctx.closePath();
+    ctx.strokeStyle = "rgba(0,0,0,0.1)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
     // Draw grid if enabled
     if (showGrid) {
-      ctx.strokeStyle = "rgba(0,0,0,0.1)";
-      ctx.lineWidth = 1;
-
-      // Vertical lines
-      for (let x = 0; x <= canvas.width; x += 20) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-
-      // Horizontal lines
-      for (let y = 0; y <= canvas.height; y += 20) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-
-      // Center markers
-      ctx.strokeStyle = "rgba(0,0,0,0.3)";
-      ctx.beginPath();
-      ctx.moveTo(canvas.width / 2, 0);
-      ctx.lineTo(canvas.width / 2, canvas.height);
-      ctx.moveTo(0, canvas.height / 2);
-      ctx.lineTo(canvas.width, canvas.height / 2);
-      ctx.stroke();
+      drawGrid(ctx, canvas.width, canvas.height);
     }
 
     // Draw all designs for the current view
@@ -171,6 +344,129 @@ const TShirtCustomizer = () => {
         ctx.restore();
       };
     });
+  };
+
+  // Helper function to draw grid
+  const drawGrid = (ctx, width, height) => {
+    ctx.strokeStyle = "rgba(0,0,0,0.1)";
+    ctx.lineWidth = 1;
+
+    // Vertical lines
+    for (let x = 0; x <= width; x += 20) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, height);
+      ctx.stroke();
+    }
+
+    // Horizontal lines
+    for (let y = 0; y <= height; y += 20) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+      ctx.stroke();
+    }
+
+    // Center markers
+    ctx.strokeStyle = "rgba(0,0,0,0.3)";
+    ctx.beginPath();
+    ctx.moveTo(width / 2, 0);
+    ctx.lineTo(width / 2, height);
+    ctx.moveTo(0, height / 2);
+    ctx.lineTo(width, height / 2);
+    ctx.stroke();
+  };
+
+  // Helper function to add fabric texture effect
+  const addFabricTexture = (
+    ctx,
+    baseColor,
+    centerX,
+    centerY,
+    width,
+    height
+  ) => {
+    // Create subtle texture by drawing semi-transparent lines
+    ctx.globalAlpha = 0.05;
+    ctx.strokeStyle = isDarkColor(baseColor) ? "#ffffff" : "#000000";
+    ctx.lineWidth = 0.5;
+
+    // Horizontal fabric lines
+    for (let y = centerY - height / 2; y < centerY + height / 2; y += 7) {
+      ctx.beginPath();
+      ctx.moveTo(centerX - width / 2, y);
+      ctx.bezierCurveTo(
+        centerX - width / 4,
+        y + Math.random() * 3 - 1.5,
+        centerX + width / 4,
+        y + Math.random() * 3 - 1.5,
+        centerX + width / 2,
+        y
+      );
+      ctx.stroke();
+    }
+
+    // Add some vertical creases
+    for (let i = 0; i < 5; i++) {
+      const x = centerX - width / 3 + Math.random() * ((width * 2) / 3);
+      const topY = centerY - height / 2;
+      const bottomY = centerY + height / 2;
+
+      ctx.beginPath();
+      ctx.moveTo(x, topY + height / 5);
+      ctx.bezierCurveTo(
+        x - 10,
+        topY + height / 3,
+        x + 10,
+        topY + (height * 2) / 3,
+        x,
+        bottomY
+      );
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 1;
+  };
+
+  // Helper function to darken or lighten a color
+  const addShade = (color, percent) => {
+    let R = parseInt(color.substring(1, 3), 16);
+    let G = parseInt(color.substring(3, 5), 16);
+    let B = parseInt(color.substring(5, 7), 16);
+
+    R = parseInt((R * (100 + percent)) / 100);
+    G = parseInt((G * (100 + percent)) / 100);
+    B = parseInt((B * (100 + percent)) / 100);
+
+    R = R < 255 ? R : 255;
+    G = G < 255 ? G : 255;
+    B = B < 255 ? B : 255;
+
+    R = R > 0 ? R : 0;
+    G = G > 0 ? G : 0;
+    B = B > 0 ? B : 0;
+
+    const RR =
+      R.toString(16).length === 1 ? "0" + R.toString(16) : R.toString(16);
+    const GG =
+      G.toString(16).length === 1 ? "0" + G.toString(16) : G.toString(16);
+    const BB =
+      B.toString(16).length === 1 ? "0" + B.toString(16) : B.toString(16);
+
+    return "#" + RR + GG + BB;
+  };
+
+  // Helper function to check if a color is dark
+  const isDarkColor = (hexColor) => {
+    const r = parseInt(hexColor.substring(1, 3), 16);
+    const g = parseInt(hexColor.substring(3, 5), 16);
+    const b = parseInt(hexColor.substring(5, 7), 16);
+
+    // Calculate brightness using the formula (0.299*R + 0.587*G + 0.114*B)
+    const brightness = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+    // If brightness is less than 0.5, consider it dark
+    return brightness < 0.5;
   };
 
   const handleColorChange = (newColor) => {
@@ -396,7 +692,7 @@ const TShirtCustomizer = () => {
         ).unwrap();
 
         // Show success message
-        toast.success("Your custom design has been saved successfully!", {
+        toast.success("Your custom design order has been placed successfully!", {
           style: {
             background: "#ecfdf5",
             color: "#065f46",
@@ -407,7 +703,7 @@ const TShirtCustomizer = () => {
         });
       } catch (err) {
         console.error("Failed to save design:", err);
-        toast.error("Failed to save design. Please try again!", {
+        toast.error("Failed to place design order. Please try again!", {
           style: {
             background: "#fef2f2",
             color: "#b91c1c",
@@ -687,7 +983,7 @@ const TShirtCustomizer = () => {
                           onClick={() => handleColorChange(c.hex)}
                           aria-label={`Color ${c.name}`}
                         />
-                        <span className="text-xs mt-1 text-gray-600">
+                        <span className="text-xs mt-1 text-center text-gray-600">
                           {c.name}
                         </span>
                       </div>
@@ -1084,7 +1380,7 @@ const TShirtCustomizer = () => {
               </div>
               <div className="flex justify-between font-semibold text-lg">
                 <span>Total:</span>
-                <span>Rs.{((2000 * quantity)).toFixed(2)}</span>
+                <span>Rs.{(2000 * quantity).toFixed(2)}</span>
               </div>
             </div>
 
