@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchDesignById } from "../../redux/slices/customDesignSlice";
+import { fetchUserDesignById } from "../../redux/slices/customDesignSlice";
 import { motion } from "framer-motion";
 
 const CustomDesign = () => {
@@ -14,7 +14,7 @@ const CustomDesign = () => {
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchDesignById(id));
+      dispatch(fetchUserDesignById(id));
     }
     
     // Clean up function

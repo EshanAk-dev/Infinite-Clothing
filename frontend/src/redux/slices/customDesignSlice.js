@@ -1,4 +1,3 @@
-// slices/customDesignSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -10,7 +9,6 @@ export const saveCustomDesign = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      // Convert front and back images to blobs
       const frontBlob = await fetch(frontImageData).then((res) => res.blob());
       const backBlob = await fetch(backImageData).then((res) => res.blob());
 
@@ -46,7 +44,7 @@ export const fetchUserDesigns = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/custom-designs`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/custom-designs/user`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
@@ -60,13 +58,33 @@ export const fetchUserDesigns = createAsyncThunk(
   }
 );
 
-// Async Thunk to delete custom design
-export const deleteCustomDesign = createAsyncThunk(
+// Async Thunk to view user's specific design
+export const fetchUserDesignById = createAsyncThunk(
+  "customDesign/fetchById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/custom-designs/user/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+// Async Thunk to delete user's design
+export const deleteUserDesign = createAsyncThunk(
   "customDesign/delete",
   async (id, { rejectWithValue }) => {
     try {
       await axios.delete(
-        `${import.meta.env.VITE_BACKEND_URL}/api/custom-designs/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/custom-designs/user/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
@@ -74,26 +92,6 @@ export const deleteCustomDesign = createAsyncThunk(
         }
       );
       return id;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-// Async Thunk to view custom design by ID
-export const fetchDesignById = createAsyncThunk(
-  "customDesign/fetchById",
-  async (id, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/custom-designs/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-          },
-        }
-      );
-      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -108,13 +106,18 @@ const customDesignSlice = createSlice({
     loading: false,
     error: null,
     success: false,
+    deleteSuccess: false,
   },
   reducers: {
     resetDesignState: (state) => {
       state.loading = false;
       state.error = null;
       state.success = false;
+      state.deleteSuccess = false;
     },
+    clearCurrentDesign: (state) => {
+      state.currentDesign = null;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -146,27 +149,41 @@ const customDesignSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || "Failed to fetch designs";
       })
-      // Delete design
-      .addCase(deleteCustomDesign.fulfilled, (state, action) => {
-        state.designs = state.designs.filter(
-          (design) => design._id !== action.payload
-        );
-      })
-      // View design by ID
-      .addCase(fetchDesignById.pending, (state) => {
+      // Fetch design by ID
+      .addCase(fetchUserDesignById.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchDesignById.fulfilled, (state, action) => {
+      .addCase(fetchUserDesignById.fulfilled, (state, action) => {
         state.loading = false;
         state.currentDesign = action.payload;
       })
-      .addCase(fetchDesignById.rejected, (state, action) => {
+      .addCase(fetchUserDesignById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Failed to fetch design";
+      })
+      // Delete design
+      .addCase(deleteUserDesign.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.deleteSuccess = false;
+      })
+      .addCase(deleteUserDesign.fulfilled, (state, action) => {
+        state.loading = false;
+        state.deleteSuccess = true;
+        state.designs = state.designs.filter(
+          (design) => design._id !== action.payload
+        );
+        if (state.currentDesign?._id === action.payload) {
+          state.currentDesign = null;
+        }
+      })
+      .addCase(deleteUserDesign.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to delete design";
       });
   },
 });
 
-export const { resetDesignState } = customDesignSlice.actions;
+export const { resetDesignState, clearCurrentDesign } = customDesignSlice.actions;
 export default customDesignSlice.reducer;

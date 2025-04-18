@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchAdminProducts } from "../redux/slices/adminProductSlice";
 import { fetchAllOrders } from "../redux/slices/adminOrderSlice";
+import { fetchAllDesigns } from "../redux/slices/adminCustomDesignSlice";
 import {
   FiPackage,
   FiShoppingCart,
-  FiUsers ,
 } from "react-icons/fi";
-import { fetchUsers } from "../redux/slices/adminSlice";
+import { FaTshirt } from "react-icons/fa";
 
 const AdminHomePage = () => {
   const dispatch = useDispatch();
@@ -24,15 +24,19 @@ const AdminHomePage = () => {
     loading: ordersLoading,
     error: ordersError,
   } = useSelector((state) => state.adminOrders);
-  const { users } = useSelector((state) => state.admin);
+  const {
+    allDesigns: customDesigns,
+    loading: customDesignsLoading,
+    error: customDesignsError,
+  } = useSelector((state) => state.adminCustomDesign);
 
   useEffect(() => {
     dispatch(fetchAdminProducts());
     dispatch(fetchAllOrders());
-    dispatch(fetchUsers());
+    dispatch(fetchAllDesigns());
   }, [dispatch]);
 
-  if (productsLoading || ordersLoading) {
+  if (productsLoading || ordersLoading || customDesignsLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -40,7 +44,7 @@ const AdminHomePage = () => {
     );
   }
 
-  if (productsError || ordersError) {
+  if (productsError || ordersError || customDesignsError) {
     return (
       <div className="max-w-7xl mx-auto p-6">
         <div
@@ -50,6 +54,7 @@ const AdminHomePage = () => {
           <p className="font-bold">Error</p>
           {productsError && <p>Products: {productsError}</p>}
           {ordersError && <p>Orders: {ordersError}</p>}
+          {customDesignsError && <p>Custom Designs: {customDesignsError}</p>}
         </div>
       </div>
     );
@@ -132,23 +137,23 @@ const AdminHomePage = () => {
           </div>
         </div>
 
-        {/* Total Users Card */}
+        {/* Custom Orders Card */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">Total Users</p>
+              <p className="text-sm font-medium text-gray-500">Total Custom Orders</p>
               <h3 className="text-2xl font-bold mt-1 text-gray-800">
-                {users.length}
+                {customDesigns.length}
               </h3>
               <Link
-                to="/admin/users"
+                to="/admin/custom-orders"
                 className="text-xs text-blue-600 hover:underline mt-2 inline-block"
               >
-                Manage users
+                Manage custom orders
               </Link>
             </div>
-            <div className="p-3 rounded-lg bg-pink-100 text-pink-600">
-              <FiUsers className="text-2xl" />
+            <div className="p-3 rounded-lg bg-orange-100 text-orange-600">
+              <FaTshirt className="text-2xl" />
             </div>
           </div>
         </div>

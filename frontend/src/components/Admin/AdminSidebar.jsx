@@ -103,7 +103,7 @@ const AdminSidebar = () => {
 
         {/* Customized T-Shirts orders */}
         <NavLink
-          to="/admin/customized-orders"
+          to="/admin/custom-orders"
           className={({ isActive }) =>
             `flex items-center space-x-3 p-3 rounded-lg transition-colors ${
               isActive
@@ -113,7 +113,7 @@ const AdminSidebar = () => {
           }
         >
           <FaTshirt className="text-lg" />
-          <span>Customized Orders</span>
+          <span>Custom Orders</span>
         </NavLink>
 
         {/* Shop */}

@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   fetchUserDesigns,
-  deleteCustomDesign,
+  deleteUserDesign,
 } from "../../redux/slices/customDesignSlice";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 const MyCustomDesigns = () => {
   const dispatch = useDispatch();
@@ -25,7 +26,16 @@ const MyCustomDesigns = () => {
 
   const handleDelete = (designId) => {
     if (window.confirm("Are you sure you want to delete this design?")) {
-      dispatch(deleteCustomDesign(designId));
+      dispatch(deleteUserDesign(designId));
+      toast.success("Custom design deleted successfully!", {
+        style: {
+          background: "#ecfdf5",
+          color: "#065f46",
+          border: "1px solid #6ee7b7",
+          borderRadius: "8px",
+          padding: "16px",
+        },
+      });
     }
     dispatch(fetchUserDesigns());
   };

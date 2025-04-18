@@ -27,6 +27,8 @@ import AddNewProductPage from "./components/Admin/AddNewProductPage";
 import TShirtCustomizer from "./components/Customize T-Shirts/TShirtCustomizer";
 import MyCustomDesigns from "./components/Customize T-Shirts/MyCustomDesigns";
 import CustomDesign from "./components/Customize T-Shirts/CustomDesign";
+import CustomOrderManagement from "./components/Admin/CustomOrderManagement";
+import AdminCustomOrderDetails from "./components/Admin/AdminCustomOrderDetails";
 
 const App = () => {
   return (
@@ -76,6 +78,8 @@ const App = () => {
             <Route path="products/:id/edit" element={<EditProductPage />} />
             <Route path="orders" element={<OrderManagement />} />
             <Route path="orders/:id" element={<AdminOrderDetails />} />
+            <Route path="custom-orders" element={<CustomOrderManagement />} />
+            <Route path="custom-orders/:id" element={<AdminCustomOrderDetails />} />
           </Route>
         </Routes>
       </BrowserRouter>
