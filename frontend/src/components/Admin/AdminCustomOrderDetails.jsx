@@ -59,7 +59,7 @@ const AdminCustomOrderDetails = () => {
 
   useEffect(() => {
     if (deleteSuccess) {
-      navigate("/admin/customized-orders");
+      navigate("/admin/custom-orders");
       toast.success("Custom order deleted successfully!", {
         style: {
           background: "#ecfdf5",
