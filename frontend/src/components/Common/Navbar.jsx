@@ -10,7 +10,6 @@ import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { useSelector } from "react-redux";
-import infiniteLogo from "../../assets/infinite-logo.png";
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
