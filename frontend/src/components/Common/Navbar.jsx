@@ -10,6 +10,7 @@ import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { useSelector } from "react-redux";
+import infiniteLogo from "../../assets/infinite-logo.png";
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -60,7 +61,7 @@ const Navbar = () => {
         <div className="lg:ml-10">
           <Link to="/">
             <img
-              src="/src/assets/infinite-logo.png"
+              src={infiniteLogo}
               alt="Infinite Logo"
               className="h-12"
             />
