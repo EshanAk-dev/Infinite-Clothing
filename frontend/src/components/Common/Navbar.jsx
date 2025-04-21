@@ -60,7 +60,7 @@ const Navbar = () => {
         <div className="lg:ml-10">
           <Link to="/">
             <img
-              src="/src/assets/infinite-logo.png"
+              src="/src/assets/infinite_logo.png"
               alt="Infinite Logo"
               className="h-12"
             />
