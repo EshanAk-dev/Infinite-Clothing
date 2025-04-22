@@ -42,11 +42,11 @@ app.use("/api/admin/products", adminProductsRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 
 // Serve static files from React app (after React build)
-app.use(express.static(path.join(__dirname, 'client', 'build')));
+app.use(express.static(path.join(__dirname, 'client', 'dist')));
 
 // For all routes that aren't API routes, serve the React app's index.html
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
