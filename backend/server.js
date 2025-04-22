@@ -13,6 +13,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const adminProductsRoutes = require("./routes/adminProductsRoutes");
 const adminOrderRoutes = require("./routes/adminOrderRoutes");
 const customDesignRoutes = require("./routes/customDesignRoutes");
+const path = require("path");
 
 const app = express();
 app.use(express.json());
@@ -25,10 +26,6 @@ const PORT = process.env.PORT || 3000;
 // Connect to MongoDB
 connectDB();
 
-app.get("/", (req, res) => {
-  res.send("Welcome to INFINITE API!");
-});
-
 // API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
@@ -39,10 +36,18 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api", subscriberRoute);
 app.use("/api/custom-designs", customDesignRoutes);
 
-// Admin
+// Admin Routes
 app.use("/api/admin/users", adminRoutes);
 app.use("/api/admin/products", adminProductsRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
+
+// Serve static files from React app (after React build)
+app.use(express.static(path.join(__dirname, 'client', 'build')));
+
+// For all routes that aren't API routes, serve the React app's index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
