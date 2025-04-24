@@ -27,7 +27,7 @@ const FilterSidebar = () => {
     price: true
   });
 
-  const categories = ["Top Wear", "Bottom Wear"];
+  const categories = ["Top Wear", "Bottom Wear", "Dresses", "Hats", "Aprons"];
   const colors = [
     { name: "Red", value: "red" },
     { name: "Blue", value: "blue" },
