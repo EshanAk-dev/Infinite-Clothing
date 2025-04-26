@@ -64,7 +64,7 @@ const Checkout = () => {
   const handleCODPayment = async (checkoutId) => {
     try {
       // Mark the checkout as paid for COD with pending COD status
-      await axios.put(
+      const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/pay`,
         { 
           paymentStatus: "pending COD", 
@@ -77,8 +77,14 @@ const Checkout = () => {
         }
       );
   
-      // Finalize the checkout
-      await handleFinalizeCheckout(checkoutId);
+      // Check if payment update was successful
+      if (response.data && response.data._id) {
+        // Finalize the checkout
+        await handleFinalizeCheckout(checkoutId);
+      } else {
+        console.error("COD payment update successful but response data is missing");
+        alert("Order started but there was an issue. Please contact support.");
+      }
     } catch (error) {
       console.error("COD payment error:", error);
       alert("Error processing COD payment. Please try again.");
@@ -87,27 +93,43 @@ const Checkout = () => {
 
   const handlePaymentSuccess = async (details) => {
     try {
+      // The key issue is here - we need to explicitly set paymentStatus to "paid"
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/pay`,
-        { paymentStatus: "paid", paymentDetails: details },
+        { 
+          paymentStatus: "paid", 
+          paymentDetails: {
+            id: details.id,
+            status: details.status,
+            update_time: details.update_time,
+            email_address: details.payer.email_address,
+            // Include any other PayPal details you want to keep
+          } 
+        },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
         }
       );
-      await handleFinalizeCheckout(checkoutId);
+      
+      // If payment was successful, finalize the checkout
+      if (response.data && response.data._id) {
+        await handleFinalizeCheckout(checkoutId);
+      } else {
+        console.error("Payment update successful but response data is missing");
+        alert("Payment recorded but there was an issue. Please contact support.");
+      }
     } catch (error) {
-      console.error(error);
+      console.error("PayPal payment processing error:", error);
+      alert("Error processing payment. Please try again or contact support.");
     }
   };
 
   const handleFinalizeCheckout = async (checkoutId) => {
     try {
-      await axios.post(
-        `${
-          import.meta.env.VITE_BACKEND_URL
-        }/api/checkout/${checkoutId}/finalize`,
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/finalize`,
         {},
         {
           headers: {
@@ -115,9 +137,16 @@ const Checkout = () => {
           },
         }
       );
-      navigate("/order-confirmation");
+      
+      if (response.data && response.data._id) {
+        navigate("/order-confirmation");
+      } else {
+        console.error("Finalization successful but order data is missing");
+        alert("Order placed but there was an issue. Please check your orders or contact support.");
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Error finalizing checkout:", error);
+      alert("Error finalizing order. Please contact customer support.");
     }
   };
 

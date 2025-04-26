@@ -27,8 +27,8 @@ router.post("/", protect, async (req, res) => {
       paymentMethod,
       totalPrice,
       paymentStatus: paymentMethod === "COD" ? "pending COD" : "pending", // Set status based on payment method
-      isPaid: paymentMethod === "COD", // Mark as paid immediately for COD
-      paidAt: paymentMethod === "COD" ? Date.now() : undefined, // Set paidAt for COD
+      isPaid: false,
+      paidAt: undefined,
     });
     console.log(`Checkout created for user: ${req.user._id}`);
     res.status(201).json(newCheckout);
@@ -52,14 +52,13 @@ router.put("/:id/pay", protect, async (req, res) => {
     }
 
     if (paymentStatus === "paid" || paymentStatus === "pending COD") {
-      checkout.isPaid = paymentStatus === "paid"; // Only mark as paid if status is "paid"
+      // For COD, we mark as paid since we're accepting payment on delivery
+      checkout.isPaid = true;
       checkout.paymentStatus = paymentStatus;
       checkout.paymentDetails = paymentDetails;
-      if (paymentStatus === "paid") {
-        checkout.paidAt = Date.now();
-      }
+      checkout.paidAt = Date.now();
+      
       await checkout.save();
-
       res.status(200).json(checkout);
     } else {
       res.status(400).json({ message: "Invalid payment status" });
@@ -71,7 +70,7 @@ router.put("/:id/pay", protect, async (req, res) => {
 });
 
 // @route POST /api/checkout/:id/finalize
-// @desc Fina;ize checkout and covert to an order after payment confirmation
+// @desc Finalize checkout and convert to an order after payment confirmation
 // @access Private
 router.post("/:id/finalize", protect, async (req, res) => {
   try {
@@ -81,7 +80,7 @@ router.post("/:id/finalize", protect, async (req, res) => {
       return res.status(404).json({ message: "Checkout not found" });
     }
 
-    if ((checkout.isPaid || checkout.paymentMethod === "COD") && !checkout.isFinalized) {
+    if (checkout.isPaid && !checkout.isFinalized) {
       // Create final order based on checkout details
       const finalOrder = await Order.create({
         user: checkout.user,
@@ -89,10 +88,10 @@ router.post("/:id/finalize", protect, async (req, res) => {
         shippingAddress: checkout.shippingAddress,
         paymentMethod: checkout.paymentMethod,
         totalPrice: checkout.totalPrice,
-        isPaid: checkout.paymentMethod === "COD", // Mark as paid for COD
-        paidAt: checkout.paymentMethod === "COD" ? Date.now() : checkout.paidAt,
+        isPaid: checkout.isPaid,
+        paidAt: checkout.paidAt,
         isDelivered: false,
-        paymentStatus: checkout.paymentMethod === "COD" ? "pending COD" : checkout.paymentStatus,
+        paymentStatus: checkout.paymentStatus,
         paymentDetails: checkout.paymentDetails,
       });
 

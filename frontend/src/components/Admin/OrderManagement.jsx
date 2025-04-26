@@ -115,6 +115,9 @@ const OrderManagement = () => {
                   Total
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Payment
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -156,6 +159,18 @@ const OrderManagement = () => {
                       <div className="text-xs text-gray-500">
                         {order.orderItems.length} items
                       </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        order.paymentStatus === 'paid' 
+                          ? 'bg-green-100 text-green-800'
+                          : order.paymentStatus === 'pending COD'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {order.paymentStatus === 'paid' ? 'Paid' : 
+                        order.paymentStatus === 'pending COD' ? 'Pending COD' : 'Pending'}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select

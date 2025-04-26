@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearCart } from "../redux/slices/cartSlice";
 import { motion } from "framer-motion";
-import { FiCheckCircle, FiShoppingBag, FiTruck, FiCreditCard, FiHome, FiCalendar } from "react-icons/fi";
+import { FiCheckCircle, FiShoppingBag, FiTruck, FiCreditCard, FiHome, FiCalendar, FiDollarSign } from "react-icons/fi";
 
 const OrderConfirmationPage = () => {
   const dispatch = useDispatch();
@@ -47,7 +47,9 @@ const OrderConfirmationPage = () => {
           Order Confirmed!
         </h1>
         <p className="text-lg text-gray-600 max-w-md mx-auto">
-          Thank you for your purchase. We've sent a confirmation email with your order details.
+          {checkout?.paymentMethod === "COD" 
+            ? "Your order has been placed successfully. Please prepare the payment upon delivery."
+            : "Thank you for your purchase. We've sent a confirmation email with your order details."}
         </p>
       </motion.div>
 
@@ -122,12 +124,18 @@ const OrderConfirmationPage = () => {
               transition={{ delay: 0.4 }}
             >
               <h4 className="text-lg font-semibold mb-3 flex items-center">
-                <FiCreditCard className="text-emerald-600 mr-2" />
+                {checkout.paymentMethod === "COD" ? (
+                  <FiDollarSign className="text-emerald-600 mr-2" />
+                ) : (
+                  <FiCreditCard className="text-emerald-600 mr-2" />
+                )}
                 Payment Information
               </h4>
               <div className="space-y-2">
-                <p className="text-gray-600">Method: PayPal</p>
-                <p className="text-gray-600">Status: Paid</p>
+                <p className="text-gray-600">Method: {checkout.paymentMethod}</p>
+                <p className="text-gray-600">
+                  Status: {checkout.paymentStatus === "pending COD" ? "Pending COD" : checkout.paymentStatus}
+                </p>
                 <p className="text-gray-600">
                   Total: <span className="font-medium">Rs.{checkout.totalPrice.toFixed(2)}</span>
                 </p>
