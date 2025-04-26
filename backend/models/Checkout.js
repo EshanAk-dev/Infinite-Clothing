@@ -61,6 +61,7 @@ const checkoutSchema = new mongoose.Schema(
     },
     paymentStatus: {
       type: String,
+      enum: ["pending", "pending COD", "paid", "failed"],
       default: "pending",
     },
     paymentDetails: {
