@@ -81,12 +81,17 @@ router.put("/:id/pay", protect, async (req, res) => {
 router.post("/:id/finalize", protect, async (req, res) => {
   try {
     const checkout = await Checkout.findById(req.params.id);
-
     if (!checkout) {
       return res.status(404).json({ message: "Checkout not found" });
     }
 
-    if (checkout.isPaid && !checkout.isFinalized) {
+    // Check if the checkout is already finalized
+    if (checkout.isFinalized) {
+      return res.status(400).json({ message: "Checkout already finalized" });
+    }
+
+    // Allow finalization for both paid orders and COD orders
+    if (checkout.isPaid || checkout.paymentMethod === "COD") {
       // Create final order based on checkout details
       const finalOrder = await Order.create({
         user: checkout.user,
@@ -109,10 +114,8 @@ router.post("/:id/finalize", protect, async (req, res) => {
       // Delete the cart associated with the user
       await Cart.findOneAndDelete({ user: checkout.user });
       res.status(201).json(finalOrder);
-    } else if (checkout.isFinalized) {
-      res.status(400).json({ message: "Checkout already finalized" });
     } else {
-      res.status(400).json({ message: "Checkout is not paid" });
+      res.status(400).json({ message: "Checkout cannot be finalized. Payment is required for non-COD orders." });
     }
   } catch (error) {
     console.error(error);
