@@ -204,7 +204,8 @@ const AdminOrderDetails = () => {
             <div className="space-y-2">
               <p className="text-sm">
                 <span className="font-medium text-gray-700">Name:</span>{" "}
-                {orderDetails.user?.name || "N/A"}
+                {orderDetails.shippingAddress?.firstName || "N/A"}{" "}
+                {orderDetails.shippingAddress?.lastName || "N/A"}
               </p>
               <p className="text-sm">
                 <span className="font-medium text-gray-700">Email:</span>{" "}
