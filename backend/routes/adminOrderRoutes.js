@@ -23,14 +23,24 @@ router.get("/", protect, admin, async (req, res) => {
 router.put("/:id", protect, admin, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate("user", "name");
-
+    
     if (order) {
       order.status = req.body.status || order.status;
-      order.isDelivered =
-        req.body.status === "Delivered" ? true : order.isDelivered;
-      order.deliveredAt =
-        req.body.status === "Delivered" ? Date.now() : order.deliveredAt;
-
+      
+      // If the order status is being set to "Delivered"
+      if (req.body.status === "Delivered") {
+        order.isDelivered = true;
+        order.deliveredAt = Date.now();
+        
+        // If payment method is COD and payment status is still "pending COD"
+        // update payment status to "paid" when delivered
+        if (order.paymentMethod === "COD" && order.paymentStatus === "pending COD") {
+          order.paymentStatus = "paid";
+          order.isPaid = true;
+          order.paidAt = Date.now(); // Set paid time to delivery time
+        }
+      }
+      
       const updatedOrder = await order.save();
       res.json(updatedOrder);
     } else {
