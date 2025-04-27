@@ -51,18 +51,24 @@ router.put("/:id/pay", protect, async (req, res) => {
       return res.status(404).json({ message: "Checkout not found" });
     }
 
-    if (paymentStatus === "paid" || paymentStatus === "pending COD") {
-      // For COD, we mark as paid since we're accepting payment on delivery
+    if (paymentStatus === "paid") {
+      // Online payment is confirmed
       checkout.isPaid = true;
       checkout.paymentStatus = paymentStatus;
       checkout.paymentDetails = paymentDetails;
       checkout.paidAt = Date.now();
-      
-      await checkout.save();
-      res.status(200).json(checkout);
+    } else if (paymentStatus === "pending COD") {
+      // For COD, we keep isPaid as false since payment will happen on delivery
+      checkout.isPaid = false;
+      checkout.paymentStatus = paymentStatus;
+      checkout.paymentDetails = paymentDetails;
+      checkout.paidAt = undefined;
     } else {
-      res.status(400).json({ message: "Invalid payment status" });
+      return res.status(400).json({ message: "Invalid payment status" });
     }
+    
+    await checkout.save();
+    res.status(200).json(checkout);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
