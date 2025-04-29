@@ -1401,7 +1401,7 @@ const TShirtCustomizer = () => {
                     />
                   </svg>
                   <span>
-                    Click to select a design, then drag to position it precisely
+                    Click to select a design, then drag to position it precisely.
                   </span>
                 </li>
                 <li className="flex items-start">
@@ -1417,7 +1417,7 @@ const TShirtCustomizer = () => {
                     />
                   </svg>
                   <span>
-                    Adjust size, rotation and opacity in the settings tab
+                    Adjust size, rotation and opacity in the settings tab.
                   </span>
                 </li>
                 <li className="flex items-start">
@@ -1433,7 +1433,7 @@ const TShirtCustomizer = () => {
                     />
                   </svg>
                   <span>
-                    Toggle between front and back views to customize each side
+                    Toggle between front and back views to customize each side.
                   </span>
                 </li>
                 <li className="flex items-start">
@@ -1449,10 +1449,13 @@ const TShirtCustomizer = () => {
                     />
                   </svg>
                   <span>
-                    Add multiple designs to each side for complex creations
+                    Add multiple designs to each side for complex creations.
                   </span>
                 </li>
-                <li className="flex items-start">
+              </ul>
+              <h3 className="font-semibold text-blue-800 mb-2 mt-2">Order Tips</h3>
+              <ul className="text-sm text-blue-700 space-y-1">
+              <li className="flex items-start">
                   <svg
                     className="h-4 w-4 mt-0.5 mr-2 flex-shrink-0"
                     fill="currentColor"
@@ -1466,6 +1469,38 @@ const TShirtCustomizer = () => {
                   </svg>
                   <span>
                     Complete shipping information before submitting designs.
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <svg
+                    className="h-4 w-4 mt-0.5 mr-2 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span>
+                    Add your quantity in settings section.
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <svg
+                    className="h-4 w-4 mt-0.5 mr-2 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span>
+                    Only cash on delivery service.
                   </span>
                 </li>
               </ul>
