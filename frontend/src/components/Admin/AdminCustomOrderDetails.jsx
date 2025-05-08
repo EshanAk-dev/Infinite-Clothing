@@ -95,6 +95,8 @@ const AdminCustomOrderDetails = () => {
         return "bg-blue-100 text-blue-800";
       case "Shipped":
         return "bg-indigo-100 text-indigo-800";
+      case "Out for Delivery":
+        return "bg-teal-100 text-teal-800";
       case "Delivered":
         return "bg-green-100 text-green-800";
       case "Cancelled":
@@ -200,6 +202,13 @@ const AdminCustomOrderDetails = () => {
                   className="bg-indigo-100 text-indigo-800"
                 >
                   Shipped
+                </option>
+
+                <option
+                  value="Out for Delivery"
+                  className="bg-teal-100 text-indigo-800"
+                >
+                  Out for Delivery
                 </option>
                 <option
                   value="Delivered"

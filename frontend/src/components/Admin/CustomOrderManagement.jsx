@@ -84,6 +84,8 @@ const CustomOrderManagement = () => {
         return 'bg-blue-100 text-blue-800';
       case 'Shipped':
         return 'bg-indigo-100 text-indigo-800';
+      case 'Out for Delivery':
+        return 'bg-teal-100 text-teal-800';
       case 'Delivered':
         return 'bg-green-100 text-green-800';
       case 'Cancelled':
@@ -170,6 +172,7 @@ const CustomOrderManagement = () => {
                         <option value="Processing" className="bg-yellow-100 text-yellow-800">Processing</option>
                         <option value="Approved" className="bg-blue-100 text-blue-800">Approved</option>
                         <option value="Shipped" className="bg-indigo-100 text-indigo-800">Shipped</option>
+                        <option value="Out for Delivery" className="bg-teal-100 text-indigo-800">Out for Delivery</option>
                         <option value="Delivered" className="bg-green-100 text-green-800">Delivered</option>
                         <option value="Cancelled" className="bg-red-100 text-red-800">Cancelled</option>
                         <option value="Rejected" className="bg-red-100 text-red-800">Rejected</option>

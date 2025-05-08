@@ -65,7 +65,7 @@ const customDesignSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Approved","Rejected","Processing", "Shipped", "Delivered", "Cancelled"],
+      enum: ["Approved","Rejected","Processing", "Shipped", "Out for Delivery", "Delivered", "Cancelled"],
       default: "Processing",
     },
     price: {
