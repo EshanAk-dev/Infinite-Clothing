@@ -13,6 +13,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const adminProductsRoutes = require("./routes/adminProductsRoutes");
 const adminOrderRoutes = require("./routes/adminOrderRoutes");
 const customDesignRoutes = require("./routes/customDesignRoutes");
+const notificationRoute = require("./routes/notificationRoute");
 const path = require("path");
 
 const app = express();
@@ -35,6 +36,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api", subscriberRoute);
 app.use("/api/custom-designs", customDesignRoutes);
+app.use("/api/notifications", notificationRoute);
 
 // Admin Routes
 app.use("/api/admin/users", adminRoutes);

@@ -1,6 +1,7 @@
 const express = require("express");
 const Order = require("../models/Order");
 const { protect, admin } = require("../middleware/authMiddleware");
+const Notification = require("../models/Notification");
 
 const router = express.Router();
 
@@ -22,9 +23,10 @@ router.get("/", protect, admin, async (req, res) => {
 // @access Private/Admin
 router.put("/:id", protect, admin, async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id).populate("user", "name");
+    const order = await Order.findById(req.params.id).populate("user", "name email");
     
     if (order) {
+      const oldStatus = order.status;
       order.status = req.body.status || order.status;
       
       // If the order status is being set to "Delivered"
@@ -32,16 +34,33 @@ router.put("/:id", protect, admin, async (req, res) => {
         order.isDelivered = true;
         order.deliveredAt = Date.now();
         
-        // If payment method is COD and payment status is still "pending COD"
-        // update payment status to "paid" when delivered
         if (order.paymentMethod === "COD" && order.paymentStatus === "pending COD") {
           order.paymentStatus = "paid";
           order.isPaid = true;
-          order.paidAt = Date.now(); // Set paid time to delivery time
+          order.paidAt = Date.now();
         }
       }
       
       const updatedOrder = await order.save();
+      
+      // Create notification if status changed
+      if (oldStatus !== updatedOrder.status) {
+        const notification = new Notification({
+          user: order.user._id,
+          type: `order_${updatedOrder.status.toLowerCase().replace(' ', '_')}`,
+          title: `Order ${updatedOrder.status}`,
+          message: `Your order #${updatedOrder._id.toString().substring(18, 24).toUpperCase()} has been updated to ${updatedOrder.status}`,
+          orderId: updatedOrder._id,
+          orderStatus: updatedOrder.status,
+          isRead: false,
+        });
+        
+        await notification.save();
+        
+        // A socket.io event for real-time updates
+        // io.to(order.user._id.toString()).emit('new_notification', notification);
+      }
+      
       res.json(updatedOrder);
     } else {
       res.status(404).json({ message: "Order not found" });
