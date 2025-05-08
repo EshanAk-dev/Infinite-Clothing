@@ -192,12 +192,14 @@ router.get("/", async (req, res) => {
       query.brand = { $in: brand.split(",") };
     }
 
+    // FIX: Properly handle size filtering as an array
     if (size) {
-      query.size = { $in: size.split(",") };
+      query.sizes = { $in: size.split(",") };
     }
 
+    // FIX: Properly handle color filtering as an array
     if (color) {
-      query.color = { $in: [color] };
+      query.colors = { $in: color.split(",") };
     }
 
     if (gender) {
@@ -321,7 +323,5 @@ router.get("/similar/:id", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-
-
 
 module.exports = router;

@@ -8,7 +8,7 @@ const FilterSidebar = () => {
   const [filters, setFilters] = useState({
     category: "",
     gender: "",
-    colors: "",
+    color: "",
     sizes: [],
     material: [],
     brand: [],
@@ -20,7 +20,7 @@ const FilterSidebar = () => {
   const [expandedSections, setExpandedSections] = useState({
     category: true,
     gender: true,
-    colors: true,
+    color: true,
     sizes: true,
     material: true,
     brand: true,
@@ -29,16 +29,16 @@ const FilterSidebar = () => {
 
   const categories = ["Top Wear", "Bottom Wear", "Dresses", "Hats", "Aprons"];
   const colors = [
-    { name: "Red", value: "red" },
-    { name: "Blue", value: "blue" },
-    { name: "Green", value: "green" },
-    { name: "Yellow", value: "yellow" },
-    { name: "Black", value: "black" },
-    { name: "White", value: "white" },
-    { name: "Orange", value: "orange" },
-    { name: "Purple", value: "purple" },
-    { name: "Pink", value: "pink" },
-    { name: "Brown", value: "brown" },
+    { name: "Red", value: "Red" },
+    { name: "Blue", value: "Blue" },
+    { name: "Green", value: "Green" },
+    { name: "Yellow", value: "Yellow" },
+    { name: "Black", value: "Black" },
+    { name: "White", value: "White" },
+    { name: "Orange", value: "Orange" },
+    { name: "Purple", value: "Purple" },
+    { name: "Pink", value: "Pink" },
+    { name: "Brown", value: "Brown" },
   ];
   const sizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
   const materials = ["Cotton", "Polyester", "Wool", "Linen", "Silk", "Denim", "Leather", "Rayon"];
@@ -50,8 +50,8 @@ const FilterSidebar = () => {
     setFilters({
       category: params.category || "",
       gender: params.gender || "",
-      colors: params.colors || "",
-      sizes: params.sizes ? params.sizes.split(",") : [],
+      color: params.color || "",
+      sizes: params.size ? params.size.split(",") : [],
       material: params.material ? params.material.split(",") : [],
       brand: params.brand ? params.brand.split(",") : [],
       minPrice: params.minPrice || 0,
@@ -86,13 +86,25 @@ const FilterSidebar = () => {
 
   const updateURLParams = (newFilters) => {
     const params = new URLSearchParams();
-    Object.keys(newFilters).forEach(key => {
-      if (Array.isArray(newFilters[key]) && newFilters[key].length > 0) {
-        params.append(key, newFilters[key].join(","));
-      } else if (newFilters[key]) {
-        params.append(key, newFilters[key]);
-      }
-    });
+    
+    // Handle individual string parameters
+    if (newFilters.category) params.append("category", newFilters.category);
+    if (newFilters.gender) params.append("gender", newFilters.gender);
+    if (newFilters.color) params.append("color", newFilters.color);
+    if (newFilters.minPrice) params.append("minPrice", newFilters.minPrice);
+    if (newFilters.maxPrice) params.append("maxPrice", newFilters.maxPrice);
+    
+    // Handle array parameters
+    if (newFilters.sizes && newFilters.sizes.length > 0) {
+      params.append("size", newFilters.sizes.join(","));
+    }
+    if (newFilters.material && newFilters.material.length > 0) {
+      params.append("material", newFilters.material.join(","));
+    }
+    if (newFilters.brand && newFilters.brand.length > 0) {
+      params.append("brand", newFilters.brand.join(","));
+    }
+    
     setSearchParams(params);
     navigate(`?${params.toString()}`);
   };
@@ -108,7 +120,7 @@ const FilterSidebar = () => {
     setFilters({
       category: "",
       gender: "",
-      colors: "",
+      color: "",
       sizes: [],
       material: [],
       brand: [],
@@ -239,26 +251,26 @@ const FilterSidebar = () => {
       <div className="mb-6">
         <div 
           className="flex justify-between items-center cursor-pointer mb-3"
-          onClick={() => toggleSection("colors")}
+          onClick={() => toggleSection("color")}
         >
           <h4 className="font-medium text-gray-900">Colors</h4>
           <span className="text-gray-500">
-            {expandedSections.colors ? "−" : "+"}
+            {expandedSections.color ? "−" : "+"}
           </span>
         </div>
-        {expandedSections.colors && (
+        {expandedSections.color && (
           <div className="grid grid-cols-5 gap-2">
             {colors.map(color => (
               <button
                 key={color.value}
                 type="button"
                 onClick={() => {
-                  const newFilters = { ...filters, colors: filters.colors === color.value ? "" : color.value };
+                  const newFilters = { ...filters, color: filters.color === color.value ? "" : color.value };
                   setFilters(newFilters);
                   updateURLParams(newFilters);
                 }}
-                className={`w-8 h-8 rounded-full border-2 ${filters.colors === color.value ? "border-indigo-600 ring-2 ring-indigo-200" : "border-gray-200"} transition-all`}
-                style={{ backgroundColor: color.value }}
+                className={`w-8 h-8 rounded-full border-2 ${filters.color === color.value ? "border-indigo-600 ring-2 ring-indigo-200" : "border-gray-200"} transition-all`}
+                style={{ backgroundColor: color.value.toLowerCase() }}
                 aria-label={color.name}
                 title={color.name}
               />
