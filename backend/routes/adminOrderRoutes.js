@@ -45,11 +45,48 @@ router.put("/:id", protect, admin, async (req, res) => {
       
       // Create notification if status changed
       if (oldStatus !== updatedOrder.status) {
+        // Get order reference number
+        const orderRef = updatedOrder._id.toString().substring(18, 24).toUpperCase();
+        
+        // Create notification messages based on status
+        let notificationTitle, notificationMessage;
+        
+        switch (updatedOrder.status) {
+          case "Processing":
+            notificationTitle = "Order Confirmed";
+            notificationMessage = `Thank you for your order #${orderRef}! We've received your order and are preparing it for shipment. We'll notify you when it's on the way.`;
+            break;
+          
+          case "Shipped":
+            notificationTitle = "Order Shipped";
+            notificationMessage = `Great news! Your order #${orderRef} has been shipped and is on its way to you. You can track your delivery status in your account dashboard.`;
+            break;
+          
+          case "Out for Delivery":
+            notificationTitle = "Out for Delivery";
+            notificationMessage = `Exciting news! Your order #${orderRef} is out for delivery today. Please ensure someone is available to receive your package.`;
+            break;
+          
+          case "Delivered":
+            notificationTitle = "Order Delivered";
+            notificationMessage = `Your order #${orderRef} has been successfully delivered! We hope you enjoy your purchase. If you have any concerns, please contact our customer support.`;
+            break;
+          
+          case "Cancelled":
+            notificationTitle = "Order Cancelled";
+            notificationMessage = `Your order #${orderRef} has been cancelled as requested. If you didn't request this cancellation or have any questions, please contact our customer support immediately.`;
+            break;
+          
+          default:
+            notificationTitle = `Order ${updatedOrder.status}`;
+            notificationMessage = `Your order #${orderRef} has been updated to ${updatedOrder.status}. Check your account for more details.`;
+        }
+        
         const notification = new Notification({
           user: order.user._id,
           type: `order_${updatedOrder.status.toLowerCase().replace(' ', '_')}`,
-          title: `Order ${updatedOrder.status}`,
-          message: `Your order #${updatedOrder._id.toString().substring(18, 24).toUpperCase()} has been updated to ${updatedOrder.status}`,
+          title: notificationTitle,
+          message: notificationMessage,
           orderId: updatedOrder._id,
           orderStatus: updatedOrder.status,
           isRead: false,
