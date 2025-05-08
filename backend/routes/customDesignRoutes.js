@@ -117,6 +117,7 @@ router.put("/admin/:id/status", protect, admin, async (req, res) => {
         "Rejected",
         "Processing",
         "Shipped",
+        "Out for Delivery",
         "Delivered",
         "Cancelled",
       ].includes(status)
