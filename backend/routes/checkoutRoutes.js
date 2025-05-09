@@ -3,6 +3,7 @@ const Checkout = require("../models/Checkout");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
 const Order = require("../models/Order");
+const Notification = require("../models/Notification");
 const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -104,6 +105,7 @@ router.post("/:id/finalize", protect, async (req, res) => {
         isDelivered: false,
         paymentStatus: checkout.paymentStatus,
         paymentDetails: checkout.paymentDetails,
+        status: "Processing" // Set status to Processing  
       });
 
       // Mark the checkout as finalized
@@ -113,6 +115,21 @@ router.post("/:id/finalize", protect, async (req, res) => {
 
       // Delete the cart associated with the user
       await Cart.findOneAndDelete({ user: checkout.user });
+
+      // Create notification for the user
+      const orderRef = finalOrder._id.toString().substring(18, 24).toUpperCase();
+      const notification = new Notification({
+        user: checkout.user,
+        type: "order_processing",
+        title: "Order Confirmed",
+        message: `Thank you for your order #${orderRef}! We've received your order and are preparing it for shipment. We'll notify you when it's on the way.`,
+        orderId: finalOrder._id,
+        orderStatus: "Processing",
+        isRead: false,
+      });
+
+      await notification.save();
+
       res.status(201).json(finalOrder);
     } else {
       res.status(400).json({ message: "Checkout cannot be finalized. Payment is required for non-COD orders." });
