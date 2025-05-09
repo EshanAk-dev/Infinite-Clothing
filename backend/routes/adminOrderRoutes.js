@@ -62,7 +62,7 @@ router.put("/:id", protect, admin, async (req, res) => {
             notificationMessage = `Great news! Your order #${orderRef} has been shipped and is on its way to you. You can track your delivery status in your account dashboard.`;
             break;
           
-          case "Out for Delivery":
+          case "Out_for_Delivery":
             notificationTitle = "Out for Delivery";
             notificationMessage = `Exciting news! Your order #${orderRef} is out for delivery today. Please ensure someone is available to receive your package.`;
             break;
