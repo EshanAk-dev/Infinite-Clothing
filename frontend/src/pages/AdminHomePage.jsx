@@ -61,7 +61,9 @@ const AdminHomePage = () => {
   }
 
   // Get recent 5 orders
-  const recentOrders = orders.slice(0, 5);
+  const recentOrders = [...orders]
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  .slice(0, 5);
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6">
