@@ -94,8 +94,18 @@ router.put("/:id", protect, admin, async (req, res) => {
         
         await notification.save();
         
-        // A socket.io event for real-time updates
-        // io.to(order.user._id.toString()).emit('new_notification', notification);
+        // Send real-time notification via WebSocket
+        req.app.locals.sendNotificationToUser(order.user._id.toString(), {
+          type: 'order_update',
+          orderId: updatedOrder._id,
+          status: updatedOrder.status,
+          notification: {
+            id: notification._id,
+            title: notificationTitle,
+            message: notificationMessage,
+            createdAt: new Date()
+          }
+        });
       }
       
       res.json(updatedOrder);

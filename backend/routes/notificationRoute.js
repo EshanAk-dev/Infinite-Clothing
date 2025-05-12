@@ -52,6 +52,13 @@ router.put("/:id/read", protect, async (req, res) => {
 
     notification.isRead = true;
     await notification.save();
+    
+    // Send real-time update about read status
+    req.app.locals.sendNotificationToUser(req.user._id.toString(), {
+      type: 'notification_read',
+      notificationId: notification._id
+    });
+    
     res.json(notification);
   } catch (error) {
     console.error(error);
@@ -68,6 +75,12 @@ router.put("/mark-all-read", protect, async (req, res) => {
       { user: req.user._id, isRead: false },
       { $set: { isRead: true } }
     );
+    
+    // Send real-time update about all notifications being read
+    req.app.locals.sendNotificationToUser(req.user._id.toString(), {
+      type: 'all_notifications_read'
+    });
+    
     res.json({ message: "All notifications marked as read" });
   } catch (error) {
     console.error(error);

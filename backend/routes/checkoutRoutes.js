@@ -27,7 +27,7 @@ router.post("/", protect, async (req, res) => {
       shippingAddress,
       paymentMethod,
       totalPrice,
-      paymentStatus: paymentMethod === "COD" ? "pending COD" : "pending", // Set status based on payment method
+      paymentStatus: paymentMethod === "COD" ? "pending COD" : "pending",
       isPaid: false,
       paidAt: undefined,
     });
@@ -53,13 +53,11 @@ router.put("/:id/pay", protect, async (req, res) => {
     }
 
     if (paymentStatus === "paid") {
-      // Online payment is confirmed
       checkout.isPaid = true;
       checkout.paymentStatus = paymentStatus;
       checkout.paymentDetails = paymentDetails;
       checkout.paidAt = Date.now();
     } else if (paymentStatus === "pending COD") {
-      // For COD, we keep isPaid as false since payment will happen on delivery
       checkout.isPaid = false;
       checkout.paymentStatus = paymentStatus;
       checkout.paymentDetails = paymentDetails;
@@ -67,8 +65,16 @@ router.put("/:id/pay", protect, async (req, res) => {
     } else {
       return res.status(400).json({ message: "Invalid payment status" });
     }
-    
+
     await checkout.save();
+
+    // Send real-time update for payment status change
+    req.app.locals.sendNotificationToUser(checkout.user.toString(), {
+      type: "payment_update",
+      checkoutId: checkout._id,
+      status: paymentStatus,
+    });
+
     res.status(200).json(checkout);
   } catch (error) {
     console.error(error);
@@ -86,14 +92,11 @@ router.post("/:id/finalize", protect, async (req, res) => {
       return res.status(404).json({ message: "Checkout not found" });
     }
 
-    // Check if the checkout is already finalized
     if (checkout.isFinalized) {
       return res.status(400).json({ message: "Checkout already finalized" });
     }
 
-    // Allow finalization for both paid orders and COD orders
     if (checkout.isPaid || checkout.paymentMethod === "COD") {
-      // Create final order based on checkout details
       const finalOrder = await Order.create({
         user: checkout.user,
         orderItems: checkout.checkoutItems,
@@ -105,19 +108,19 @@ router.post("/:id/finalize", protect, async (req, res) => {
         isDelivered: false,
         paymentStatus: checkout.paymentStatus,
         paymentDetails: checkout.paymentDetails,
-        status: "Processing" // Set status to Processing  
+        status: "Processing",
       });
 
-      // Mark the checkout as finalized
       checkout.isFinalized = true;
       checkout.finalizedAt = Date.now();
       await checkout.save();
 
-      // Delete the cart associated with the user
       await Cart.findOneAndDelete({ user: checkout.user });
 
-      // Create notification for the user
-      const orderRef = finalOrder._id.toString().substring(18, 24).toUpperCase();
+      const orderRef = finalOrder._id
+        .toString()
+        .substring(18, 24)
+        .toUpperCase();
       const notification = new Notification({
         user: checkout.user,
         type: "order_processing",
@@ -130,9 +133,27 @@ router.post("/:id/finalize", protect, async (req, res) => {
 
       await notification.save();
 
+      // Send real-time notification
+      req.app.locals.sendNotificationToUser(checkout.user.toString(), {
+        type: "order_created",
+        orderId: finalOrder._id,
+        status: "Processing",
+        notification: {
+          id: notification._id,
+          title: "Order Confirmed",
+          message: notification.message,
+          createdAt: new Date(),
+        },
+      });
+
       res.status(201).json(finalOrder);
     } else {
-      res.status(400).json({ message: "Checkout cannot be finalized. Payment is required for non-COD orders." });
+      res
+        .status(400)
+        .json({
+          message:
+            "Checkout cannot be finalized. Payment is required for non-COD orders.",
+        });
     }
   } catch (error) {
     console.error(error);
@@ -151,9 +172,10 @@ router.get("/:id", protect, async (req, res) => {
       return res.status(404).json({ message: "Checkout not found" });
     }
 
-    // Check if the requesting user is the owner of this checkout
     if (checkout.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "Not authorized to access this checkout" });
+      return res
+        .status(403)
+        .json({ message: "Not authorized to access this checkout" });
     }
 
     res.status(200).json(checkout);
