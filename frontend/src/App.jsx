@@ -19,6 +19,7 @@ import EditProductPage from "./components/Admin/EditProductPage";
 import OrderManagement from "./components/Admin/OrderManagement";
 import AdminProductDetails from "./components/Admin/AdminProductDetails";
 import AdminOrderDetails from "./components/Admin/AdminOrderDetails";
+import WhatsAppChatButton from "./components/Common/WhatsappChatButton";
 
 import { Provider } from "react-redux";
 import store from "./redux/store";
@@ -38,7 +39,12 @@ const App = () => {
       >
         <Toaster position="top-right" />
         <Routes>
-          <Route path="/" element={<UserLayout />}>
+          <Route path="/" element={
+            <>
+              <UserLayout />
+              <WhatsAppChatButton />
+            </>
+          }>
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
