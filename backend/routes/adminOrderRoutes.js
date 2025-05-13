@@ -46,7 +46,7 @@ router.put("/:id", protect, admin, async (req, res) => {
       // Create notification if status changed
       if (oldStatus !== updatedOrder.status) {
         // Get order reference number
-        const orderRef = updatedOrder._id.toString().substring(18, 24).toUpperCase();
+        const orderRef = order._id.toString().slice(-8).toUpperCase();
         
         // Create notification messages based on status
         let notificationTitle, notificationMessage;

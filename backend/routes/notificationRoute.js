@@ -88,4 +88,34 @@ router.put("/mark-all-read", protect, async (req, res) => {
   }
 });
 
+// @route DELETE /api/notifications/:id
+// @desc Delete a notification
+// @access Private
+router.delete("/:id", protect, async (req, res) => {
+  try {
+    const notification = await Notification.findById(req.params.id);
+
+    if (!notification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+
+    if (notification.user.toString() !== req.user._id.toString()) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    await notification.deleteOne();
+
+    // Optionally, send real-time update about deletion
+    req.app.locals.sendNotificationToUser(req.user._id.toString(), {
+      type: 'notification_deleted',
+      notificationId: notification._id
+    });
+
+    res.json({ message: "Notification deleted" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
 module.exports = router;

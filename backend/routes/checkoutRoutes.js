@@ -117,10 +117,7 @@ router.post("/:id/finalize", protect, async (req, res) => {
 
       await Cart.findOneAndDelete({ user: checkout.user });
 
-      const orderRef = finalOrder._id
-        .toString()
-        .substring(18, 24)
-        .toUpperCase();
+      const orderRef = finalOrder._id.toString().slice(-8).toUpperCase();
       const notification = new Notification({
         user: checkout.user,
         type: "order_processing",
@@ -148,12 +145,10 @@ router.post("/:id/finalize", protect, async (req, res) => {
 
       res.status(201).json(finalOrder);
     } else {
-      res
-        .status(400)
-        .json({
-          message:
-            "Checkout cannot be finalized. Payment is required for non-COD orders.",
-        });
+      res.status(400).json({
+        message:
+          "Checkout cannot be finalized. Payment is required for non-COD orders.",
+      });
     }
   } catch (error) {
     console.error(error);
