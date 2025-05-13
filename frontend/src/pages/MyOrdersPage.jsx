@@ -106,7 +106,7 @@ const MyOrdersPage = () => {
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            #{order._id.substring(0, 8)}...
+                            #{order._id.slice(-8)}
                           </div>
                           <div className="text-sm text-gray-500">
                             {order.shippingAddress?.city || "N/A"}

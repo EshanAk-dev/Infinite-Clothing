@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MdDelete, MdAdd } from "react-icons/md";
+import { MdDelete, MdAdd, MdSearch, MdFilterAlt } from "react-icons/md"; // Add MdFilterAlt
 import { X } from 'lucide-react';
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -40,11 +40,37 @@ const UserManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 6;
 
+  // Filter states
+  const [nameFilter, setNameFilter] = useState("");
+  const [emailFilter, setEmailFilter] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Clear filters handler
+  const clearFilters = () => {
+    setNameFilter("");
+    setEmailFilter("");
+    setRoleFilter("");
+  };
+
+  // Filter users by name, email, and role
+  const filteredUsers = users.filter((user) => {
+    const nameMatch = user.name.toLowerCase().includes(nameFilter.toLowerCase());
+    const emailMatch = user.email.toLowerCase().includes(emailFilter.toLowerCase());
+    const roleMatch = roleFilter ? user.role === roleFilter : true;
+    return nameMatch && emailMatch && roleMatch;
+  });
+
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = [...users].reverse().slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = [...filteredUsers].reverse().slice(indexOfFirstUser, indexOfLastUser);
 
-  const totalPages = Math.ceil(users.length / usersPerPage);
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [nameFilter, emailFilter, roleFilter]);
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -113,18 +139,97 @@ const UserManagement = () => {
             Manage system users and permissions
           </p>
         </div>
-        <button
-          onClick={() => setIsAddingUser(!isAddingUser)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 w-full sm:w-auto justify-center"
-        >
-          {isAddingUser ? (
-            <X className="text-xl" />
-          ) : (
-            <MdAdd className="text-xl" /> 
-          )}
-          <span>{isAddingUser ? "Cancel" : "Add New User"}</span>
-        </button>
+        <div className="flex gap-4 w-full sm:w-auto">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg transition-all duration-300"
+          >
+            <MdFilterAlt className="text-xl" />
+            <span>{showFilters ? "Hide Filters" : "Show Filters"}</span>
+          </button>
+          <button
+            onClick={() => setIsAddingUser(!isAddingUser)}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 w-full sm:w-auto justify-center"
+          >
+            {isAddingUser ? (
+              <X className="text-xl" />
+            ) : (
+              <MdAdd className="text-xl" /> 
+            )}
+            <span>{isAddingUser ? "Cancel" : "Add New User"}</span>
+          </button>
+        </div>
       </div>
+
+      {/* Filter fields */}
+      {showFilters && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label htmlFor="nameFilter" className="block text-sm font-medium text-gray-700 mb-1">
+                Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <MdSearch className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  id="nameFilter"
+                  value={nameFilter}
+                  onChange={(e) => setNameFilter(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Search by name..."
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="emailFilter" className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <MdSearch className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  id="emailFilter"
+                  value={emailFilter}
+                  onChange={(e) => setEmailFilter(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Search by email..."
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="roleFilter" className="block text-sm font-medium text-gray-700 mb-1">
+                Role
+              </label>
+              <select
+                id="roleFilter"
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
+                className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              >
+                <option value="">All</option>
+                <option value="customer">Customer</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={clearFilters}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+            >
+              Clear Filters
+            </button>
+          </div>
+          <div className="mt-2 text-sm text-gray-500">
+            {filteredUsers.length} users found
+          </div>
+        </div>
+      )}
 
       {/* Add new user form */}
       {isAddingUser && (
@@ -307,7 +412,9 @@ const UserManagement = () => {
                         No users found
                       </p>
                       <p className="text-gray-400">
-                        Add your first user to get started
+                        {nameFilter || emailFilter || roleFilter
+                          ? "Try adjusting your search filters"
+                          : "Add your first user to get started"}
                       </p>
                     </div>
                   </td>

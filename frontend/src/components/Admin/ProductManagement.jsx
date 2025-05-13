@@ -1,4 +1,4 @@
-import { MdDelete, MdEdit, MdVisibility } from "react-icons/md";
+import { MdDelete, MdEdit, MdVisibility, MdSearch, MdFilterAlt } from "react-icons/md";
 import { MdAdd } from 'react-icons/md';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,9 +17,24 @@ const ProductManagement = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 6;
+  
+  // Filter states
+  const [nameFilter, setNameFilter] = useState("");
+  const [skuFilter, setSkuFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
 
-  // Sort products by createdAt in descending order
-  const sortedProducts = [...products].sort(
+  // Apply filters to products
+  const filteredProducts = products.filter((product) => {
+    const nameMatch = product.name.toLowerCase().includes(nameFilter.toLowerCase());
+    const skuMatch = product.sku.toLowerCase().includes(skuFilter.toLowerCase());
+    const categoryMatch = product.category.toLowerCase().includes(categoryFilter.toLowerCase());
+    
+    return nameMatch && skuMatch && categoryMatch;
+  });
+
+  // Sort filtered products by createdAt in descending order
+  const sortedProducts = [...filteredProducts].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
 
@@ -34,6 +49,11 @@ const ProductManagement = () => {
       setCurrentPage(pageNumber);
     }
   };
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [nameFilter, skuFilter, categoryFilter]);
 
   useEffect(() => {
     dispatch(fetchAdminProducts());
@@ -52,6 +72,12 @@ const ProductManagement = () => {
         },
       });
     }
+  };
+
+  const clearFilters = () => {
+    setNameFilter("");
+    setSkuFilter("");
+    setCategoryFilter("");
   };
 
   if (loading) return (
@@ -76,14 +102,95 @@ const ProductManagement = () => {
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Product Management</h2>
           <p className="text-gray-600 mt-1">Manage your product inventory</p>
         </div>
-        <Link
-          to="/admin/products/new"
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 w-full sm:w-auto justify-center"
-        >
-          <MdAdd className="text-xl" />
-          <span>Add New Product</span>
-        </Link>
+        <div className="flex gap-4 w-full sm:w-auto">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg transition-all duration-300"
+          >
+            <MdFilterAlt className="text-xl" />
+            <span>{showFilters ? "Hide Filters" : "Show Filters"}</span>
+          </button>
+          <Link
+            to="/admin/products/new"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex-grow sm:flex-grow-0 justify-center"
+          >
+            <MdAdd className="text-xl" />
+            <span>Add New Product</span>
+          </Link>
+        </div>
       </div>
+
+      {showFilters && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label htmlFor="nameFilter" className="block text-sm font-medium text-gray-700 mb-1">
+                Product Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <MdSearch className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  id="nameFilter"
+                  value={nameFilter}
+                  onChange={(e) => setNameFilter(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Search by name..."
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="skuFilter" className="block text-sm font-medium text-gray-700 mb-1">
+                SKU
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <MdSearch className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  id="skuFilter"
+                  value={skuFilter}
+                  onChange={(e) => setSkuFilter(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Search by SKU..."
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="categoryFilter" className="block text-sm font-medium text-gray-700 mb-1">
+                Category
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <MdSearch className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  id="categoryFilter"
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Search by category..."
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={clearFilters}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+            >
+              Clear Filters
+            </button>
+          </div>
+          <div className="mt-2 text-sm text-gray-500">
+            {filteredProducts.length} products found
+          </div>
+        </div>
+      )}
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
@@ -178,7 +285,11 @@ const ProductManagement = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                       </svg>
                       <p className="mt-4 text-lg font-medium text-gray-500">No products found</p>
-                      <p className="text-gray-400">Add your first product to get started</p>
+                      <p className="text-gray-400">
+                        {nameFilter || skuFilter || categoryFilter 
+                          ? "Try adjusting your search filters" 
+                          : "Add your first product to get started"}
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -187,45 +298,47 @@ const ProductManagement = () => {
           </table>
         </div>
       </div>
-      <div className="flex justify-center mt-6">
-        <nav className="inline-flex space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={`px-4 py-2 rounded-md ${
-              currentPage === 1
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            Previous
-          </button>
-          {Array.from({ length: totalPages }, (_, index) => (
+      {sortedProducts.length > 0 && (
+        <div className="flex justify-center mt-6">
+          <nav className="inline-flex space-x-2">
             <button
-              key={index + 1}
-              onClick={() => handlePageChange(index + 1)}
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
               className={`px-4 py-2 rounded-md ${
-                currentPage === index + 1
-                  ? "bg-blue-600 text-white"
+                currentPage === 1
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
-              {index + 1}
+              Previous
             </button>
-          ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={`px-4 py-2 rounded-md ${
-              currentPage === totalPages
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            Next
-          </button>
-        </nav>
-      </div>
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => handlePageChange(index + 1)}
+                className={`px-4 py-2 rounded-md ${
+                  currentPage === index + 1
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`px-4 py-2 rounded-md ${
+                currentPage === totalPages
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Next
+            </button>
+          </nav>
+        </div>
+      )}
     </div>
   );
 };

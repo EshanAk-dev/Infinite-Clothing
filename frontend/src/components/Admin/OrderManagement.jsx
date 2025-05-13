@@ -1,10 +1,10 @@
-import { MdCheckCircle, MdVisibility, MdDelete } from "react-icons/md"; // Added MdDelete import
+import { MdCheckCircle, MdVisibility, MdDelete, MdSearch } from "react-icons/md"; // Added MdSearch import
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import {
   fetchAllOrders,
   updateOrderStatus,
-  deleteOrder, // Added deleteOrder import
+  deleteOrder,
 } from "../../redux/slices/adminOrderSlice";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -17,22 +17,34 @@ const OrderManagement = () => {
   const { orders, loading, error } = useSelector((state) => state.adminOrders);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(""); // Added search state
   const ordersPerPage = 6;
+
+  // Filter orders based on search query
+  const filteredOrders = orders.filter(order => {
+    const orderId = order._id.slice(-8).toLowerCase();
+    return searchQuery === "" || orderId.includes(searchQuery.toLowerCase());
+  });
 
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = orders
+  const currentOrders = filteredOrders
     .slice()
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(indexOfFirstOrder, indexOfLastOrder);
 
-  const totalPages = Math.ceil(orders.length / ordersPerPage);
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
     }
   };
+
+  // Reset to first page when search query changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   useEffect(() => {
     if (!user || user.role !== "admin") {
@@ -59,6 +71,11 @@ const OrderManagement = () => {
         },
       });
     }
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
   };
 
   if (loading) return (
@@ -99,6 +116,20 @@ const OrderManagement = () => {
         <div>
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Order Management</h2>
           <p className="text-gray-600 mt-1">Manage customer orders and fulfillment</p>
+        </div>
+        
+        {/* Search input */}
+        <div className="relative lg:min-w-80 sm:min-w-64">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <MdSearch className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Search by order ID (#xxxxxxxx)"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          />
         </div>
       </div>
 
@@ -204,7 +235,7 @@ const OrderManagement = () => {
                           <MdCheckCircle className="h-5 w-5" />
                         </button>
                         <button
-                          onClick={() => handleDeleteOrder(order._id)} // Added delete button
+                          onClick={() => handleDeleteOrder(order._id)}
                           className="text-red-600 hover:text-red-900 p-2 rounded-md hover:bg-red-50 transition-colors"
                           title="Delete Order"
                         >
@@ -216,13 +247,17 @@ const OrderManagement = () => {
                 ))
               ) : (
                 <tr>
-                  <td className="px-6 py-4 text-center text-gray-500" colSpan={5}>
+                  <td className="px-6 py-4 text-center text-gray-500" colSpan={6}>
                     <div className="flex flex-col items-center justify-center py-12">
                       <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
-                      <p className="mt-4 text-lg font-medium text-gray-500">No orders found</p>
-                      <p className="text-gray-400">All orders will appear here</p>
+                      <p className="mt-4 text-lg font-medium text-gray-500">
+                        {searchQuery ? "No matching orders found" : "No orders found"}
+                      </p>
+                      <p className="text-gray-400">
+                        {searchQuery ? "Try a different search term" : "All orders will appear here"}
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -231,45 +266,47 @@ const OrderManagement = () => {
           </table>
         </div>
       </div>
-      <div className="flex justify-center mt-6">
-        <nav className="inline-flex space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={`px-4 py-2 rounded-md ${
-              currentPage === 1
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            Previous
-          </button>
-          {Array.from({ length: totalPages }, (_, index) => (
+      {filteredOrders.length > 0 && (
+        <div className="flex justify-center mt-6">
+          <nav className="inline-flex space-x-2">
             <button
-              key={index + 1}
-              onClick={() => handlePageChange(index + 1)}
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
               className={`px-4 py-2 rounded-md ${
-                currentPage === index + 1
-                  ? "bg-blue-600 text-white"
+                currentPage === 1
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
-              {index + 1}
+              Previous
             </button>
-          ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={`px-4 py-2 rounded-md ${
-              currentPage === totalPages
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            Next
-          </button>
-        </nav>
-      </div>
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => handlePageChange(index + 1)}
+                className={`px-4 py-2 rounded-md ${
+                  currentPage === index + 1
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`px-4 py-2 rounded-md ${
+                currentPage === totalPages
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Next
+            </button>
+          </nav>
+        </div>
+      )}
     </div>
   );
 };
