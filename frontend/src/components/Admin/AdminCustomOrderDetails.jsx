@@ -6,6 +6,7 @@ import {
   MdDelete,
   MdLocalShipping,
   MdCheckCircle,
+  MdClose,
 } from "react-icons/md";
 import { toast } from "sonner";
 import {
@@ -19,6 +20,7 @@ const AdminCustomOrderDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [popupImage, setPopupImage] = useState(null);
 
   const {
     currentDesign: design,
@@ -143,6 +145,26 @@ const AdminCustomOrderDetails = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6">
+      {/* Image Popup */}
+      {popupImage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="relative bg-white rounded-lg shadow-lg p-4 max-w-2xl w-full flex flex-col items-center">
+            <button
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+              onClick={() => setPopupImage(null)}
+              aria-label="Close"
+            >
+              <MdClose className="w-6 h-6" />
+            </button>
+            <img
+              src={popupImage}
+              alt="Design Preview"
+              className="max-h-[70vh] w-auto rounded"
+            />
+          </div>
+        </div>
+      )}
+
       {/* Back button and top actions */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <Link
@@ -335,7 +357,11 @@ const AdminCustomOrderDetails = () => {
                 <h3 className="text-md font-medium text-gray-700 mb-2">
                   Front Design
                 </h3>
-                <div className="bg-gray-100 rounded-lg p-2">
+                <div
+                  className="bg-gray-100 rounded-lg p-2 cursor-pointer hover:ring-2 hover:ring-indigo-400 transition"
+                  onClick={() => setPopupImage(design.frontImageUrl)}
+                  title="Click to enlarge"
+                >
                   <img
                     src={design.frontImageUrl}
                     alt="Front Design"
@@ -347,7 +373,11 @@ const AdminCustomOrderDetails = () => {
                 <h3 className="text-md font-medium text-gray-700 mb-2">
                   Back Design
                 </h3>
-                <div className="bg-gray-100 rounded-lg p-2">
+                <div
+                  className="bg-gray-100 rounded-lg p-2 cursor-pointer hover:ring-2 hover:ring-indigo-400 transition"
+                  onClick={() => setPopupImage(design.backImageUrl)}
+                  title="Click to enlarge"
+                >
                   <img
                     src={design.backImageUrl}
                     alt="Back Design"
@@ -362,75 +392,81 @@ const AdminCustomOrderDetails = () => {
             <h2 className="text-lg font-semibold text-gray-800 mb-4">
               Design Elements
             </h2>
-
-            <div className="mb-6">
-              <h3 className="text-md font-medium text-gray-700 mb-2">
-                Front Elements
-              </h3>
-              {design.designs.front && design.designs.front.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {design.designs.front.map((element, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-50 rounded-lg p-3 border border-gray-200"
-                    >
-                      <p className="text-sm font-medium text-gray-800">
-                        {element.name || `Element ${index + 1}`}
-                      </p>
-                      <div className="mt-2 space-y-1">
-                        <p className="text-xs text-gray-600">
-                          Position: x={element.position?.x?.toFixed(2) || "N/A"}
-                          , y={element.position?.y?.toFixed(2) || "N/A"}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Front Elements */}
+              <div>
+                <h3 className="text-md font-medium text-gray-700 mb-2">
+                  Front Elements
+                </h3>
+                {design.designs.front && design.designs.front.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {design.designs.front.map((element, index) => (
+                      <div
+                        key={index}
+                        className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                      >
+                        <p className="text-sm font-medium text-gray-800">
+                          {element.name || `Element ${index + 1}`}
                         </p>
-                        <p className="text-xs text-gray-600">
-                          Scale: {element.scale?.toFixed(2) || "N/A"}
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          Rotation: {element.rotation?.toFixed(2) || "N/A"}°
-                        </p>
+                        <div className="mt-2 space-y-1">
+                          <p className="text-xs text-gray-600">
+                            Position: x=
+                            {element.position?.x?.toFixed(2) || "N/A"}, y=
+                            {element.position?.y?.toFixed(2) || "N/A"}
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            Scale: {element.scale?.toFixed(2) || "N/A"}
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            Rotation: {element.rotation?.toFixed(2) || "N/A"}°
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500">
-                  No front elements found.
-                </p>
-              )}
-            </div>
-
-            <div>
-              <h3 className="text-md font-medium text-gray-700 mb-2">
-                Back Elements
-              </h3>
-              {design.designs.back && design.designs.back.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {design.designs.back.map((element, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-50 rounded-lg p-3 border border-gray-200"
-                    >
-                      <p className="text-sm font-medium text-gray-800">
-                        {element.name || `Element ${index + 1}`}
-                      </p>
-                      <div className="mt-2 space-y-1">
-                        <p className="text-xs text-gray-600">
-                          Position: x={element.position?.x?.toFixed(2) || "N/A"}
-                          , y={element.position?.y?.toFixed(2) || "N/A"}
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    No front elements found.
+                  </p>
+                )}
+              </div>
+              {/* Back Elements */}
+              <div>
+                <h3 className="text-md font-medium text-gray-700 mb-2">
+                  Back Elements
+                </h3>
+                {design.designs.back && design.designs.back.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {design.designs.back.map((element, index) => (
+                      <div
+                        key={index}
+                        className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                      >
+                        <p className="text-sm font-medium text-gray-800">
+                          {element.name || `Element ${index + 1}`}
                         </p>
-                        <p className="text-xs text-gray-600">
-                          Scale: {element.scale?.toFixed(2) || "N/A"}
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          Rotation: {element.rotation?.toFixed(2) || "N/A"}°
-                        </p>
+                        <div className="mt-2 space-y-1">
+                          <p className="text-xs text-gray-600">
+                            Position: x=
+                            {element.position?.x?.toFixed(2) || "N/A"}, y=
+                            {element.position?.y?.toFixed(2) || "N/A"}
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            Scale: {element.scale?.toFixed(2) || "N/A"}
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            Rotation: {element.rotation?.toFixed(2) || "N/A"}°
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500">No back elements found.</p>
-              )}
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    No back elements found.
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>

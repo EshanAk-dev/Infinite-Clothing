@@ -26,7 +26,8 @@ export const fetchProductsByFilters = createAsyncThunk(
     if (gender) query.append("gender", gender);
     if (minPrice) query.append("minPrice", minPrice);
     if (maxPrice) query.append("maxPrice", maxPrice);
-    if (sortBy) query.append("sortBy", sortBy);
+    // Always sort by newest first if sortBy is not provided
+    query.append("sortBy", sortBy || "-createdAt");
     if (search) query.append("search", search);
     if (material) query.append("material", material);
     if (category) query.append("category", category);
@@ -73,7 +74,7 @@ export const fetchSimilarProducts = createAsyncThunk(
   "products/fetchSimilarProducts",
   async ({ id }) => {
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/api/products/similar/${id}`
+      `${import.meta.env.VITE_BACKEND_URL}/api/products/similar/${id}?sortBy=-createdAt`
     );
     return response.data;
   }

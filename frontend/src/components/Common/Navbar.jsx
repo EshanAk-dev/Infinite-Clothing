@@ -4,23 +4,35 @@ import {
   HiOutlineShoppingBag,
   HiBars3BottomRight,
 } from "react-icons/hi2";
+import { IoNotificationsOutline } from "react-icons/io5";
 import SearchBar from "./SearchBar";
 import CartDrawer from "../Layout/CartDrawer";
-import { useState } from "react";
+import NotificationDrawer from "../Layout/NotificationDrawer";
+import { useState, useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 import { MdAdminPanelSettings } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import infiniteLogo from "../../assets/infinite-logo.png";
+import { fetchUnreadCount } from "../../redux/slices/notificationSlice";
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [navDrawerOpen, setNavDrawerOpen] = useState(false);
+  const [notificationDrawerOpen, setNotificationDrawerOpen] = useState(false);
   const { cart } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.auth);
+  const { unreadCount } = useSelector((state) => state.notifications);
+  const dispatch = useDispatch();
 
   const cartItemCount =
     cart?.products?.reduce((total, product) => total + product.quantity, 0) ||
     0;
+
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchUnreadCount());
+    }
+  }, [dispatch, user]);
 
   const toggleNavDrawer = () => {
     setNavDrawerOpen(!navDrawerOpen);
@@ -28,6 +40,10 @@ const Navbar = () => {
 
   const toggleCartDrawer = () => {
     setDrawerOpen(!drawerOpen);
+  };
+
+  const toggleNotificationDrawer = () => {
+    setNotificationDrawerOpen(!notificationDrawerOpen);
   };
 
   // NavLink component with hover underline effect
@@ -60,11 +76,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className="lg:ml-10">
           <Link to="/">
-            <img
-              src={infiniteLogo}
-              alt="Infinite Logo"
-              className="h-12"
-            />
+            <img src={infiniteLogo} alt="Infinite Logo" className="h-12" />
           </Link>
         </div>
 
@@ -91,6 +103,20 @@ const Navbar = () => {
               <MdAdminPanelSettings className="text-lg text-blue-400 group-hover:text-blue-300 transition-colors duration-200 mr-1" />
               <span>Admin</span>
             </Link>
+          )}
+
+          {user && (
+            <button
+              onClick={toggleNotificationDrawer}
+              className="relative hover:text-black transition-colors duration-200"
+            >
+              <IoNotificationsOutline className="h-6 w-6 text-gray-700" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </button>
           )}
 
           <Link
@@ -129,11 +155,27 @@ const Navbar = () => {
       {/* Cart Drawer */}
       <CartDrawer drawerOpen={drawerOpen} toggleCartDrawer={toggleCartDrawer} />
 
+      {/* Notification Drawer */}
+      <NotificationDrawer
+        drawerOpen={notificationDrawerOpen}
+        toggleDrawer={toggleNotificationDrawer}
+      />
+
+      {/* Mobile Navigation Drawer Overlay */}
+      {navDrawerOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-30 z-40"
+          onClick={toggleNavDrawer}
+          aria-label="Close navigation drawer"
+        />
+      )}
+
       {/* Mobile Navigation Drawer */}
       <div
         className={`fixed top-0 left-0 w-3/4 sm:w-1/2 md:w-1/3 h-full bg-white shadow-lg transform transition-transform duration-300 z-50 ${
           navDrawerOpen ? "translate-x-0" : "-translate-x-full"
         }`}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <div className="flex justify-end p-4">

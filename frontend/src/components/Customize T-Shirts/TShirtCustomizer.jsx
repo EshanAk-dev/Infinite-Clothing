@@ -7,6 +7,7 @@ import {
   resetDesignState,
 } from "../../redux/slices/customDesignSlice";
 import { toast } from "sonner";
+import { Shirt, RotateCcw } from "lucide-react";
 
 const TShirtCustomizer = () => {
   const [color, setColor] = useState("#ffffff");
@@ -83,6 +84,10 @@ const TShirtCustomizer = () => {
     { hex: "#D7CCC8", name: "Sand" },
 
     // Special colors
+    { hex: "#FFB300", name: "Amber" },
+    { hex: "#8BC34A", name: "Fresh Green" },
+    { hex: "#FF7043", name: "Coral Orange" },
+    { hex: "#B39DDB", name: "Lavender Purple" },
     { hex: "#263238", name: "Graphite" },
     { hex: "#006064", name: "Deep Teal" },
     { hex: "#607D8B", name: "Slate Blue" },
@@ -692,15 +697,18 @@ const TShirtCustomizer = () => {
         ).unwrap();
 
         // Show success message
-        toast.success("Your custom design order has been placed successfully!", {
-          style: {
-            background: "#ecfdf5",
-            color: "#065f46",
-            border: "1px solid #6ee7b7",
-            borderRadius: "8px",
-            padding: "16px",
-          },
-        });
+        toast.success(
+          "Your custom design order has been placed successfully!",
+          {
+            style: {
+              background: "#ecfdf5",
+              color: "#065f46",
+              border: "1px solid #6ee7b7",
+              borderRadius: "8px",
+              padding: "16px",
+            },
+          }
+        );
       } catch (err) {
         console.error("Failed to save design:", err);
         toast.error("Failed to place design order. Please try again!", {
@@ -821,109 +829,223 @@ const TShirtCustomizer = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left sidebar - Options */}
           <motion.div
-            className="bg-white p-4 md:p-6 rounded-lg shadow-md"
+            className="bg-white p-4 md:p-6 rounded-xl shadow-lg border border-gray-100"
             variants={sidebarVariants}
             initial="hidden"
             animate="visible"
           >
-            <div className="flex border-b mb-4">
+            <div className="flex border-b mb-6">
               <button
-                className={`px-4 py-2 font-medium ${
+                className={`px-4 py-3 font-medium text-sm transition-all ${
                   activeTab === "design"
-                    ? "text-blue-600 border-b-2 border-blue-600"
-                    : "text-gray-500"
+                    ? "text-blue-600 border-b-2 border-blue-600 font-semibold"
+                    : "text-gray-500 hover:text-gray-700"
                 }`}
                 onClick={() => setActiveTab("design")}
               >
-                Design
+                <div className="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Design
+                </div>
               </button>
               <button
-                className={`px-4 py-2 font-medium ${
+                className={`px-4 py-3 font-medium text-sm transition-all ${
                   activeTab === "settings"
-                    ? "text-blue-600 border-b-2 border-blue-600"
-                    : "text-gray-500"
+                    ? "text-blue-600 border-b-2 border-blue-600 font-semibold"
+                    : "text-gray-500 hover:text-gray-700"
                 }`}
                 onClick={() => setActiveTab("settings")}
               >
-                Settings
+                <div className="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Settings
+                </div>
               </button>
               <button
-                className={`px-4 py-2 font-medium ${
+                className={`px-4 py-3 font-medium text-sm transition-all ${
                   activeTab === "shipping"
-                    ? "text-blue-600 border-b-2 border-blue-600"
-                    : "text-gray-500"
+                    ? "text-blue-600 border-b-2 border-blue-600 font-semibold"
+                    : "text-gray-500 hover:text-gray-700"
                 }`}
                 onClick={() => setActiveTab("shipping")}
               >
-                Shipping
+                <div className="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                    <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1v-1a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1V5a1 1 0 00-1-1H3zm11 3a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V7z" />
+                  </svg>
+                  Shipping
+                </div>
               </button>
             </div>
 
             {activeTab === "design" ? (
               <>
                 {/* View selection */}
-                <div className="mb-6">
-                  <h3 className="font-semibold mb-2">Select View</h3>
-                  <div className="flex space-x-2">
+                <div className="mb-8">
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-500"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm0 2h12v7h-2.586l-1.707-1.707a1 1 0 00-1.414 0L9.586 12H4V5z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Select View
+                  </h3>
+                  <div className="flex space-x-3">
                     <button
-                      className={`flex-1 py-2 rounded-md ${
+                      className={`flex-1 py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
                         view === "front"
-                          ? "bg-blue-600 text-white"
+                          ? "bg-blue-600 text-white shadow-md"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
                       onClick={() => handleViewChange("front")}
                     >
+                      <Shirt className="h-5 w-5" />
                       Front
                     </button>
                     <button
-                      className={`flex-1 py-2 rounded-md ${
+                      className={`flex-1 py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
                         view === "back"
-                          ? "bg-blue-600 text-white"
+                          ? "bg-blue-600 text-white shadow-md"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
                       onClick={() => handleViewChange("back")}
                     >
+                      <RotateCcw className="h-5 w-5" />
                       Back
                     </button>
                   </div>
                 </div>
 
                 {/* Design upload */}
-                <div className="mb-6">
-                  <h3 className="font-semibold mb-2">Upload Your Design</h3>
-                  <p className="text-sm text-gray-500 mb-2">
+                <div className="mb-8">
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-500"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Upload Your Design
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-4">
                     {view === "front" ? "Front design" : "Back design"}
                   </p>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleDesignUpload}
-                    className="w-full text-sm text-gray-500 
-          file:mr-4 file:py-2 file:px-4
-          file:rounded-md file:border-0
-          file:text-sm file:font-semibold
-          file:bg-blue-50 file:text-blue-700
-          hover:file:bg-blue-100"
-                  />
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-10 w-10 text-gray-400 mb-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                        />
+                      </svg>
+                      <p className="text-sm text-gray-500">
+                        <span className="font-semibold text-blue-600">
+                          Click to upload
+                        </span>{" "}
+                        or drag and drop
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        PNG, JPG, SVG (Max. 5MB)
+                      </p>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleDesignUpload}
+                      className="hidden"
+                    />
+                  </label>
 
                   {/* Thumbnails for uploaded designs */}
-                  <div className="mt-4 space-y-2">
+                  <div className="mt-6 space-y-3">
+                    {designs[view].length > 0 && (
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">
+                        Your Designs:
+                      </h4>
+                    )}
                     {designs[view].map((design) => (
                       <div
                         key={design.id}
-                        className={`flex items-center p-2 rounded-md border ${
+                        className={`flex items-center p-3 rounded-xl transition-all ${
                           design.id === selectedDesignId
-                            ? "border-blue-500 bg-blue-50"
-                            : "border-gray-200 bg-gray-50"
+                            ? "border-2 border-blue-500 bg-blue-50"
+                            : "border border-gray-200 bg-gray-50 hover:bg-gray-100"
                         }`}
                         onClick={() => setSelectedDesignId(design.id)}
                       >
-                        <img
-                          src={design.image}
-                          alt={design.name}
-                          className="w-12 h-12 object-contain bg-white border border-gray-300 rounded-md"
-                        />
-                        <div className="ml-3 flex-1">
+                        <div className="relative">
+                          <img
+                            src={design.image}
+                            alt={design.name}
+                            className="w-14 h-14 object-contain bg-white border border-gray-200 rounded-lg p-1"
+                          />
+                          {design.id === selectedDesignId && (
+                            <div className="absolute -top-2 -right-2 bg-blue-500 rounded-full p-1">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-3 w-3 text-white"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        <div className="ml-3 flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-700 truncate">
                             {design.name}
                           </p>
@@ -944,7 +1066,7 @@ const TShirtCustomizer = () => {
                               ),
                             }));
                           }}
-                          className="ml-2 p-1 text-red-500 hover:bg-red-50 rounded-full"
+                          className="ml-2 p-1.5 text-red-500 hover:bg-red-50 rounded-full transition-colors"
                           aria-label="Remove design"
                         >
                           <svg
@@ -968,22 +1090,38 @@ const TShirtCustomizer = () => {
             ) : activeTab === "settings" ? (
               <>
                 {/* Color selection */}
-                <div className="mb-6">
-                  <h3 className="font-semibold mb-2">T-Shirt Color</h3>
-                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                <div className="mb-8">
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                      />
+                    </svg>
+                    T-Shirt Color
+                  </h3>
+                  <div className="grid grid-cols-5 sm:grid-cols-7 gap-3">
                     {availableColors.map((c) => (
                       <div key={c.hex} className="flex flex-col items-center">
                         <button
-                          className={`w-8 h-8 rounded-full border-2 ${
+                          className={`w-8 h-8 rounded-full transition-transform hover:scale-110 border-2 ${
                             color === c.hex
-                              ? "border-blue-500"
-                              : "border-gray-300"
+                              ? "border-blue-500 scale-110 shadow-md"
+                              : "border-gray-200 hover:border-gray-300"
                           }`}
                           style={{ backgroundColor: c.hex }}
                           onClick={() => handleColorChange(c.hex)}
                           aria-label={`Color ${c.name}`}
                         />
-                        <span className="text-xs mt-1 text-center text-gray-600">
+                        <span className="text-xs mt-1 text-center text-gray-600 truncate w-full">
                           {c.name}
                         </span>
                       </div>
@@ -994,8 +1132,24 @@ const TShirtCustomizer = () => {
                 {selectedDesignId ? (
                   <>
                     {/* Design size */}
-                    <div className="mb-6">
-                      <h3 className="font-semibold mb-2">Design Size</h3>
+                    <div className="mb-8">
+                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 text-gray-500"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                          />
+                        </svg>
+                        Design Size
+                      </h3>
                       <input
                         type="range"
                         min="0.1"
@@ -1003,11 +1157,11 @@ const TShirtCustomizer = () => {
                         step="0.1"
                         value={getSelectedDesign()?.scale || 1}
                         onChange={handleScaleChange}
-                        className="w-full mb-2"
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 mb-2"
                       />
                       <div className="flex justify-between text-sm text-gray-600">
                         <span>Small</span>
-                        <span>
+                        <span className="font-medium text-blue-600">
                           {(getSelectedDesign()?.scale || 1).toFixed(1)}x
                         </span>
                         <span>Large</span>
@@ -1015,8 +1169,24 @@ const TShirtCustomizer = () => {
                     </div>
 
                     {/* Design rotation */}
-                    <div className="mb-6">
-                      <h3 className="font-semibold mb-2">Design Rotation</h3>
+                    <div className="mb-8">
+                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 text-gray-500"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                          />
+                        </svg>
+                        Design Rotation
+                      </h3>
                       <input
                         type="range"
                         min="0"
@@ -1024,18 +1194,36 @@ const TShirtCustomizer = () => {
                         step="1"
                         value={getSelectedDesign()?.rotation || 0}
                         onChange={handleRotationChange}
-                        className="w-full mb-2"
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 mb-2"
                       />
                       <div className="flex justify-between text-sm text-gray-600">
                         <span>0°</span>
-                        <span>{getSelectedDesign()?.rotation || 0}°</span>
+                        <span className="font-medium text-blue-600">
+                          {getSelectedDesign()?.rotation || 0}°
+                        </span>
                         <span>360°</span>
                       </div>
                     </div>
 
                     {/* Design opacity */}
-                    <div className="mb-6">
-                      <h3 className="font-semibold mb-2">Design Opacity</h3>
+                    <div className="mb-8">
+                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 text-gray-500"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                          />
+                        </svg>
+                        Design Opacity
+                      </h3>
                       <input
                         type="range"
                         min="0"
@@ -1043,11 +1231,11 @@ const TShirtCustomizer = () => {
                         step="0.1"
                         value={getSelectedDesign()?.opacity || 1}
                         onChange={handleOpacityChange}
-                        className="w-full mb-2"
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 mb-2"
                       />
                       <div className="flex justify-between text-sm text-gray-600">
                         <span>0%</span>
-                        <span>
+                        <span className="font-medium text-blue-600">
                           {Math.round(
                             (getSelectedDesign()?.opacity || 1) * 100
                           )}
@@ -1060,24 +1248,68 @@ const TShirtCustomizer = () => {
                     {/* Reset button */}
                     <button
                       onClick={resetSelectedDesign}
-                      className="w-full py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 mb-4"
+                      className="w-full py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 mb-6 flex items-center justify-center gap-2 transition-colors"
                     >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
                       Reset Selected Design
                     </button>
                   </>
                 ) : (
-                  <div className="text-center py-4 text-gray-500">
-                    Select a design to adjust its settings
+                  <div className="text-center py-8 text-gray-500 flex flex-col items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-12 w-12 text-gray-300 mb-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"
+                      />
+                    </svg>
+                    <p>Select a design to adjust its settings</p>
                   </div>
                 )}
 
                 {/* Grid toggle */}
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h3 className="font-semibold">Show Grid</h3>
-                    <p className="text-sm text-gray-500">
-                      Helpful for alignment
-                    </p>
+                <div className="flex items-center justify-between mb-8 p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-gray-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                      />
+                    </svg>
+                    <div>
+                      <h3 className="font-semibold">Show Grid</h3>
+                      <p className="text-sm text-gray-500">
+                        Helpful for alignment
+                      </p>
+                    </div>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
@@ -1089,15 +1321,32 @@ const TShirtCustomizer = () => {
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                   </label>
                 </div>
+
                 {/* Quantity selector */}
-                <div className="mb-6">
-                  <h3 className="font-semibold mb-2">Quantity</h3>
-                  <div className="flex items-center">
+                <div className="mb-8">
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    Quantity
+                  </h3>
+                  <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden w-fit">
                     <button
                       onClick={() =>
                         setQuantity((prev) => Math.max(1, prev - 1))
                       }
-                      className="px-3 py-1 bg-gray-200 text-gray-700 rounded-l-md hover:bg-gray-300"
+                      className="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
                     >
                       -
                     </button>
@@ -1108,11 +1357,11 @@ const TShirtCustomizer = () => {
                       onChange={(e) =>
                         setQuantity(Math.max(1, parseInt(e.target.value) || 1))
                       }
-                      className="w-16 text-center py-1 border-t border-b border-gray-300"
+                      className="w-16 text-center py-2 border-x border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                     <button
                       onClick={() => setQuantity((prev) => prev + 1)}
-                      className="px-3 py-1 bg-gray-200 text-gray-700 rounded-r-md hover:bg-gray-300"
+                      className="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
                     >
                       +
                     </button>
@@ -1121,8 +1370,19 @@ const TShirtCustomizer = () => {
               </>
             ) : (
               activeTab === "shipping" && (
-                <div className="shipping-form space-y-4">
-                  <h3 className="font-semibold mb-2">Shipping Information</h3>
+                <div className="shipping-form space-y-5">
+                  <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-500"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                      <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1v-1a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1V5a1 1 0 00-1-1H3zm11 3a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V7z" />
+                    </svg>
+                    Shipping Information
+                  </h3>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1137,7 +1397,7 @@ const TShirtCustomizer = () => {
                           name: e.target.value,
                         })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       required
                     />
                   </div>
@@ -1155,7 +1415,7 @@ const TShirtCustomizer = () => {
                           address: e.target.value,
                         })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       required
                     />
                   </div>
@@ -1173,7 +1433,7 @@ const TShirtCustomizer = () => {
                           city: e.target.value,
                         })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       required
                     />
                   </div>
@@ -1192,7 +1452,7 @@ const TShirtCustomizer = () => {
                             postalCode: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                         required
                       />
                     </div>
@@ -1210,7 +1470,7 @@ const TShirtCustomizer = () => {
                             country: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                         required
                       />
                     </div>
@@ -1229,7 +1489,7 @@ const TShirtCustomizer = () => {
                           phone: e.target.value,
                         })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       required
                     />
                   </div>
@@ -1238,11 +1498,11 @@ const TShirtCustomizer = () => {
             )}
 
             {/* Submit buttons */}
-            <div className="space-y-3 mt-6">
+            <div className="space-y-3 mt-8">
               <button
                 onClick={submitDesign}
                 disabled={loading}
-                className={`w-full py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center justify-center ${
+                className={`w-full py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 flex items-center justify-center shadow-md transition-all ${
                   loading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
               >
@@ -1280,7 +1540,7 @@ const TShirtCustomizer = () => {
                     >
                       <path
                         fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12."
                         clipRule="evenodd"
                       />
                     </svg>
@@ -1290,7 +1550,7 @@ const TShirtCustomizer = () => {
               </button>
               <button
                 onClick={downloadDesign}
-                className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center"
+                className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 flex items-center justify-center shadow-md transition-all"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1300,11 +1560,11 @@ const TShirtCustomizer = () => {
                 >
                   <path
                     fillRule="evenodd"
-                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                    d="M3 3a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V3zm7 10a1 1 0 001-1V7a1 1 0 10-2 0v5a1 1 0 001 1zm-3-1a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z"
                     clipRule="evenodd"
                   />
                 </svg>
-                Download Preview
+                Download {view === "front" ? "Front" : "Back"} Design
               </button>
             </div>
           </motion.div>
@@ -1401,7 +1661,8 @@ const TShirtCustomizer = () => {
                     />
                   </svg>
                   <span>
-                    Click to select a design, then drag to position it precisely.
+                    Click to select a design, then drag to position it
+                    precisely.
                   </span>
                 </li>
                 <li className="flex items-start">
@@ -1453,9 +1714,11 @@ const TShirtCustomizer = () => {
                   </span>
                 </li>
               </ul>
-              <h3 className="font-semibold text-blue-800 mb-2 mt-2">Order Tips</h3>
+              <h3 className="font-semibold text-blue-800 mb-2 mt-2">
+                Order Tips
+              </h3>
               <ul className="text-sm text-blue-700 space-y-1">
-              <li className="flex items-start">
+                <li className="flex items-start">
                   <svg
                     className="h-4 w-4 mt-0.5 mr-2 flex-shrink-0"
                     fill="currentColor"
@@ -1483,9 +1746,7 @@ const TShirtCustomizer = () => {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span>
-                    Add your quantity in settings section.
-                  </span>
+                  <span>Add your quantity in settings section.</span>
                 </li>
                 <li className="flex items-start">
                   <svg
@@ -1499,9 +1760,7 @@ const TShirtCustomizer = () => {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span>
-                    Only cash on delivery service.
-                  </span>
+                  <span>Only cash on delivery service.</span>
                 </li>
               </ul>
             </div>
