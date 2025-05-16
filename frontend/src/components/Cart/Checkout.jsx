@@ -6,6 +6,8 @@ import { createCheckout } from "../../redux/slices/checkoutSlice";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { FiArrowRight, FiCheckCircle, FiShoppingBag } from "react-icons/fi";
+import Select from "react-select";
+import countryList from "react-select-country-list";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -25,6 +27,7 @@ const Checkout = () => {
   });
   const [activeStep, setActiveStep] = useState(1); // 1: Shipping, 2: Payment
   const [paymentMethod, setPaymentMethod] = useState(""); // Track selected payment method
+  const countryOptions = countryList().getData();
 
   // Ensure that cart is loaded before proceeding checkout
   useEffect(() => {
@@ -66,9 +69,9 @@ const Checkout = () => {
       // Mark the checkout as paid for COD with pending COD status
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/pay`,
-        { 
-          paymentStatus: "pending COD", 
-          paymentDetails: { method: "COD" } 
+        {
+          paymentStatus: "pending COD",
+          paymentDetails: { method: "COD" },
         },
         {
           headers: {
@@ -76,13 +79,15 @@ const Checkout = () => {
           },
         }
       );
-  
+
       // Check if payment update was successful
       if (response.data && response.data._id) {
         // Finalize the checkout
         await handleFinalizeCheckout(checkoutId);
       } else {
-        console.error("COD payment update successful but response data is missing");
+        console.error(
+          "COD payment update successful but response data is missing"
+        );
         alert("Order started but there was an issue. Please contact support.");
       }
     } catch (error) {
@@ -96,15 +101,15 @@ const Checkout = () => {
       // The key issue is here - we need to explicitly set paymentStatus to "paid"
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/pay`,
-        { 
-          paymentStatus: "paid", 
+        {
+          paymentStatus: "paid",
           paymentDetails: {
             id: details.id,
             status: details.status,
             update_time: details.update_time,
             email_address: details.payer.email_address,
             // Include any other PayPal details you want to keep
-          } 
+          },
         },
         {
           headers: {
@@ -112,13 +117,15 @@ const Checkout = () => {
           },
         }
       );
-      
+
       // If payment was successful, finalize the checkout
       if (response.data && response.data._id) {
         await handleFinalizeCheckout(checkoutId);
       } else {
         console.error("Payment update successful but response data is missing");
-        alert("Payment recorded but there was an issue. Please contact support.");
+        alert(
+          "Payment recorded but there was an issue. Please contact support."
+        );
       }
     } catch (error) {
       console.error("PayPal payment processing error:", error);
@@ -129,7 +136,9 @@ const Checkout = () => {
   const handleFinalizeCheckout = async (checkoutId) => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/finalize`,
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/checkout/${checkoutId}/finalize`,
         {},
         {
           headers: {
@@ -137,12 +146,14 @@ const Checkout = () => {
           },
         }
       );
-      
+
       if (response.data && response.data._id) {
         navigate("/order-confirmation");
       } else {
         console.error("Finalization successful but order data is missing");
-        alert("Order placed but there was an issue. Please check your orders or contact support.");
+        alert(
+          "Order placed but there was an issue. Please check your orders or contact support."
+        );
       }
     } catch (error) {
       console.error("Error finalizing checkout:", error);
@@ -358,17 +369,19 @@ const Checkout = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Country
                     </label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-black focus:border-black"
-                      required
-                      value={shippingAddress.country}
-                      onChange={(e) =>
+                    <Select
+                      options={countryOptions}
+                      value={countryOptions.find(
+                        (c) => c.label === shippingAddress.country
+                      )}
+                      onChange={(selected) =>
                         setShippingAddress({
                           ...shippingAddress,
-                          country: e.target.value,
+                          country: selected ? selected.label : "",
                         })
                       }
+                      isSearchable
+                      placeholder="Select your country..."
                     />
                   </div>
 

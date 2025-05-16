@@ -74,7 +74,11 @@ const Navbar = () => {
     <>
       <nav className="container mx-auto flex items-center justify-between py-5 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <div className="lg:ml-10">
+        <div
+          className={`lg:ml-10 ${
+            user && user.role === "admin" ? "hidden md:block" : ""
+          }`}
+        >
           <Link to="/">
             <img src={infiniteLogo} alt="Infinite Logo" className="h-12" />
           </Link>

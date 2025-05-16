@@ -14,8 +14,8 @@ import {
   MapPin,
   Calendar,
   ShoppingBag,
-  MessageCircle,
 } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 
 const OrderDetailsPage = () => {
   const { id } = useParams();
@@ -260,21 +260,21 @@ const OrderDetailsPage = () => {
 
           {/* Customer Support */}
           <div className="bg-green-50 rounded-2xl mt-5 p-6 flex flex-col items-center text-center">
-  <h4 className="font-medium text-green-900 mb-2">
-    Need help with your order?
-  </h4>
-  <p className="text-sm text-green-700 mb-4">
-    Our customer support team is here to help you with any questions
-    about your order.
-  </p>
-  <button
-    onClick={contactSupport}
-    className="w-1/2 bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center"
-  >
-    <MessageCircle className="h-5 w-5 mr-2" />
-    Contact via WhatsApp
-  </button>
-</div>
+            <h4 className="font-medium text-green-900 mb-2">
+              Need help with your order?
+            </h4>
+            <p className="text-sm text-green-700 mb-4">
+              Our customer support team is here to help you with any questions
+              about your order.
+            </p>
+            <button
+              onClick={contactSupport}
+              className="w-full sm:w-1/2 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
+            >
+              <FaWhatsapp className="h-5 w-5 mr-2 text-white" />
+              Contact via WhatsApp
+            </button>
+          </div>
         </div>
 
         {/* Order Details - Right Column */}

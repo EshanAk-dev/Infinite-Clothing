@@ -108,6 +108,77 @@ const UserManagement = () => {
     }
   };
 
+  const renderMobileCards = () => {
+    if (currentUsers.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center py-12">
+          <svg
+            className="w-16 h-16 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1}
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+            />
+          </svg>
+          <p className="mt-4 text-lg font-medium text-gray-500 text-center px-4">
+            No users found
+          </p>
+          <p className="text-gray-400 text-center px-4">
+            {nameFilter || emailFilter || roleFilter
+              ? "Try adjusting your search filters"
+              : "Add your first user to get started"}
+          </p>
+        </div>
+      );
+    }
+
+    return currentUsers.map((user) => (
+      <div
+        key={user._id}
+        className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 overflow-hidden"
+      >
+        <div className="p-4 flex items-center">
+          <div className="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+            <span className="text-blue-600 font-medium text-lg">
+              {user.name.charAt(0).toUpperCase()}
+            </span>
+          </div>
+          <div className="ml-4 flex-1">
+            <div className="text-base font-medium text-gray-900">{user.name}</div>
+            <div className="text-xs text-gray-500">
+              Joined {new Date(user.createdAt).toLocaleDateString()}
+            </div>
+            <div className="text-xs text-gray-700">{user.email}</div>
+          </div>
+          <div className="flex flex-col items-end gap-2">
+            <select
+              value={user.role}
+              onChange={(e) => handleRoleChange(user._id, e.target.value)}
+              className="text-xs border-gray-300 p-1 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="customer">Customer</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+        <div className="px-4 pb-4 flex justify-end gap-2">
+          <button
+            onClick={() => handleDeleteUser(user._id)}
+            className="text-red-600 hover:text-red-900 p-2 rounded-md hover:bg-red-50 transition-colors"
+            title="Delete"
+          >
+            <MdDelete className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+    ));
+  };
+
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
@@ -129,7 +200,7 @@ const UserManagement = () => {
     );
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-3 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
@@ -139,10 +210,10 @@ const UserManagement = () => {
             Manage system users and permissions
           </p>
         </div>
-        <div className="flex gap-4 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg transition-all duration-300"
+            className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg transition-all duration-300 w-full sm:w-auto justify-center"
           >
             <MdFilterAlt className="text-xl" />
             <span>{showFilters ? "Hide Filters" : "Show Filters"}</span>
@@ -305,7 +376,10 @@ const UserManagement = () => {
       )}
 
       {/* User list */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="md:hidden">
+        {renderMobileCards()}
+      </div>
+      <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -424,45 +498,71 @@ const UserManagement = () => {
           </table>
         </div>
       </div>
-      <div className="flex justify-center mt-6">
-        <nav className="inline-flex space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={`px-4 py-2 rounded-md ${
-              currentPage === 1
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            Previous
-          </button>
-          {Array.from({ length: totalPages }, (_, index) => (
+      {/* Pagination */}
+      {filteredUsers.length > 0 && (
+        <div className="flex justify-center mt-6 overflow-x-auto pb-2">
+          <nav className="inline-flex space-x-1 sm:space-x-2">
             <button
-              key={index + 1}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-4 py-2 rounded-md ${
-                currentPage === index + 1
-                  ? "bg-blue-600 text-white"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`px-2 sm:px-4 py-2 text-sm rounded-md ${
+                currentPage === 1
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
-              {index + 1}
+              Prev
             </button>
-          ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={`px-4 py-2 rounded-md ${
-              currentPage === totalPages
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            Next
-          </button>
-        </nav>
-      </div>
+            {Array.from({ length: totalPages }, (_, index) => {
+              if (
+                window.innerWidth >= 768 ||
+                index + 1 === 1 ||
+                index + 1 === totalPages ||
+                index + 1 === currentPage ||
+                index + 1 === currentPage - 1 ||
+                index + 1 === currentPage + 1
+              ) {
+                return (
+                  <button
+                    key={index + 1}
+                    onClick={() => handlePageChange(index + 1)}
+                    className={`px-3 py-2 text-sm rounded-md ${
+                      currentPage === index + 1
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                );
+              } else if (
+                window.innerWidth < 768 &&
+                (index + 1 === currentPage - 2 ||
+                  index + 1 === currentPage + 2) &&
+                index + 1 > 1 &&
+                index + 1 < totalPages
+              ) {
+                return (
+                  <span key={index + 1} className="flex items-center px-2">
+                  </span>
+                );
+              }
+              return null;
+            })}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`px-2 sm:px-4 py-2 text-sm rounded-md ${
+                currentPage === totalPages
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Next
+            </button>
+          </nav>
+        </div>
+      )}
     </div>
   );
 };

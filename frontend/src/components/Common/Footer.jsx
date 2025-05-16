@@ -45,8 +45,8 @@ const Footer = () => {
                 { name: "Home", path: "/" },
                 { name: "Men's Collection", path: "/collections/all?gender=Men" },
                 { name: "Women's Collection", path: "/collections/all?gender=Women" },
-                { name: "New Arrivals", path: "/collections/new" },
-                { name: "Best Sellers", path: "/collections/bestsellers" },
+                { name: "New Arrivals", path: "/collections/all" },
+                { name: "Best Sellers", path: "/collections/all" },
               ].map((item) => (
                 <li key={item.name}>
                   <Link
@@ -65,11 +65,11 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Support</h3>
             <ul className="space-y-3">
               {[
-                { name: "Contact Us", path: "/contact" },
-                { name: "FAQs", path: "/faqs" },
-                { name: "Shipping Policy", path: "/shipping" },
-                { name: "Returns & Exchanges", path: "/returns" },
-                { name: "Size Guide", path: "/size-guide" },
+                { name: "Contact Us", path: "#" },
+                { name: "FAQs", path: "#" },
+                { name: "Shipping Policy", path: "#" },
+                { name: "Returns & Exchanges", path: "#" },
+                { name: "Size Guide", path: "#" },
               ].map((item) => (
                 <li key={item.name}>
                   <Link

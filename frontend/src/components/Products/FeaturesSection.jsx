@@ -31,19 +31,19 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section className="py-16 px-4 bg-gray-50 border-y border-gray-200">
+    <section className="py-10 px-2 sm:py-16 sm:px-4 bg-gray-50 border-y border-gray-200">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="flex flex-col items-center p-6 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow"
+              className="flex flex-col items-center p-5 sm:p-6 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow text-center"
               whileHover={{ y: -5 }}
             >
               <div className={`p-3 rounded-full ${feature.bgColor} ${feature.color} mb-4`}>
                 {feature.icon}
               </div>
-              <h4 className="font-medium text-gray-900 mb-2 text-lg">
+              <h4 className="font-medium text-gray-900 mb-2 text-base sm:text-lg">
                 {feature.title}
               </h4>
               <p className="text-gray-600 text-sm max-w-xs">

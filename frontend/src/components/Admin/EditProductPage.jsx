@@ -47,6 +47,7 @@ const EditProductPage = () => {
   });
 
   const [uploading, setUploading] = useState(false);
+  const [activeTab, setActiveTab] = useState("basic"); // For mobile tabs navigation
 
   useEffect(() => {
     if (id) {
@@ -151,6 +152,39 @@ const EditProductPage = () => {
       });
   };
 
+  // Tab navigation for mobile
+  const renderTabSelector = () => {
+    const tabs = [
+      { id: "basic", label: "Basic" },
+      { id: "categories", label: "Categories" },
+      { id: "variants", label: "Variants" },
+      { id: "images", label: "Images" },
+      { id: "shipping", label: "Shipping" },
+      { id: "seo", label: "SEO" },
+      { id: "status", label: "Status" },
+    ];
+
+    return (
+      <div className="lg:hidden overflow-x-auto scrollbar-hide mb-6">
+        <div className="flex space-x-2 py-2">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-3 py-2 text-sm font-medium rounded-lg whitespace-nowrap ${
+                activeTab === tab.id
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
@@ -173,8 +207,8 @@ const EditProductPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 sm:mb-0">
           Edit Product
         </h2>
         <button
@@ -185,13 +219,16 @@ const EditProductPage = () => {
         </button>
       </div>
 
+      {/* Mobile tab selector */}
+      {renderTabSelector()}
+
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 p-4 sm:p-6">
             {/* Left Column */}
             <div className="space-y-6">
               {/* Basic Information */}
-              <div className="border border-gray-200 rounded-lg p-5">
+              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "basic" && "lg:block hidden"}`}>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Basic Information
                 </h3>
@@ -300,7 +337,7 @@ const EditProductPage = () => {
               </div>
 
               {/* Categories */}
-              <div className="border border-gray-200 rounded-lg p-5">
+              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "categories" && "lg:block hidden"}`}>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Categories
                 </h3>
@@ -377,7 +414,7 @@ const EditProductPage = () => {
               </div>
 
               {/* Variants */}
-              <div className="border border-gray-200 rounded-lg p-5">
+              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "variants" && "lg:block hidden"}`}>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Variants
                 </h3>
@@ -449,7 +486,7 @@ const EditProductPage = () => {
             {/* Right Column */}
             <div className="space-y-6">
               {/* Images */}
-              <div className="border border-gray-200 rounded-lg p-5">
+              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "images" && "lg:block hidden"}`}>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Images
                 </h3>
@@ -528,7 +565,7 @@ const EditProductPage = () => {
                       <button
                         type="button"
                         onClick={() => handleRemoveImage(index)}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-100 group-hover:opacity-100 transition-opacity lg:opacity-0"
                       >
                         <MdDelete className="h-4 w-4" />
                       </button>
@@ -538,7 +575,7 @@ const EditProductPage = () => {
               </div>
 
               {/* Shipping */}
-              <div className="border border-gray-200 rounded-lg p-5">
+              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "shipping" && "lg:block hidden"}`}>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Shipping Information
                 </h3>
@@ -610,7 +647,7 @@ const EditProductPage = () => {
               </div>
 
               {/* SEO */}
-              <div className="border border-gray-200 rounded-lg p-5">
+              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "seo" && "lg:block hidden"}`}>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   SEO Information
                 </h3>
@@ -656,7 +693,7 @@ const EditProductPage = () => {
               </div>
 
               {/* Status */}
-              <div className="border border-gray-200 rounded-lg p-5">
+              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "status" && "lg:block hidden"}`}>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Status
                 </h3>
@@ -708,18 +745,18 @@ const EditProductPage = () => {
             </div>
           </div>
 
-          {/* Submit Button */}
-          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+          {/* Submit Button - Fixed at bottom on mobile */}
+          <div className="p-4 sm:px-6 sm:py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 sticky bottom-0">
             <button
               type="button"
               onClick={() => navigate("/admin/products")}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <MdUpdate className="-ml-1 mr-2 h-5 w-5" />
               Update Product
