@@ -261,9 +261,10 @@ const NotificationDrawer = ({ drawerOpen, toggleDrawer }) => {
                       >
                         {/* Delete button */}
                         <button
-                          onClick={() =>
-                            handleDeleteNotification(notification._id)
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevents parent onClick from firing
+                            handleDeleteNotification(notification._id);
+                          }}
                           className="absolute bottom-2 right-10 p-1 rounded-full hover:bg-red-100 transition-colors z-10"
                           aria-label="Delete notification"
                         >
