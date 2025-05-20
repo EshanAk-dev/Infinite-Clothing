@@ -900,7 +900,11 @@ const TShirtCustomizer = () => {
                 onClick={() => setActiveTab("shipping")}
               >
                 <div className="flex items-center gap-2">
-                  <Truck className="h-6 w-6 text-gray-500" strokeWidth={2.5} />
+                  <Truck
+                    className="h-6 w-6"
+                    strokeWidth={2.5}
+                    color={activeTab === "shipping" ? "#2563eb" : "#6b7280"}
+                  />
                   <span className="font-semibold">Shipping</span>
                 </div>
               </button>
