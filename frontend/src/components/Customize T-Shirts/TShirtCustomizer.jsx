@@ -7,7 +7,15 @@ import {
   resetDesignState,
 } from "../../redux/slices/customDesignSlice";
 import { toast } from "sonner";
-import { Shirt, RotateCcw } from "lucide-react";
+import {
+  Shirt,
+  RotateCcw,
+  Loader2,
+  CheckCircle,
+  Download,
+  Upload,
+  Truck,
+} from "lucide-react";
 
 const TShirtCustomizer = () => {
   const [color, setColor] = useState("#ffffff");
@@ -892,16 +900,8 @@ const TShirtCustomizer = () => {
                 onClick={() => setActiveTab("shipping")}
               >
                 <div className="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-                    <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1v-1a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1V5a1 1 0 00-1-1H3zm11 3a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V7z" />
-                  </svg>
-                  Shipping
+                  <Truck className="h-6 w-6 text-gray-500" strokeWidth={2.5} />
+                  <span className="font-semibold">Shipping</span>
                 </div>
               </button>
             </div>
@@ -954,18 +954,7 @@ const TShirtCustomizer = () => {
                 {/* Design upload */}
                 <div className="mb-8">
                   <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 text-gray-500"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                    <Upload className="h-5 w-5 text-gray-500" />
                     Upload Your Design
                   </h3>
                   <p className="text-sm text-gray-500 mb-4">
@@ -1372,15 +1361,7 @@ const TShirtCustomizer = () => {
               activeTab === "shipping" && (
                 <div className="shipping-form space-y-5">
                   <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 text-gray-500"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-                      <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1v-1a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1V5a1 1 0 00-1-1H3zm11 3a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V7z" />
-                    </svg>
+                    <Truck className="h-5 w-5 text-gray-500" />
                     Shipping Information
                   </h3>
 
@@ -1508,42 +1489,12 @@ const TShirtCustomizer = () => {
               >
                 {loading ? (
                   <>
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
+                    <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
                     Saving...
                   </>
                 ) : (
                   <>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 mr-2"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12."
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                    <CheckCircle className="h-5 w-5 mr-2" />
                     Submit Design
                   </>
                 )}
@@ -1552,18 +1503,7 @@ const TShirtCustomizer = () => {
                 onClick={downloadDesign}
                 className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 flex items-center justify-center shadow-md transition-all"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M3 3a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V3zm7 10a1 1 0 001-1V7a1 1 0 10-2 0v5a1 1 0 001 1zm-3-1a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <Download className="h-5 w-5 mr-2" />
                 Download {view === "front" ? "Front" : "Back"} Design
               </button>
             </div>

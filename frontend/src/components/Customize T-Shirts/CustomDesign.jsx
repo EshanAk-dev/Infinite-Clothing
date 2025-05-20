@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchUserDesignById } from "../../redux/slices/customDesignSlice";
 import { motion } from "framer-motion";
+import { Truck } from "lucide-react";
 
 const CustomDesign = () => {
   const dispatch = useDispatch();
@@ -574,20 +575,7 @@ const CustomDesign = () => {
               >
                 <div className="flex items-center mb-4">
                   <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
-                    <svg
-                      className="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 9V7a2 2 0 012-2h10a2 2 0 012 2v2h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V17a2 2 0 01-2 2h-1a2 2 0 01-4 0H9a2 2 0 01-4 0H4a2 2 0 01-2-2v-6a2 2 0 012-2h16"
-                      />
-                    </svg>
+                    <Truck className="w-7 h-7" strokeWidth={2} />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">
                     Shipping Information

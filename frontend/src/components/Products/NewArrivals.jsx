@@ -70,7 +70,7 @@ const NewArrivals = () => {
       if (canScrollRight) {
         scroll("right");
       }
-    }, 4000);
+    }, 3000);
 
     return () => clearInterval(autoScroll);
   }, [canScrollRight]);
