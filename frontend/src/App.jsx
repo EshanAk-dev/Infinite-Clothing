@@ -30,6 +30,7 @@ import MyCustomDesigns from "./components/Customize T-Shirts/MyCustomDesigns";
 import CustomDesign from "./components/Customize T-Shirts/CustomDesign";
 import CustomOrderManagement from "./components/Admin/CustomOrderManagement";
 import AdminCustomOrderDetails from "./components/Admin/AdminCustomOrderDetails";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   return (
@@ -87,6 +88,8 @@ const App = () => {
             <Route path="custom-orders" element={<CustomOrderManagement />} />
             <Route path="custom-orders/:id" element={<AdminCustomOrderDetails />} />
           </Route>
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </Provider>
