@@ -95,16 +95,19 @@ const ProductDetails = ({ productId }) => {
       });
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-96">
-        <div className="relative w-20 h-20">
-          <div className="absolute top-0 left-0 w-full h-full border-8 border-gray-200 rounded-full"></div>
-          <div className="absolute top-0 left-0 w-full h-full border-8 border-t-indigo-600 rounded-full animate-spin"></div>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex justify-center items-center h-64"
+    >
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+        className="rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
+      ></motion.div>
+    </motion.div>
+  );
 
   if (error) {
     return (
