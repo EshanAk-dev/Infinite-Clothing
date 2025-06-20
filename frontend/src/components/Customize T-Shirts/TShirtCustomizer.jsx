@@ -47,6 +47,7 @@ const TShirtCustomizer = () => {
     phone: "",
   });
   const [quantity, setQuantity] = useState(1);
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
 
   useEffect(() => {
     // Redirect to login if user is not authenticated
@@ -612,16 +613,6 @@ const TShirtCustomizer = () => {
     }));
   };
 
-  const removeSelectedDesign = () => {
-    if (!selectedDesignId) return;
-
-    setDesigns((prev) => ({
-      ...prev,
-      [view]: prev[view].filter((design) => design.id !== selectedDesignId),
-    }));
-    setSelectedDesignId(null);
-  };
-
   const resetSelectedDesign = () => {
     if (!selectedDesignId) return;
 
@@ -790,11 +781,6 @@ const TShirtCustomizer = () => {
   const canvasVariants = {
     hidden: { scale: 0.8, opacity: 0 },
     visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } },
-  };
-
-  const buttonVariants = {
-    hover: { scale: 1.1 },
-    tap: { scale: 0.95 },
   };
 
   return (
@@ -983,8 +969,7 @@ const TShirtCustomizer = () => {
                       <p className="text-sm text-gray-500">
                         <span className="font-semibold text-blue-600">
                           Click to upload
-                        </span>{" "}
-                        or drag and drop
+                        </span>
                       </p>
                       <p className="text-xs text-gray-400 mt-1">
                         PNG, JPG, SVG (Max. 5MB)
@@ -1101,24 +1086,55 @@ const TShirtCustomizer = () => {
                     </svg>
                     T-Shirt Color
                   </h3>
-                  <div className="grid grid-cols-5 sm:grid-cols-7 gap-3">
-                    {availableColors.map((c) => (
-                      <div key={c.hex} className="flex flex-col items-center">
-                        <button
-                          className={`w-8 h-8 rounded-full transition-transform hover:scale-110 border-2 ${
-                            color === c.hex
-                              ? "border-blue-500 scale-110 shadow-md"
-                              : "border-gray-200 hover:border-gray-300"
-                          }`}
-                          style={{ backgroundColor: c.hex }}
-                          onClick={() => handleColorChange(c.hex)}
-                          aria-label={`Color ${c.name}`}
+                  {/* Color picker */}
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+                      aria-expanded={isColorPickerOpen}
+                    >
+                      Colors
+                      <svg
+                        className={`w-4 h-4 transition-transform ${
+                          isColorPickerOpen ? "rotate-180" : ""
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
                         />
-                        <span className="text-xs mt-1 text-center text-gray-600 truncate w-full">
-                          {c.name}
-                        </span>
+                      </svg>
+                    </button>
+
+                    {isColorPickerOpen && (
+                      <div className="grid grid-cols-5 sm:grid-cols-7 gap-3 p-3 bg-gray-50 rounded-md border">
+                        {availableColors.map((c) => (
+                          <div
+                            key={c.hex}
+                            className="flex flex-col items-center"
+                          >
+                            <button
+                              className={`w-8 h-8 rounded-full transition-transform hover:scale-110 border-2 ${
+                                color === c.hex
+                                  ? "border-blue-500 scale-110 shadow-md"
+                                  : "border-gray-200 hover:border-gray-300"
+                              }`}
+                              style={{ backgroundColor: c.hex }}
+                              onClick={() => handleColorChange(c.hex)}
+                              aria-label={`Color ${c.name}`}
+                            />
+                            <span className="text-xs mt-1 text-center text-gray-600 truncate w-full">
+                              {c.name}
+                            </span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
 
