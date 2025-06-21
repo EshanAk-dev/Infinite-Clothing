@@ -580,7 +580,7 @@ const TShirtCustomizer = () => {
                   </h3>
                   <div className="flex space-x-3">
                     <button
-                      className={`flex-1 py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
+                      className={`flex-1 py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 ${
                         view === "front"
                           ? "bg-blue-600 text-white shadow-md"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -590,7 +590,7 @@ const TShirtCustomizer = () => {
                       Front
                     </button>
                     <button
-                      className={`flex-1 py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
+                      className={`flex-1 py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 ${
                         view === "back"
                           ? "bg-blue-600 text-white shadow-md"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -600,7 +600,7 @@ const TShirtCustomizer = () => {
                       Back
                     </button>
                     <button
-                      className={`flex-1 py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
+                      className={`flex-1 py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 ${
                         view === "leftArm"
                           ? "bg-blue-600 text-white shadow-md"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -610,7 +610,7 @@ const TShirtCustomizer = () => {
                       Left Arm
                     </button>
                     <button
-                      className={`flex-1 py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
+                      className={`flex-1 py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 ${
                         view === "rightArm"
                           ? "bg-blue-600 text-white shadow-md"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
