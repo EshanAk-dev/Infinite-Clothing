@@ -98,7 +98,7 @@ export function drawTShirt({
 
     // Add wrinkles/fabric texture
     addFabricTexture(ctx, color, 265, 200, 150, 100);
-  } else {
+  } else if (view === "back") {
     // Draw back of t-shirt - crew neck
     ctx.fillStyle = baseColor;
     ctx.beginPath();
@@ -176,27 +176,159 @@ export function drawTShirt({
 
     // Add wrinkles/fabric texture
     addFabricTexture(ctx, color, 265, 200, 150, 100);
+  } else if (view === "leftArm") {
+    // Draw left sleeve - simple flat view
+    ctx.fillStyle = baseColor;
+    ctx.beginPath();
+
+    // Simple sleeve shape like a trapezoid
+    ctx.moveTo(180, 100); // Top left
+    ctx.lineTo(350, 100); // Top right
+    ctx.lineTo(340, 350); // Bottom right
+    ctx.lineTo(190, 350); // Bottom left
+    ctx.closePath();
+    ctx.fill();
+
+    // Remove shadow for details
+    ctx.shadowColor = "transparent";
+
+    // Add sleeve opening at top
+    ctx.beginPath();
+    ctx.moveTo(180, 100);
+    ctx.lineTo(350, 100);
+    ctx.lineTo(340, 115);
+    ctx.lineTo(190, 115);
+    ctx.closePath();
+    ctx.fillStyle = shadowColor;
+    ctx.fill();
+
+    // Add sleeve hem at bottom
+    ctx.beginPath();
+    ctx.moveTo(190, 335);
+    ctx.lineTo(340, 335);
+    ctx.lineTo(340, 350);
+    ctx.lineTo(190, 350);
+    ctx.closePath();
+    ctx.fillStyle = shadowColor;
+    ctx.fill();
+
+    // Add simple gradient shading
+    const gradientSleeve = ctx.createLinearGradient(180, 100, 350, 100);
+    gradientSleeve.addColorStop(0, shadowColor);
+    gradientSleeve.addColorStop(0.5, baseColor);
+    gradientSleeve.addColorStop(1, highlightColor);
+
+    ctx.fillStyle = gradientSleeve;
+    ctx.globalAlpha = 0.3;
+    ctx.beginPath();
+    ctx.moveTo(180, 100);
+    ctx.lineTo(350, 100);
+    ctx.lineTo(340, 350);
+    ctx.lineTo(190, 350);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Add side seams
+    ctx.beginPath();
+    ctx.moveTo(180, 100);
+    ctx.lineTo(190, 350);
+    ctx.moveTo(350, 100);
+    ctx.lineTo(340, 350);
+    ctx.strokeStyle = shadowColor;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Add fabric texture
+    addFabricTexture(ctx, color, 265, 225, 120, 200);
+  } else if (view === "rightArm") {
+    // Draw right sleeve - simple flat view (mirrored)
+    ctx.fillStyle = baseColor;
+    ctx.beginPath();
+
+    // Simple sleeve shape like a trapezoid
+    ctx.moveTo(180, 100); // Top left
+    ctx.lineTo(350, 100); // Top right
+    ctx.lineTo(340, 350); // Bottom right
+    ctx.lineTo(190, 350); // Bottom left
+    ctx.closePath();
+    ctx.fill();
+
+    // Remove shadow for details
+    ctx.shadowColor = "transparent";
+
+    // Add sleeve opening at top
+    ctx.beginPath();
+    ctx.moveTo(180, 100);
+    ctx.lineTo(350, 100);
+    ctx.lineTo(340, 115);
+    ctx.lineTo(190, 115);
+    ctx.closePath();
+    ctx.fillStyle = shadowColor;
+    ctx.fill();
+
+    // Add sleeve hem at bottom
+    ctx.beginPath();
+    ctx.moveTo(190, 335);
+    ctx.lineTo(340, 335);
+    ctx.lineTo(340, 350);
+    ctx.lineTo(190, 350);
+    ctx.closePath();
+    ctx.fillStyle = shadowColor;
+    ctx.fill();
+
+    // Add simple gradient shading (reversed for right arm)
+    const gradientSleeve = ctx.createLinearGradient(180, 100, 350, 100);
+    gradientSleeve.addColorStop(0, highlightColor);
+    gradientSleeve.addColorStop(0.5, baseColor);
+    gradientSleeve.addColorStop(1, shadowColor);
+
+    ctx.fillStyle = gradientSleeve;
+    ctx.globalAlpha = 0.3;
+    ctx.beginPath();
+    ctx.moveTo(180, 100);
+    ctx.lineTo(350, 100);
+    ctx.lineTo(340, 350);
+    ctx.lineTo(190, 350);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Add side seams
+    ctx.beginPath();
+    ctx.moveTo(180, 100);
+    ctx.lineTo(190, 350);
+    ctx.moveTo(350, 100);
+    ctx.lineTo(340, 350);
+    ctx.strokeStyle = shadowColor;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Add fabric texture
+    addFabricTexture(ctx, color, 265, 225, 120, 200);
   }
 
-  // Add sleeve ends
-  ctx.beginPath();
-  ctx.moveTo(130, 110); // Left sleeve end
-  ctx.lineTo(160, 160); // Left armpit
-  ctx.moveTo(400, 110); // Right sleeve end
-  ctx.lineTo(370, 160); // Right armpit
-  ctx.strokeStyle = shadowColor;
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
+  // Add sleeve ends for front and back views
+  if (view === "front" || view === "back") {
+    ctx.beginPath();
+    ctx.moveTo(130, 110); // Left sleeve end
+    ctx.lineTo(160, 160); // Left armpit
+    ctx.moveTo(400, 110); // Right sleeve end
+    ctx.lineTo(370, 160); // Right armpit
+    ctx.strokeStyle = shadowColor;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
 
-  // Add bottom hem
-  ctx.beginPath();
-  ctx.moveTo(160, 360);
-  ctx.lineTo(370, 360);
-  ctx.strokeStyle = shadowColor;
-  ctx.lineWidth = 2;
-  ctx.stroke();
+    // Add bottom hem
+    ctx.beginPath();
+    ctx.moveTo(160, 360);
+    ctx.lineTo(370, 360);
+    ctx.strokeStyle = shadowColor;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
 
-  // Border for the entire t-shirt to define shape better
+  // Border for the entire t-shirt/sleeve to define shape better
   ctx.beginPath();
   if (view === "front") {
     ctx.moveTo(200, 70); // Left shoulder
@@ -208,7 +340,7 @@ export function drawTShirt({
     ctx.lineTo(400, 110); // Right sleeve
     ctx.lineTo(330, 70); // Right shoulder
     ctx.quadraticCurveTo(265, 90, 200, 70); // Crew neck
-  } else {
+  } else if (view === "back") {
     ctx.moveTo(200, 70); // Left shoulder
     ctx.lineTo(130, 110); // Left sleeve
     ctx.lineTo(160, 160); // Left armpit
@@ -218,8 +350,19 @@ export function drawTShirt({
     ctx.lineTo(400, 110); // Right sleeve
     ctx.lineTo(330, 70); // Right shoulder
     ctx.quadraticCurveTo(265, 80, 200, 70); // Crew neck
+  } else if (view === "leftArm" || view === "rightArm") {
+    // Simple sleeve outline
+    ctx.moveTo(180, 100);
+    ctx.lineTo(350, 100);
+    ctx.lineTo(340, 350);
+    ctx.lineTo(190, 350);
+    ctx.closePath();
   }
-  ctx.closePath();
+
+  if (view === "front" || view === "back") {
+    ctx.closePath();
+  }
+
   ctx.strokeStyle = "rgba(0,0,0,0.1)";
   ctx.lineWidth = 1;
   ctx.stroke();
@@ -230,7 +373,7 @@ export function drawTShirt({
   }
 
   // Draw all designs for the current view
-  designs[view].forEach((design) => {
+  designs[view]?.forEach((design) => {
     const img = new Image();
     img.src = design.image;
     img.onload = () => {
@@ -346,9 +489,12 @@ export const addShade = (color, percent) => {
   R = R > 0 ? R : 0;
   G = G > 0 ? G : 0;
   B = B > 0 ? B : 0;
-  const RR = R.toString(16).length === 1 ? "0" + R.toString(16) : R.toString(16);
-  const GG = G.toString(16).length === 1 ? "0" + G.toString(16) : G.toString(16);
-  const BB = B.toString(16).length === 1 ? "0" + B.toString(16) : B.toString(16);
+  const RR =
+    R.toString(16).length === 1 ? "0" + R.toString(16) : R.toString(16);
+  const GG =
+    G.toString(16).length === 1 ? "0" + G.toString(16) : G.toString(16);
+  const BB =
+    B.toString(16).length === 1 ? "0" + B.toString(16) : B.toString(16);
   return "#" + RR + GG + BB;
 };
 

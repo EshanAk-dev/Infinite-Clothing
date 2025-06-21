@@ -5,16 +5,44 @@ import axios from "axios";
 export const saveCustomDesign = createAsyncThunk(
   "customDesign/save",
   async (
-    { color, designs, frontImageData, backImageData, shippingAddress, quantity = 1, price = 2000 },
+    {
+      color,
+      designs,
+      frontImageData,
+      backImageData,
+      rightArmImageData,
+      leftArmImageData,
+      shippingAddress,
+      quantity = 1,
+      price = 2000,
+    },
     { rejectWithValue }
   ) => {
     try {
       const frontBlob = await fetch(frontImageData).then((res) => res.blob());
       const backBlob = await fetch(backImageData).then((res) => res.blob());
+      const rightArmBlob = rightArmImageData
+        ? await fetch(rightArmImageData).then((res) => res.blob())
+        : null;
+      const leftArmBlob = leftArmImageData
+        ? await fetch(leftArmImageData).then((res) => res.blob())
+        : null;
 
       const formData = new FormData();
       formData.append("frontDesignImage", frontBlob, "front-design.png");
       formData.append("backDesignImage", backBlob, "back-design.png");
+      if (rightArmBlob)
+        formData.append(
+          "rightArmDesignImage",
+          rightArmBlob,
+          "right-arm-design.png"
+        );
+      if (leftArmBlob)
+        formData.append(
+          "leftArmDesignImage",
+          leftArmBlob,
+          "left-arm-design.png"
+        );
       formData.append("color", color);
       formData.append("designs", JSON.stringify(designs));
       formData.append("shippingAddress", JSON.stringify(shippingAddress));
@@ -117,7 +145,7 @@ const customDesignSlice = createSlice({
     },
     clearCurrentDesign: (state) => {
       state.currentDesign = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -185,5 +213,6 @@ const customDesignSlice = createSlice({
   },
 });
 
-export const { resetDesignState, clearCurrentDesign } = customDesignSlice.actions;
+export const { resetDesignState, clearCurrentDesign } =
+  customDesignSlice.actions;
 export default customDesignSlice.reducer;
