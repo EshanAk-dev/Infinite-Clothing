@@ -4,10 +4,7 @@ import { useEffect } from "react";
 import { fetchAdminProducts } from "../redux/slices/adminProductSlice";
 import { fetchAllOrders } from "../redux/slices/adminOrderSlice";
 import { fetchAllDesigns } from "../redux/slices/adminCustomDesignSlice";
-import {
-  FiPackage,
-  FiShoppingCart,
-} from "react-icons/fi";
+import { FiPackage, FiShoppingCart } from "react-icons/fi";
 import { FaTshirt } from "react-icons/fa";
 
 const AdminHomePage = () => {
@@ -62,8 +59,8 @@ const AdminHomePage = () => {
 
   // Get recent 5 orders
   const recentOrders = [...orders]
-  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-  .slice(0, 5);
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 5);
 
   return (
     <div className="max-w-7xl mx-auto p-3 sm:p-6">
@@ -84,12 +81,18 @@ const AdminHomePage = () => {
         <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs sm:text-sm font-medium text-gray-500">Total Revenue</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-500">
+                Total Revenue
+              </p>
               <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
-                Rs.{totalSales.toFixed(2)}
+                Rs.
+                {totalSales.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </h3>
             </div>
-            <div className="p-2 sm:p-3 rounded-lg bg-blue-100 text-blue-600">
+            <div className="p-2 sm:p-3 ml-2 lg:mt-0 rounded-lg bg-blue-100 text-blue-600">
               <span className="text-xl sm:text-2xl font-bold">LKR</span>
             </div>
           </div>
@@ -99,7 +102,9 @@ const AdminHomePage = () => {
         <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs sm:text-sm font-medium text-gray-500">Total Orders</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-500">
+                Total Orders
+              </p>
               <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
                 {totalOrders}
               </h3>
@@ -143,7 +148,9 @@ const AdminHomePage = () => {
         <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs sm:text-sm font-medium text-gray-500">Total Custom Orders</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-500">
+                Total Custom Orders
+              </p>
               <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
                 {customDesigns.length}
               </h3>
@@ -164,7 +171,9 @@ const AdminHomePage = () => {
       {/* Recent Orders */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
         <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
-          <h2 className="text-base sm:text-lg font-semibold text-gray-800">Recent Orders</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-gray-800">
+            Recent Orders
+          </h2>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
