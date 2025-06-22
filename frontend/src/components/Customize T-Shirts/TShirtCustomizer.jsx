@@ -15,6 +15,8 @@ import {
   addShade,
   isDarkColor,
 } from "./drawTShirt";
+import Select from "react-select";
+import countryList from "react-select-country-list";
 
 const TShirtCustomizer = () => {
   const [color, setColor] = useState("#ffffff");
@@ -49,6 +51,7 @@ const TShirtCustomizer = () => {
   });
   const [quantity, setQuantity] = useState(1);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+  const countryOptions = countryList().getData();
 
   useEffect(() => {
     // Redirect to login if user is not authenticated
@@ -1156,17 +1159,21 @@ const TShirtCustomizer = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Country
                       </label>
-                      <input
-                        type="text"
-                        value={shippingAddress.country}
-                        onChange={(e) =>
+                      <Select
+                        options={countryOptions}
+                        value={countryOptions.find(
+                          (c) => c.label === shippingAddress.country
+                        )}
+                        onChange={(selected) =>
                           setShippingAddress({
                             ...shippingAddress,
-                            country: e.target.value,
+                            country: selected ? selected.label : "",
                           })
                         }
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                        required
+                        isSearchable
+                        placeholder="Select country"
+                        className="react-select-container"
+                        classNamePrefix="react-select"
                       />
                     </div>
                   </div>
@@ -1363,7 +1370,8 @@ const TShirtCustomizer = () => {
                     />
                   </svg>
                   <span>
-                    Toggle between front and back views to customize each side.
+                    Toggle between front, back, right arm & left hand views to
+                    customize each side.
                   </span>
                 </li>
                 <li className="flex items-start">
