@@ -143,7 +143,7 @@ const MyCustomDesigns = () => {
                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow-md">
                       <span className="text-sm font-medium text-indigo-700">
                         {design.designs.front.length +
-                          design.designs.back.length}{" "}
+                          design.designs.back.length + design.designs.rightArm.length + design.designs.leftArm.length}{" "}
                         elements
                       </span>
                     </div>

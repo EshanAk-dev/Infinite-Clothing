@@ -1,9 +1,11 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchUserDesignById } from "../../redux/slices/customDesignSlice";
 import { motion } from "framer-motion";
 import { Truck } from "lucide-react";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import DesignSidePreview from "./DesignSidePreview";
 
 const CustomDesign = () => {
   const dispatch = useDispatch();
@@ -12,6 +14,9 @@ const CustomDesign = () => {
   const { currentDesign, loading, error } = useSelector(
     (state) => state.customDesign
   );
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     if (id) {
@@ -19,9 +24,42 @@ const CustomDesign = () => {
     }
   }, [id, dispatch]);
 
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (container) {
+      container.addEventListener("scroll", updateScrollButtons);
+      window.addEventListener("resize", updateScrollButtons);
+      updateScrollButtons();
+      return () => {
+        container.removeEventListener("scroll", updateScrollButtons);
+        window.removeEventListener("resize", updateScrollButtons);
+      };
+    }
+  }, [currentDesign]);
+
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const scroll = (direction) => {
+    const container = scrollRef.current;
+    const scrollAmount =
+      direction === "left"
+        ? -container.offsetWidth * 0.8
+        : container.offsetWidth * 0.8;
+    container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  };
+
+  const updateScrollButtons = () => {
+    const container = scrollRef.current;
+    if (container) {
+      const leftScroll = container.scrollLeft;
+      const rightScrollable =
+        container.scrollWidth > leftScroll + container.clientWidth + 1;
+      setCanScrollLeft(leftScroll > 0);
+      setCanScrollRight(rightScrollable);
+    }
   };
 
   const StatusBadge = useMemo(() => {
@@ -164,338 +202,154 @@ const CustomDesign = () => {
           transition={{ duration: 0.5 }}
         >
           {/* Design Preview Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-8">
-            {/* Front Design */}
-            <motion.div
-              className="space-y-6"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-                  <svg
-                    className="w-5 h-5 mr-2 text-indigo-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  Front Design
-                </h2>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                  {currentDesign.designs.front.length} elements
-                </span>
-              </div>
+          <div className="p-6 md:p-8">
+            <p className="text-gray-600 text-center mb-8">
+              Swipe or use arrows to view all design sides
+            </p>
 
-              <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                <img
-                  src={currentDesign.frontImageUrl}
-                  alt="Front design"
-                  className="w-full h-auto max-h-96 object-contain"
-                  loading="lazy"
+            {/* Scrollable Design Container */}
+            <div className="relative">
+              {/* Scroll buttons */}
+              <motion.button
+                onClick={() => scroll("left")}
+                disabled={!canScrollLeft}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: canScrollLeft ? 1 : 0.3 }}
+                className={`absolute left-2 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-300 ${
+                  canScrollLeft
+                    ? "hover:bg-gray-50 active:bg-gray-100"
+                    : "cursor-not-allowed"
+                }`}
+                whileHover={canScrollLeft ? { scale: 1.1 } : {}}
+                whileTap={canScrollLeft ? { scale: 0.95 } : {}}
+              >
+                <FiChevronLeft className="text-xl text-gray-700" />
+              </motion.button>
+
+              <motion.button
+                onClick={() => scroll("right")}
+                disabled={!canScrollRight}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: canScrollRight ? 1 : 0.3 }}
+                className={`absolute right-2 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-300 ${
+                  canScrollRight
+                    ? "hover:bg-gray-50 active:bg-gray-100"
+                    : "cursor-not-allowed"
+                }`}
+                whileHover={canScrollRight ? { scale: 1.1 } : {}}
+                whileTap={canScrollRight ? { scale: 0.95 } : {}}
+              >
+                <FiChevronRight className="text-xl text-gray-700" />
+              </motion.button>
+
+              {/* Scrollable content */}
+              <div
+                ref={scrollRef}
+                className="overflow-x-auto flex space-x-8 pb-6 scrollbar-hide snap-x snap-mandatory"
+                style={{
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                  WebkitScrollbar: { display: "none" },
+                }}
+              >
+                <DesignSidePreview
+                  title="Front Design"
+                  icon={
+                    <svg
+                      className="w-5 h-5 mr-2 text-indigo-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  }
+                  imageUrl={currentDesign.frontImageUrl}
+                  elements={currentDesign.designs.front}
+                  badgeColor="bg-indigo-100 text-indigo-800"
+                  badgeText="elements"
+                  delay={0}
                 />
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="font-medium text-gray-900 flex items-center">
-                  <svg
-                    className="w-5 h-5 mr-1.5 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                    />
-                  </svg>
-                  Design Elements
-                </h3>
-                {currentDesign.designs.front.length > 0 ? (
-                  <ul className="space-y-3">
-                    {currentDesign.designs.front.map((item, index) => (
-                      <motion.li
-                        key={index}
-                        className="p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
-                        whileHover={{ scale: 1.01 }}
+                <DesignSidePreview
+                  title="Back Design"
+                  icon={
+                    <svg
+                      className="w-5 h-5 mr-2 text-indigo-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  }
+                  imageUrl={currentDesign.backImageUrl}
+                  elements={currentDesign.designs.back}
+                  badgeColor="bg-indigo-100 text-indigo-800"
+                  badgeText="elements"
+                  delay={0.1}
+                />
+                {currentDesign.leftArmImageUrl && (
+                  <DesignSidePreview
+                    title="Left Arm Design"
+                    icon={
+                      <svg
+                        className="w-5 h-5 mr-2 text-purple-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        <div className="flex justify-between items-start">
-                          <span className="font-medium text-gray-900">
-                            {item.name || `Element ${index + 1}`}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            #{index + 1}
-                          </span>
-                        </div>
-                        <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-gray-600">
-                          <div className="flex items-center">
-                            <svg
-                              className="w-4 h-4 mr-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                            Position
-                          </div>
-                          <span>
-                            ({item.position.x.toFixed(0)},{" "}
-                            {item.position.y.toFixed(0)})
-                          </span>
-
-                          <div className="flex items-center">
-                            <svg
-                              className="w-4 h-4 mr-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-                              />
-                            </svg>
-                            Scale
-                          </div>
-                          <span>{item.scale.toFixed(2)}</span>
-
-                          <div className="flex items-center">
-                            <svg
-                              className="w-4 h-4 mr-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                              />
-                            </svg>
-                            Rotation
-                          </div>
-                          <span>{item.rotation}°</span>
-
-                          <div className="flex items-center">
-                            <svg
-                              className="w-4 h-4 mr-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M13 10V3L4 14h7v7l9-11h-7z"
-                              />
-                            </svg>
-                            Opacity
-                          </div>
-                          <span>{(item.opacity * 100).toFixed(0)}%</span>
-                        </div>
-                      </motion.li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="p-4 text-center bg-gray-50 rounded-lg border border-gray-200">
-                    <p className="text-gray-500">
-                      No elements added to front design
-                    </p>
-                  </div>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 3V1m0 18v2"
+                        />
+                      </svg>
+                    }
+                    imageUrl={currentDesign.leftArmImageUrl}
+                    elements={currentDesign.designs?.leftArm || []}
+                    badgeColor="bg-purple-100 text-purple-800"
+                    badgeText="elements"
+                    delay={0.2}
+                  />
+                )}
+                {currentDesign.rightArmImageUrl && (
+                  <DesignSidePreview
+                    title="Right Arm Design"
+                    icon={
+                      <svg
+                        className="w-5 h-5 mr-2 text-orange-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 21a4 4 0 004-4V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4zM17 3V1m0 18v2"
+                        />
+                      </svg>
+                    }
+                    imageUrl={currentDesign.rightArmImageUrl}
+                    elements={currentDesign.designs?.rightArm || []}
+                    badgeColor="bg-orange-100 text-orange-800"
+                    badgeText="elements"
+                    delay={0.3}
+                  />
                 )}
               </div>
-            </motion.div>
-
-            {/* Back Design */}
-            <motion.div
-              className="space-y-6"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-            >
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-                  <svg
-                    className="w-5 h-5 mr-2 text-indigo-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  Back Design
-                </h2>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                  {currentDesign.designs.back.length} elements
-                </span>
-              </div>
-
-              <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                <img
-                  src={currentDesign.backImageUrl}
-                  alt="Back design"
-                  className="w-full h-auto max-h-96 object-contain"
-                  loading="lazy"
-                />
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="font-medium text-gray-900 flex items-center">
-                  <svg
-                    className="w-5 h-5 mr-1.5 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                    />
-                  </svg>
-                  Design Elements
-                </h3>
-                {currentDesign.designs.back.length > 0 ? (
-                  <ul className="space-y-3">
-                    {currentDesign.designs.back.map((item, index) => (
-                      <motion.li
-                        key={index}
-                        className="p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
-                        whileHover={{ scale: 1.01 }}
-                      >
-                        <div className="flex justify-between items-start">
-                          <span className="font-medium text-gray-900">
-                            {item.name || `Element ${index + 1}`}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            #{index + 1}
-                          </span>
-                        </div>
-                        <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-gray-600">
-                          <div className="flex items-center">
-                            <svg
-                              className="w-4 h-4 mr-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                            Position
-                          </div>
-                          <span>
-                            ({item.position.x.toFixed(0)},{" "}
-                            {item.position.y.toFixed(0)})
-                          </span>
-
-                          <div className="flex items-center">
-                            <svg
-                              className="w-4 h-4 mr-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-                              />
-                            </svg>
-                            Scale
-                          </div>
-                          <span>{item.scale.toFixed(2)}</span>
-
-                          <div className="flex items-center">
-                            <svg
-                              className="w-4 h-4 mr-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                              />
-                            </svg>
-                            Rotation
-                          </div>
-                          <span>{item.rotation}°</span>
-
-                          <div className="flex items-center">
-                            <svg
-                              className="w-4 h-4 mr-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M13 10V3L4 14h7v7l9-11h-7z"
-                              />
-                            </svg>
-                            Opacity
-                          </div>
-                          <span>{(item.opacity * 100).toFixed(0)}%</span>
-                        </div>
-                      </motion.li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="p-4 text-center bg-gray-50 rounded-lg border border-gray-200">
-                    <p className="text-gray-500">
-                      No elements added to back design
-                    </p>
-                  </div>
-                )}
-              </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* Order and Shipping Info */}

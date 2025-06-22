@@ -25,6 +25,8 @@ router.post(
   upload.fields([
     { name: "frontDesignImage", maxCount: 1 },
     { name: "backDesignImage", maxCount: 1 },
+    { name: "leftArmDesignImage", maxCount: 1 },
+    { name: "rightArmDesignImage", maxCount: 1 },
   ]),
   async (req, res) => {
     try {
@@ -38,10 +40,17 @@ router.post(
 
       const user = req.user._id;
 
-      if (!req.files.frontDesignImage || !req.files.backDesignImage) {
+      if (
+        !req.files.frontDesignImage ||
+        !req.files.backDesignImage ||
+        !req.files.leftArmDesignImage ||
+        !req.files.rightArmDesignImage
+      ) {
         return res
           .status(400)
-          .json({ message: "Both front and back images are required" });
+          .json({
+            message: "Front, back, left arm, and right arm images are required",
+          });
       }
 
       // Calculate total price
@@ -77,6 +86,36 @@ router.post(
         stream.end(req.files.backDesignImage[0].buffer);
       });
 
+      // Upload left arm image to Cloudinary
+      const leftArmResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "custom-designs" },
+          (error, result) => {
+            if (result) {
+              resolve(result);
+            } else {
+              reject(error);
+            }
+          }
+        );
+        stream.end(req.files.leftArmDesignImage[0].buffer);
+      });
+
+      // Upload right arm image to Cloudinary
+      const rightArmResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "custom-designs" },
+          (error, result) => {
+            if (result) {
+              resolve(result);
+            } else {
+              reject(error);
+            }
+          }
+        );
+        stream.end(req.files.rightArmDesignImage[0].buffer);
+      });
+
       // Create new custom design
       const customDesign = new CustomDesign({
         user,
@@ -86,6 +125,10 @@ router.post(
         frontCloudinaryId: frontResult.public_id,
         backImageUrl: backResult.secure_url,
         backCloudinaryId: backResult.public_id,
+        leftArmImageUrl: leftArmResult.secure_url,
+        leftArmCloudinaryId: leftArmResult.public_id,
+        rightArmImageUrl: rightArmResult.secure_url,
+        rightArmCloudinaryId: rightArmResult.public_id,
         shippingAddress: JSON.parse(shippingAddress),
         status: "Processing",
         price,
@@ -160,7 +203,10 @@ router.get("/admin/all", protect, admin, async (req, res) => {
 // @access Private/Admin
 router.get("/admin/:id", protect, admin, async (req, res) => {
   try {
-    const design = await CustomDesign.findById(req.params.id).populate("user", "name email");
+    const design = await CustomDesign.findById(req.params.id).populate(
+      "user",
+      "name email"
+    );
 
     if (!design) {
       return res.status(404).json({ message: "Design not found" });
@@ -187,6 +233,8 @@ router.delete("/admin/:id", protect, admin, async (req, res) => {
     await CustomDesign.findByIdAndDelete(req.params.id);
     await cloudinary.uploader.destroy(design.frontCloudinaryId);
     await cloudinary.uploader.destroy(design.backCloudinaryId);
+    await cloudinary.uploader.destroy(design.rightArmCloudinaryId);
+    await cloudinary.uploader.destroy(design.leftArmCloudinaryId);
 
     res.json({ message: "Design removed by admin" });
   } catch (error) {
@@ -250,6 +298,8 @@ router.delete("/user/:id", protect, async (req, res) => {
     await CustomDesign.findByIdAndDelete(req.params.id);
     await cloudinary.uploader.destroy(design.frontCloudinaryId);
     await cloudinary.uploader.destroy(design.backCloudinaryId);
+    await cloudinary.uploader.destroy(design.rightArmCloudinaryId);
+    await cloudinary.uploader.destroy(design.leftArmCloudinaryId);
 
     res.json({ message: "Your design has been removed" });
   } catch (error) {

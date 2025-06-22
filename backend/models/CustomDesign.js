@@ -38,6 +38,32 @@ const customDesignSchema = new mongoose.Schema(
           opacity: Number,
         },
       ],
+      leftArm: [
+        {
+          image: String,
+          name: String,
+          position: {
+            x: Number,
+            y: Number,
+          },
+          scale: Number,
+          rotation: Number,
+          opacity: Number,
+        },
+      ],
+      rightArm: [
+        {
+          image: String,
+          name: String,
+          position: {
+            x: Number,
+            y: Number,
+          },
+          scale: Number,
+          rotation: Number,
+          opacity: Number,
+        },
+      ],
     },
     frontImageUrl: {
       type: String,
@@ -55,6 +81,22 @@ const customDesignSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    rightArmImageUrl: {
+      type: String,
+      required: true,
+    },
+    rightArmCloudinaryId: {
+      type: String,
+      required: true,
+    },
+    leftArmImageUrl: {
+      type: String,
+      required: true,
+    },
+    leftArmCloudinaryId: {
+      type: String,
+      required: true,
+    },
     shippingAddress: {
       name: { type: String, required: true },
       address: { type: String, required: true },
@@ -65,7 +107,15 @@ const customDesignSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Approved","Rejected","Processing", "Shipped", "Out for Delivery", "Delivered", "Cancelled"],
+      enum: [
+        "Approved",
+        "Rejected",
+        "Processing",
+        "Shipped",
+        "Out for Delivery",
+        "Delivered",
+        "Cancelled",
+      ],
       default: "Processing",
     },
     price: {
@@ -81,7 +131,7 @@ const customDesignSchema = new mongoose.Schema(
     totalPrice: {
       type: Number,
       required: true,
-    }
+    },
   },
   { timestamps: true }
 );

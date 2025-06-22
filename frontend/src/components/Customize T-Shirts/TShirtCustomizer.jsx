@@ -7,15 +7,7 @@ import {
   resetDesignState,
 } from "../../redux/slices/customDesignSlice";
 import { toast } from "sonner";
-import {
-  Shirt,
-  RotateCcw,
-  Loader2,
-  CheckCircle,
-  Download,
-  Upload,
-  Truck,
-} from "lucide-react";
+import { Loader2, CheckCircle, Download, Upload, Truck } from "lucide-react";
 import {
   drawTShirt,
   drawGrid,
@@ -30,6 +22,8 @@ const TShirtCustomizer = () => {
   const [designs, setDesigns] = useState({
     front: [],
     back: [],
+    leftArm: [],
+    rightArm: [],
   });
   const [selectedDesignId, setSelectedDesignId] = useState(null);
   const [draggedDesign, setDraggedDesign] = useState(null);
@@ -323,6 +317,18 @@ const TShirtCustomizer = () => {
         setTimeout(() => resolve(canvas.toDataURL("image/png")), 100);
       });
 
+      // Get right arm image
+      setView("rightArm");
+      const rightArmImageData = await new Promise((resolve) => {
+        setTimeout(() => resolve(canvas.toDataURL("image/png")), 100);
+      });
+
+      // Get left arm image
+      setView("leftArm");
+      const leftArmImageData = await new Promise((resolve) => {
+        setTimeout(() => resolve(canvas.toDataURL("image/png")), 100);
+      });
+
       try {
         await dispatch(
           saveCustomDesign({
@@ -330,6 +336,8 @@ const TShirtCustomizer = () => {
             designs,
             frontImageData,
             backImageData,
+            rightArmImageData,
+            leftArmImageData,
             shippingAddress,
             quantity,
             price: 2000, // Default price from the model
@@ -390,10 +398,23 @@ const TShirtCustomizer = () => {
     // Wait for the canvas to update before downloading
     setTimeout(() => {
       const link = document.createElement("a");
-      const fileName =
-        view === "front"
-          ? "custom-tshirt-front-design.png"
-          : "custom-tshirt-back-design.png";
+      let fileName;
+      switch (view) {
+        case "front":
+          fileName = "custom-tshirt-front-design.png";
+          break;
+        case "back":
+          fileName = "custom-tshirt-back-design.png";
+          break;
+        case "rightArm":
+          fileName = "custom-tshirt-right-arm-design.png";
+          break;
+        case "leftArm":
+          fileName = "custom-tshirt-left-arm-design.png";
+          break;
+        default:
+          fileName = "custom-tshirt-design.png";
+      }
       link.download = fileName;
       link.href = canvas.toDataURL("image/png");
       link.click();
@@ -558,26 +579,44 @@ const TShirtCustomizer = () => {
                   </h3>
                   <div className="flex space-x-3">
                     <button
-                      className={`flex-1 py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
+                      className={`flex-1 py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 ${
                         view === "front"
                           ? "bg-blue-600 text-white shadow-md"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
                       onClick={() => handleViewChange("front")}
                     >
-                      <Shirt className="h-5 w-5" />
                       Front
                     </button>
                     <button
-                      className={`flex-1 py-3 rounded-lg transition-all flex items-center justify-center gap-2 ${
+                      className={`flex-1 py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 ${
                         view === "back"
                           ? "bg-blue-600 text-white shadow-md"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
                       onClick={() => handleViewChange("back")}
                     >
-                      <RotateCcw className="h-5 w-5" />
                       Back
+                    </button>
+                    <button
+                      className={`flex-1 py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 ${
+                        view === "rightArm"
+                          ? "bg-blue-600 text-white shadow-md"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                      onClick={() => handleViewChange("rightArm")}
+                    >
+                      Right Arm
+                    </button>
+                    <button
+                      className={`flex-1 py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 ${
+                        view === "leftArm"
+                          ? "bg-blue-600 text-white shadow-md"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                      onClick={() => handleViewChange("leftArm")}
+                    >
+                      Left Arm
                     </button>
                   </div>
                 </div>
@@ -589,7 +628,14 @@ const TShirtCustomizer = () => {
                     Upload Your Design
                   </h3>
                   <p className="text-sm text-gray-500 mb-4">
-                    {view === "front" ? "Front design" : "Back design"}
+                    {
+                      {
+                        front: "Front design",
+                        back: "Back design",
+                        leftArm: "Left arm design",
+                        rightArm: "Right arm design",
+                      }[view]
+                    }
                   </p>
                   <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -669,7 +715,14 @@ const TShirtCustomizer = () => {
                             {design.name}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {view === "front" ? "Front design" : "Back design"}
+                            {
+                              {
+                                front: "Front design",
+                                back: "Back design",
+                                leftArm: "Left arm design",
+                                rightArm: "Right arm design",
+                              }[view]
+                            }
                           </p>
                         </div>
                         <button
@@ -1165,7 +1218,14 @@ const TShirtCustomizer = () => {
                 className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 flex items-center justify-center shadow-md transition-all"
               >
                 <Download className="h-5 w-5 mr-2" />
-                Download {view === "front" ? "Front" : "Back"} Design
+                Download{" "}
+                {{
+                  front: "Front",
+                  back: "Back",
+                  leftArm: "Left Arm",
+                  rightArm: "Right Arm",
+                }[view] || "Design"}{" "}
+                Design
               </button>
             </div>
           </motion.div>
@@ -1200,7 +1260,15 @@ const TShirtCustomizer = () => {
                 <div className="flex items-center bg-gray-100 px-3 py-1 rounded-full">
                   <span className="text-sm text-gray-600 mr-2">View:</span>
                   <span className="font-semibold">
-                    {view === "front" ? "Front" : "Back"}
+                    {view === "front"
+                      ? "Front"
+                      : view === "back"
+                      ? "Back"
+                      : view === "leftArm"
+                      ? "Left Arm"
+                      : view === "rightArm"
+                      ? "Right Arm"
+                      : view}
                   </span>
                 </div>
                 <div className="flex items-center bg-gray-100 px-3 py-1 rounded-full">
