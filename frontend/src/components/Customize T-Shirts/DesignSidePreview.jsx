@@ -15,7 +15,7 @@ const DesignSidePreview = ({
 
   return (
     <motion.div
-      className="flex-shrink-0 w-full max-w-md mx-2 snap-center"
+      className="flex-shrink-0 w-full max-w-md ml-2 snap-center"
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.4, delay }}
