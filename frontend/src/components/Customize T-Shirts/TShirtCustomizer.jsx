@@ -396,7 +396,6 @@ const TShirtCustomizer = () => {
     setSelectedDesignId(null);
 
     // Wait for the canvas to update before downloading
-    // Wait for the canvas to update before downloading
     setTimeout(() => {
       const link = document.createElement("a");
       let fileName;
@@ -407,11 +406,11 @@ const TShirtCustomizer = () => {
         case "back":
           fileName = "custom-tshirt-back-design.png";
           break;
-        case "leftArm":
-          fileName = "custom-tshirt-left-arm-design.png";
-          break;
         case "rightArm":
           fileName = "custom-tshirt-right-arm-design.png";
+          break;
+        case "leftArm":
+          fileName = "custom-tshirt-left-arm-design.png";
           break;
         default:
           fileName = "custom-tshirt-design.png";
@@ -601,16 +600,6 @@ const TShirtCustomizer = () => {
                     </button>
                     <button
                       className={`flex-1 py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 ${
-                        view === "leftArm"
-                          ? "bg-blue-600 text-white shadow-md"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
-                      onClick={() => handleViewChange("leftArm")}
-                    >
-                      Left Arm
-                    </button>
-                    <button
-                      className={`flex-1 py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 ${
                         view === "rightArm"
                           ? "bg-blue-600 text-white shadow-md"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -618,6 +607,16 @@ const TShirtCustomizer = () => {
                       onClick={() => handleViewChange("rightArm")}
                     >
                       Right Arm
+                    </button>
+                    <button
+                      className={`flex-1 py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 ${
+                        view === "leftArm"
+                          ? "bg-blue-600 text-white shadow-md"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                      onClick={() => handleViewChange("leftArm")}
+                    >
+                      Left Arm
                     </button>
                   </div>
                 </div>

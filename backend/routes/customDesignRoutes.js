@@ -233,6 +233,8 @@ router.delete("/admin/:id", protect, admin, async (req, res) => {
     await CustomDesign.findByIdAndDelete(req.params.id);
     await cloudinary.uploader.destroy(design.frontCloudinaryId);
     await cloudinary.uploader.destroy(design.backCloudinaryId);
+    await cloudinary.uploader.destroy(design.rightArmCloudinaryId);
+    await cloudinary.uploader.destroy(design.leftArmCloudinaryId);
 
     res.json({ message: "Design removed by admin" });
   } catch (error) {
@@ -296,6 +298,8 @@ router.delete("/user/:id", protect, async (req, res) => {
     await CustomDesign.findByIdAndDelete(req.params.id);
     await cloudinary.uploader.destroy(design.frontCloudinaryId);
     await cloudinary.uploader.destroy(design.backCloudinaryId);
+    await cloudinary.uploader.destroy(design.rightArmCloudinaryId);
+    await cloudinary.uploader.destroy(design.leftArmCloudinaryId);
 
     res.json({ message: "Your design has been removed" });
   } catch (error) {
