@@ -238,7 +238,8 @@ const EditTrendingProductPage = () => {
             </h3>
             <div className="mt-2 text-sm text-purple-700">
               <p>
-                This product is marked as trending and appears in the trending products section on the website.
+                This product is marked as trending and appears in the trending
+                products section on the website.
               </p>
             </div>
           </div>
@@ -254,7 +255,11 @@ const EditTrendingProductPage = () => {
             {/* Left Column */}
             <div className="space-y-6">
               {/* Basic Information */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "basic" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "basic" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Basic Information
                 </h3>
@@ -356,7 +361,11 @@ const EditTrendingProductPage = () => {
                 </div>
               </div>
               {/* Categories */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "categories" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "categories" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Categories
                 </h3>
@@ -364,14 +373,20 @@ const EditTrendingProductPage = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Category*
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="category"
                     value={productData.category}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     required
-                  />
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Top Wear">Top Wear</option>
+                    <option value="Bottom Wear">Bottom Wear</option>
+                    <option value="Dresses">Dresses</option>
+                    <option value="Hats">Hats</option>
+                    <option value="Aprons">Aprons</option>
+                  </select>
                 </div>
                 <div className="mb-5">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -427,7 +442,11 @@ const EditTrendingProductPage = () => {
                 </div>
               </div>
               {/* Variants */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "variants" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "variants" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Variants
                 </h3>
@@ -495,7 +514,11 @@ const EditTrendingProductPage = () => {
             {/* Right Column */}
             <div className="space-y-6">
               {/* Images */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "images" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "images" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Images
                 </h3>
@@ -581,7 +604,11 @@ const EditTrendingProductPage = () => {
                 </div>
               </div>
               {/* Shipping */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "shipping" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "shipping" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Shipping Information
                 </h3>
@@ -650,7 +677,11 @@ const EditTrendingProductPage = () => {
                 </div>
               </div>
               {/* SEO */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "seo" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "seo" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   SEO Information
                 </h3>
@@ -692,7 +723,11 @@ const EditTrendingProductPage = () => {
                 </div>
               </div>
               {/* Status */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "status" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "status" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Status
                 </h3>

@@ -6,7 +6,7 @@ import {
   MdFilterAlt,
 } from "react-icons/md";
 import { MdAdd } from "react-icons/md";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -17,7 +17,6 @@ import {
 
 const TrendingsManagement = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { trendingProducts, loading, error } = useSelector(
     (state) => state.adminProducts
   );
@@ -99,7 +98,7 @@ const TrendingsManagement = () => {
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
 

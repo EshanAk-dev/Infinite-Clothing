@@ -45,20 +45,25 @@ const AddNewProductPage = () => {
   const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState("basic"); // For mobile tabs navigation
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-64">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-    </div>
-  );
-
-  if (error) return (
-    <div className="w-full px-4 sm:max-w-7xl sm:mx-auto p-4 sm:p-6">
-      <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded" role="alert">
-        <p className="font-bold">Error</p>
-        <p>{error}</p>
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
-    </div>
-  );
+    );
+
+  if (error)
+    return (
+      <div className="w-full px-4 sm:max-w-7xl sm:mx-auto p-4 sm:p-6">
+        <div
+          className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded"
+          role="alert"
+        >
+          <p className="font-bold">Error</p>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -180,8 +185,10 @@ const AddNewProductPage = () => {
   return (
     <div className="w-full px-4 sm:max-w-7xl sm:mx-auto py-4 sm:py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 sm:mb-0">Add New Product</h2>
-        <button 
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 sm:mb-0">
+          Add New Product
+        </h2>
+        <button
           onClick={() => navigate("/admin/products")}
           className="text-sm text-gray-600 hover:text-gray-800"
         >
@@ -198,11 +205,19 @@ const AddNewProductPage = () => {
             {/* Left Column */}
             <div className="space-y-6">
               {/* Basic Information */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "basic" && "lg:block hidden"}`}>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Basic Information</h3>
-                
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "basic" && "lg:block hidden"
+                }`}
+              >
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+                  Basic Information
+                </h3>
+
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Product Name*</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Product Name*
+                  </label>
                   <input
                     type="text"
                     name="name"
@@ -214,7 +229,9 @@ const AddNewProductPage = () => {
                 </div>
 
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Description*</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description*
+                  </label>
                   <textarea
                     name="description"
                     value={productData.description}
@@ -227,9 +244,13 @@ const AddNewProductPage = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Price*</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Price*
+                    </label>
                     <div className="relative">
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">Rs.</span>
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                        Rs.
+                      </span>
                       <input
                         type="number"
                         name="price"
@@ -244,9 +265,13 @@ const AddNewProductPage = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Old Price</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Old Price
+                    </label>
                     <div className="relative">
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">Rs.</span>
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                        Rs.
+                      </span>
                       <input
                         type="number"
                         name="discountPrice"
@@ -262,7 +287,9 @@ const AddNewProductPage = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="mb-5">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">SKU*</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      SKU*
+                    </label>
                     <input
                       type="text"
                       name="sku"
@@ -274,7 +301,9 @@ const AddNewProductPage = () => {
                   </div>
 
                   <div className="mb-5">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Stock Quantity*</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Stock Quantity*
+                    </label>
                     <input
                       type="number"
                       name="countInStock"
@@ -289,23 +318,39 @@ const AddNewProductPage = () => {
               </div>
 
               {/* Categories */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "categories" && "lg:block hidden"}`}>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Categories</h3>
-                
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "categories" && "lg:block hidden"
+                }`}
+              >
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+                  Categories
+                </h3>
+
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Category*</label>
-                  <input
-                    type="text"
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Category*
+                  </label>
+                  <select
                     name="category"
                     value={productData.category}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     required
-                  />
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Top Wear">Top Wear</option>
+                    <option value="Bottom Wear">Bottom Wear</option>
+                    <option value="Dresses">Dresses</option>
+                    <option value="Hats">Hats</option>
+                    <option value="Aprons">Aprons</option>
+                  </select>
                 </div>
 
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Brand
+                  </label>
                   <input
                     type="text"
                     name="brand"
@@ -316,7 +361,9 @@ const AddNewProductPage = () => {
                 </div>
 
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Collections</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Collections
+                  </label>
                   <input
                     type="text"
                     name="collections"
@@ -327,7 +374,9 @@ const AddNewProductPage = () => {
                 </div>
 
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Material</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Material
+                  </label>
                   <input
                     type="text"
                     name="material"
@@ -338,7 +387,9 @@ const AddNewProductPage = () => {
                 </div>
 
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Gender
+                  </label>
                   <select
                     name="gender"
                     value={productData.gender}
@@ -354,11 +405,19 @@ const AddNewProductPage = () => {
               </div>
 
               {/* Variants */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "variants" && "lg:block hidden"}`}>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Variants</h3>
-                
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "variants" && "lg:block hidden"
+                }`}
+              >
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+                  Variants
+                </h3>
+
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Sizes* (comma separated)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sizes* (comma separated)
+                  </label>
                   <input
                     type="text"
                     name="sizes"
@@ -366,7 +425,9 @@ const AddNewProductPage = () => {
                     onChange={(e) =>
                       setProductData({
                         ...productData,
-                        sizes: e.target.value.split(",").map((size) => size.trim()),
+                        sizes: e.target.value
+                          .split(",")
+                          .map((size) => size.trim()),
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
@@ -375,7 +436,9 @@ const AddNewProductPage = () => {
                 </div>
 
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Colors* (comma separated)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Colors* (comma separated)
+                  </label>
                   <input
                     type="text"
                     name="colors"
@@ -383,7 +446,9 @@ const AddNewProductPage = () => {
                     onChange={(e) =>
                       setProductData({
                         ...productData,
-                        colors: e.target.value.split(",").map((color) => color.trim()),
+                        colors: e.target.value
+                          .split(",")
+                          .map((color) => color.trim()),
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
@@ -392,7 +457,9 @@ const AddNewProductPage = () => {
                 </div>
 
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tags (comma separated)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tags (comma separated)
+                  </label>
                   <input
                     type="text"
                     name="tags"
@@ -400,7 +467,9 @@ const AddNewProductPage = () => {
                     onChange={(e) =>
                       setProductData({
                         ...productData,
-                        tags: e.target.value.split(",").map((tag) => tag.trim()),
+                        tags: e.target.value
+                          .split(",")
+                          .map((tag) => tag.trim()),
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
@@ -412,9 +481,15 @@ const AddNewProductPage = () => {
             {/* Right Column */}
             <div className="space-y-6">
               {/* Images */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "images" && "lg:block hidden"}`}>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Images</h3>
-                
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "images" && "lg:block hidden"
+                }`}
+              >
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+                  Images
+                </h3>
+
                 <div className="mb-5">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Upload Images (Multiple)
@@ -422,24 +497,53 @@ const AddNewProductPage = () => {
                   <div className="flex items-center justify-center w-full">
                     <label className="flex flex-col w-full h-28 sm:h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50">
                       <div className="flex flex-col items-center justify-center pt-5 sm:pt-7">
-                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        <svg
+                          className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                          />
                         </svg>
-                        <p className="pt-1 text-xs sm:text-sm text-gray-600">Click to upload or drag and drop</p>
+                        <p className="pt-1 text-xs sm:text-sm text-gray-600">
+                          Click to upload or drag and drop
+                        </p>
                       </div>
-                      <input 
-                        type="file" 
-                        onChange={handleImageUpload} 
-                        multiple 
+                      <input
+                        type="file"
+                        onChange={handleImageUpload}
+                        multiple
                         className="opacity-0"
                       />
                     </label>
                   </div>
                   {uploading && (
                     <div className="mt-2 text-sm text-blue-600 flex items-center">
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
                       Uploading images...
                     </div>
@@ -448,7 +552,10 @@ const AddNewProductPage = () => {
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {productData.images.map((image, index) => (
-                    <div key={index} className="relative group rounded-lg overflow-hidden border border-gray-200">
+                    <div
+                      key={index}
+                      className="relative group rounded-lg overflow-hidden border border-gray-200"
+                    >
                       <img
                         src={image.url}
                         alt={image.altText || "Product image"}
@@ -467,12 +574,20 @@ const AddNewProductPage = () => {
               </div>
 
               {/* Shipping */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "shipping" && "lg:block hidden"}`}>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Shipping Information</h3>
-                
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "shipping" && "lg:block hidden"
+                }`}
+              >
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+                  Shipping Information
+                </h3>
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Length (cm)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Length (cm)
+                    </label>
                     <input
                       type="number"
                       name="length"
@@ -484,7 +599,9 @@ const AddNewProductPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Width (cm)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Width (cm)
+                    </label>
                     <input
                       type="number"
                       name="width"
@@ -496,7 +613,9 @@ const AddNewProductPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Height (cm)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Height (cm)
+                    </label>
                     <input
                       type="number"
                       name="height"
@@ -510,12 +629,19 @@ const AddNewProductPage = () => {
                 </div>
 
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Weight (kg)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Weight (kg)
+                  </label>
                   <input
                     type="number"
                     name="weight"
                     value={productData.weight}
-                    onChange={(e) => setProductData({ ...productData, weight: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) =>
+                      setProductData({
+                        ...productData,
+                        weight: parseFloat(e.target.value) || 0,
+                      })
+                    }
                     min="0"
                     step="0.01"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
@@ -524,11 +650,19 @@ const AddNewProductPage = () => {
               </div>
 
               {/* SEO */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "seo" && "lg:block hidden"}`}>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">SEO Information</h3>
-                
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "seo" && "lg:block hidden"
+                }`}
+              >
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+                  SEO Information
+                </h3>
+
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Meta Title</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Meta Title
+                  </label>
                   <input
                     type="text"
                     name="metaTitle"
@@ -539,7 +673,9 @@ const AddNewProductPage = () => {
                 </div>
 
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Meta Description</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Meta Description
+                  </label>
                   <textarea
                     name="metaDescription"
                     value={productData.metaDescription}
@@ -550,7 +686,9 @@ const AddNewProductPage = () => {
                 </div>
 
                 <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Meta Keywords</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Meta Keywords
+                  </label>
                   <input
                     type="text"
                     name="metaKeywords"
@@ -562,19 +700,33 @@ const AddNewProductPage = () => {
               </div>
 
               {/* Status */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "status" && "lg:block hidden"}`}>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Status</h3>
-                
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "status" && "lg:block hidden"
+                }`}
+              >
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+                  Status
+                </h3>
+
                 <div className="flex items-center mb-4">
                   <input
                     type="checkbox"
                     id="isFeatured"
                     name="isFeatured"
                     checked={productData.isFeatured}
-                    onChange={(e) => setProductData({ ...productData, isFeatured: e.target.checked })}
+                    onChange={(e) =>
+                      setProductData({
+                        ...productData,
+                        isFeatured: e.target.checked,
+                      })
+                    }
                     className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label htmlFor="isFeatured" className="ml-3 block text-sm text-gray-700">
+                  <label
+                    htmlFor="isFeatured"
+                    className="ml-3 block text-sm text-gray-700"
+                  >
                     Featured Product
                   </label>
                 </div>
@@ -585,10 +737,18 @@ const AddNewProductPage = () => {
                     id="isPublished"
                     name="isPublished"
                     checked={productData.isPublished}
-                    onChange={(e) => setProductData({ ...productData, isPublished: e.target.checked })}
+                    onChange={(e) =>
+                      setProductData({
+                        ...productData,
+                        isPublished: e.target.checked,
+                      })
+                    }
                     className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label htmlFor="isPublished" className="ml-3 block text-sm text-gray-700">
+                  <label
+                    htmlFor="isPublished"
+                    className="ml-3 block text-sm text-gray-700"
+                  >
                     Publish Product
                   </label>
                 </div>

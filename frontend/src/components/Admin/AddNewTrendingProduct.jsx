@@ -356,14 +356,20 @@ const AddNewTrendingProduct = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Category*
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="category"
                     value={productData.category}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     required
-                  />
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Top Wear">Top Wear</option>
+                    <option value="Bottom Wear">Bottom Wear</option>
+                    <option value="Dresses">Dresses</option>
+                    <option value="Hats">Hats</option>
+                    <option value="Aprons">Aprons</option>
+                  </select>
                 </div>
 
                 <div className="mb-5">

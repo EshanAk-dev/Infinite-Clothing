@@ -139,14 +139,15 @@ const EditProductPage = () => {
         navigate("/admin/products");
       })
       .catch((err) => {
-        toast.error("Failed to update product!", {style: {
-          background: "#fef2f2",
-          color: "#b91c1c",
-          border: "1px solid #fca5a5",
-          borderRadius: "8px",
-          padding: "16px",
-        },
-        icon: "⚠️",
+        toast.error("Failed to update product!", {
+          style: {
+            background: "#fef2f2",
+            color: "#b91c1c",
+            border: "1px solid #fca5a5",
+            borderRadius: "8px",
+            padding: "16px",
+          },
+          icon: "⚠️",
         });
         console.error(err);
       });
@@ -228,7 +229,11 @@ const EditProductPage = () => {
             {/* Left Column */}
             <div className="space-y-6">
               {/* Basic Information */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "basic" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "basic" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Basic Information
                 </h3>
@@ -337,7 +342,11 @@ const EditProductPage = () => {
               </div>
 
               {/* Categories */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "categories" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "categories" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Categories
                 </h3>
@@ -346,14 +355,20 @@ const EditProductPage = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Category*
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="category"
                     value={productData.category}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     required
-                  />
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Top Wear">Top Wear</option>
+                    <option value="Bottom Wear">Bottom Wear</option>
+                    <option value="Dresses">Dresses</option>
+                    <option value="Hats">Hats</option>
+                    <option value="Aprons">Aprons</option>
+                  </select>
                 </div>
 
                 <div className="mb-5">
@@ -414,7 +429,11 @@ const EditProductPage = () => {
               </div>
 
               {/* Variants */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "variants" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "variants" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Variants
                 </h3>
@@ -486,7 +505,11 @@ const EditProductPage = () => {
             {/* Right Column */}
             <div className="space-y-6">
               {/* Images */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "images" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "images" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Images
                 </h3>
@@ -575,7 +598,11 @@ const EditProductPage = () => {
               </div>
 
               {/* Shipping */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "shipping" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "shipping" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Shipping Information
                 </h3>
@@ -647,7 +674,11 @@ const EditProductPage = () => {
               </div>
 
               {/* SEO */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "seo" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "seo" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   SEO Information
                 </h3>
@@ -693,7 +724,11 @@ const EditProductPage = () => {
               </div>
 
               {/* Status */}
-              <div className={`border border-gray-200 rounded-lg p-4 ${activeTab !== "status" && "lg:block hidden"}`}>
+              <div
+                className={`border border-gray-200 rounded-lg p-4 ${
+                  activeTab !== "status" && "lg:block hidden"
+                }`}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
                   Status
                 </h3>
