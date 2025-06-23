@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
@@ -8,6 +8,7 @@ import {
   MdCheckCircle,
   MdClose,
 } from "react-icons/md";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { toast } from "sonner";
 import {
   fetchDesignDetailsAdmin,
@@ -15,12 +16,16 @@ import {
   deleteDesignAdmin,
   resetAdminDesignState,
 } from "../../redux/slices/adminCustomDesignSlice";
+import DesignSidePreview from "../Customize T-Shirts/DesignSidePreview";
 
 const AdminCustomOrderDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [popupImage, setPopupImage] = useState(null);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const scrollRef = useRef(null);
 
   const {
     currentDesign: design,
@@ -43,6 +48,19 @@ const AdminCustomOrderDetails = () => {
       };
     }
   }, [id, dispatch, user, navigate]);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (container) {
+      container.addEventListener("scroll", updateScrollButtons);
+      window.addEventListener("resize", updateScrollButtons);
+      updateScrollButtons();
+      return () => {
+        container.removeEventListener("scroll", updateScrollButtons);
+        window.removeEventListener("resize", updateScrollButtons);
+      };
+    }
+  }, [design]);
 
   useEffect(() => {
     if (success && statusUpdating) {
@@ -107,6 +125,26 @@ const AdminCustomOrderDetails = () => {
         return "bg-red-100 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const scroll = (direction) => {
+    const container = scrollRef.current;
+    const scrollAmount =
+      direction === "left"
+        ? -container.offsetWidth * 0.8
+        : container.offsetWidth * 0.8;
+    container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  };
+
+  const updateScrollButtons = () => {
+    const container = scrollRef.current;
+    if (container) {
+      const leftScroll = container.scrollLeft;
+      const rightScrollable =
+        container.scrollWidth > leftScroll + container.clientWidth + 1;
+      setCanScrollLeft(leftScroll > 0);
+      setCanScrollRight(rightScrollable);
     }
   };
 
@@ -352,119 +390,142 @@ const AdminCustomOrderDetails = () => {
             <h2 className="text-lg font-semibold text-gray-800 mb-4">
               Design Preview
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-md font-medium text-gray-700 mb-2">
-                  Front Design
-                </h3>
-                <div
-                  className="bg-gray-100 rounded-lg p-2 cursor-pointer hover:ring-2 hover:ring-indigo-400 transition"
-                  onClick={() => setPopupImage(design.frontImageUrl)}
-                  title="Click to enlarge"
-                >
-                  <img
-                    src={design.frontImageUrl}
-                    alt="Front Design"
-                    className="w-full h-auto rounded"
-                  />
-                </div>
-              </div>
-              <div>
-                <h3 className="text-md font-medium text-gray-700 mb-2">
-                  Back Design
-                </h3>
-                <div
-                  className="bg-gray-100 rounded-lg p-2 cursor-pointer hover:ring-2 hover:ring-indigo-400 transition"
-                  onClick={() => setPopupImage(design.backImageUrl)}
-                  title="Click to enlarge"
-                >
-                  <img
-                    src={design.backImageUrl}
-                    alt="Back Design"
-                    className="w-full h-auto rounded"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+            <p className="text-gray-600 text-center mb-6">
+              Swipe or use arrows to view all design sides
+            </p>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Design Elements
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Front Elements */}
-              <div>
-                <h3 className="text-md font-medium text-gray-700 mb-2">
-                  Front Elements
-                </h3>
-                {design.designs.front && design.designs.front.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {design.designs.front.map((element, index) => (
-                      <div
-                        key={index}
-                        className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+            {/* Scrollable Design Container */}
+            <div className="relative">
+              {/* Scroll buttons */}
+              <button
+                onClick={() => scroll("left")}
+                disabled={!canScrollLeft}
+                className={`absolute left-2 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-300 ${
+                  canScrollLeft
+                    ? "hover:bg-gray-50 active:bg-gray-100"
+                    : "cursor-not-allowed opacity-30"
+                }`}
+              >
+                <FiChevronLeft className="text-xl text-gray-700" />
+              </button>
+
+              <button
+                onClick={() => scroll("right")}
+                disabled={!canScrollRight}
+                className={`absolute right-2 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-300 ${
+                  canScrollRight
+                    ? "hover:bg-gray-50 active:bg-gray-100"
+                    : "cursor-not-allowed opacity-30"
+                }`}
+              >
+                <FiChevronRight className="text-xl text-gray-700" />
+              </button>
+
+              {/* Scrollable content */}
+              <div
+                ref={scrollRef}
+                className="overflow-x-auto flex space-x-8 pb-6 scrollbar-hide snap-x snap-mandatory"
+                style={{
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                  WebkitScrollbar: { display: "none" },
+                }}
+              >
+                <DesignSidePreview
+                  title="Front Design"
+                  icon={
+                    <svg
+                      className="w-5 h-5 mr-2 text-indigo-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  }
+                  imageUrl={design.frontImageUrl}
+                  elements={design.designs.front || []}
+                  badgeColor="bg-indigo-100 text-indigo-800"
+                  badgeText="elements"
+                  delay={0}
+                />
+                <DesignSidePreview
+                  title="Back Design"
+                  icon={
+                    <svg
+                      className="w-5 h-5 mr-2 text-indigo-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  }
+                  imageUrl={design.backImageUrl}
+                  elements={design.designs.back || []}
+                  badgeColor="bg-indigo-100 text-indigo-800"
+                  badgeText="elements"
+                  delay={0.1}
+                />
+                {design.leftArmImageUrl && (
+                  <DesignSidePreview
+                    title="Left Arm Design"
+                    icon={
+                      <svg
+                        className="w-5 h-5 mr-2 text-purple-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        <p className="text-sm font-medium text-gray-800">
-                          {element.name || `Element ${index + 1}`}
-                        </p>
-                        <div className="mt-2 space-y-1">
-                          <p className="text-xs text-gray-600">
-                            Position: x=
-                            {element.position?.x?.toFixed(2) || "N/A"}, y=
-                            {element.position?.y?.toFixed(2) || "N/A"}
-                          </p>
-                          <p className="text-xs text-gray-600">
-                            Scale: {element.scale?.toFixed(2) || "N/A"}
-                          </p>
-                          <p className="text-xs text-gray-600">
-                            Rotation: {element.rotation?.toFixed(2) || "N/A"}°
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-500">
-                    No front elements found.
-                  </p>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 3V1m0 18v2"
+                        />
+                      </svg>
+                    }
+                    imageUrl={design.leftArmImageUrl}
+                    elements={design.designs?.leftArm || []}
+                    badgeColor="bg-purple-100 text-purple-800"
+                    badgeText="elements"
+                    delay={0.2}
+                  />
                 )}
-              </div>
-              {/* Back Elements */}
-              <div>
-                <h3 className="text-md font-medium text-gray-700 mb-2">
-                  Back Elements
-                </h3>
-                {design.designs.back && design.designs.back.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {design.designs.back.map((element, index) => (
-                      <div
-                        key={index}
-                        className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                {design.rightArmImageUrl && (
+                  <DesignSidePreview
+                    title="Right Arm Design"
+                    icon={
+                      <svg
+                        className="w-5 h-5 mr-2 text-orange-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        <p className="text-sm font-medium text-gray-800">
-                          {element.name || `Element ${index + 1}`}
-                        </p>
-                        <div className="mt-2 space-y-1">
-                          <p className="text-xs text-gray-600">
-                            Position: x=
-                            {element.position?.x?.toFixed(2) || "N/A"}, y=
-                            {element.position?.y?.toFixed(2) || "N/A"}
-                          </p>
-                          <p className="text-xs text-gray-600">
-                            Scale: {element.scale?.toFixed(2) || "N/A"}
-                          </p>
-                          <p className="text-xs text-gray-600">
-                            Rotation: {element.rotation?.toFixed(2) || "N/A"}°
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-500">
-                    No back elements found.
-                  </p>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 21a4 4 0 004-4V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4zM17 3V1m0 18v2"
+                        />
+                      </svg>
+                    }
+                    imageUrl={design.rightArmImageUrl}
+                    elements={design.designs?.rightArm || []}
+                    badgeColor="bg-orange-100 text-orange-800"
+                    badgeText="elements"
+                    delay={0.3}
+                  />
                 )}
               </div>
             </div>
