@@ -17,6 +17,19 @@ export const fetchAdminProducts = createAsyncThunk(
   }
 );
 
+// Async Thunk to fetch admin trending products
+export const fetchAdminTrendingProducts = createAsyncThunk(
+  "adminProducts/fetchTrendingProducts",
+  async () => {
+    const response = await axios.get(`${API_URL}/api/admin/products/trending`, {
+      headers: {
+        Authorization: USER_TOKEN,
+      },
+    });
+    return response.data;
+  }
+);
+
 // Async thunk to create a new product
 export const createProduct = createAsyncThunk(
   "adminProducts/createProduct",
@@ -81,6 +94,7 @@ const adminProductSlice = createSlice({
   name: "adminProducts",
   initialState: {
     products: [],
+    trendingProducts: [],
     loading: false,
     error: null,
   },
@@ -96,6 +110,18 @@ const adminProductSlice = createSlice({
         state.products = action.payload;
       })
       .addCase(fetchAdminProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      // Fetch trending products
+      .addCase(fetchAdminTrendingProducts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchAdminTrendingProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.trendingProducts = action.payload;
+      })
+      .addCase(fetchAdminTrendingProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })

@@ -18,7 +18,7 @@ router.get("/", protect, admin, async (req, res) => {
 });
 
 // @route GET /api/admin/products/trending
-// @desc Get all trending products (admin only)
+// @desc Get all trending products
 // @access Private/Admin
 router.get("/trending", protect, admin, async (req, res) => {
   try {
