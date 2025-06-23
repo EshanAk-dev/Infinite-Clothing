@@ -74,7 +74,9 @@ export const fetchSimilarProducts = createAsyncThunk(
   "products/fetchSimilarProducts",
   async ({ id }) => {
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/api/products/similar/${id}?sortBy=-createdAt`
+      `${
+        import.meta.env.VITE_BACKEND_URL
+      }/api/products/similar/${id}?sortBy=-createdAt`
     );
     return response.data;
   }

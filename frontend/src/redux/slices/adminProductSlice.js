@@ -17,12 +17,25 @@ export const fetchAdminProducts = createAsyncThunk(
   }
 );
 
-// Async thunk to create a new prpduct
+// Async thunk to create a new product
 export const createProduct = createAsyncThunk(
   "adminProducts/createProduct",
   async (productData) => {
+    const response = await axios.post(`${API_URL}/api/products`, productData, {
+      headers: {
+        Authorization: USER_TOKEN,
+      },
+    });
+    return response.data;
+  }
+);
+
+// Async thunk to create a new trending product
+export const createTrendingProduct = createAsyncThunk(
+  "adminProducts/createTrendingProduct",
+  async (productData) => {
     const response = await axios.post(
-      `${API_URL}/api/products`,
+      `${API_URL}/api/products/trending`,
       productData,
       {
         headers: {

@@ -31,6 +31,8 @@ import CustomDesign from "./components/Customize T-Shirts/CustomDesign";
 import CustomOrderManagement from "./components/Admin/CustomOrderManagement";
 import AdminCustomOrderDetails from "./components/Admin/AdminCustomOrderDetails";
 import NotFound from "./pages/NotFound";
+import TrendingsManagement from "./components/Admin/TrendingsManagement";
+import AddNewTrendingProduct from "./components/Admin/AddNewTrendingProduct";
 
 const App = () => {
   return (
@@ -40,12 +42,15 @@ const App = () => {
       >
         <Toaster position="top-right" />
         <Routes>
-          <Route path="/" element={
-            <>
-              <UserLayout />
-              <WhatsAppChatButton />
-            </>
-          }>
+          <Route
+            path="/"
+            element={
+              <>
+                <UserLayout />
+                <WhatsAppChatButton />
+              </>
+            }
+          >
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
@@ -86,7 +91,12 @@ const App = () => {
             <Route path="orders" element={<OrderManagement />} />
             <Route path="orders/:id" element={<AdminOrderDetails />} />
             <Route path="custom-orders" element={<CustomOrderManagement />} />
-            <Route path="custom-orders/:id" element={<AdminCustomOrderDetails />} />
+            <Route
+              path="custom-orders/:id"
+              element={<AdminCustomOrderDetails />}
+            />
+            <Route path="trendings" element={<TrendingsManagement />} />
+            <Route path="trendings/new" element={<AddNewTrendingProduct />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
