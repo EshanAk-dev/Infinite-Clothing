@@ -83,6 +83,7 @@ router.put("/:id", protect, admin, async (req, res) => {
       images, // Ensure this is handled
       isFeatured,
       isPublished,
+      isTrending,
       tags,
       dimensions,
       weight,

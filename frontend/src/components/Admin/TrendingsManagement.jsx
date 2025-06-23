@@ -187,7 +187,7 @@ const TrendingsManagement = () => {
             <MdVisibility className="h-5 w-5" />
           </Link>
           <Link
-            to={`/admin/products/${product._id}/edit`}
+            to={`/admin/trendings/${product._id}/edit`}
             className="text-yellow-600 hover:text-yellow-900 p-2 rounded-md hover:bg-yellow-50 transition-colors"
             title="Edit"
           >
@@ -403,7 +403,7 @@ const TrendingsManagement = () => {
                           <MdVisibility className="h-5 w-5" />
                         </Link>
                         <Link
-                          to={`/admin/products/${product._id}/edit`}
+                          to={`/admin/trendings/${product._id}/edit`}
                           className="text-yellow-600 hover:text-yellow-900 p-2 rounded-md hover:bg-yellow-50 transition-colors"
                           title="Edit"
                         >

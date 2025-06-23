@@ -65,7 +65,7 @@ export const updateProduct = createAsyncThunk(
   "adminProducts/updateProduct",
   async ({ id, productData }) => {
     const response = await axios.put(
-      `${API_URL}/api/admin/products/${id}`,
+      `${API_URL}/api/products/${id}`,
       productData,
       {
         headers: {
@@ -141,6 +141,9 @@ const adminProductSlice = createSlice({
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         state.products = state.products.filter(
+          (product) => product._id !== action.payload
+        );
+        state.trendingProducts = state.trendingProducts.filter(
           (product) => product._id !== action.payload
         );
       });

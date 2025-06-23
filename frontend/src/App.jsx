@@ -33,6 +33,7 @@ import AdminCustomOrderDetails from "./components/Admin/AdminCustomOrderDetails"
 import NotFound from "./pages/NotFound";
 import TrendingsManagement from "./components/Admin/TrendingsManagement";
 import AddNewTrendingProduct from "./components/Admin/AddNewTrendingProduct";
+import EditTrendingProductPage from "./components/Admin/EditTrendingProductPage";
 
 const App = () => {
   return (
@@ -97,6 +98,7 @@ const App = () => {
             />
             <Route path="trendings" element={<TrendingsManagement />} />
             <Route path="trendings/new" element={<AddNewTrendingProduct />} />
+            <Route path="trendings/:id/edit" element={<EditTrendingProductPage />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
