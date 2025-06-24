@@ -1,11 +1,20 @@
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { fetchAdminProducts } from "../redux/slices/adminProductSlice";
+import {
+  fetchAdminProducts,
+  fetchAdminTrendingProducts,
+} from "../redux/slices/adminProductSlice";
 import { fetchAllOrders } from "../redux/slices/adminOrderSlice";
 import { fetchAllDesigns } from "../redux/slices/adminCustomDesignSlice";
-import { FiPackage, FiShoppingCart } from "react-icons/fi";
+import {
+  FiPackage,
+  FiShoppingCart,
+  FiTrendingUp,
+  FiUser,
+} from "react-icons/fi";
 import { FaTshirt } from "react-icons/fa";
+import { fetchUsers } from "../redux/slices/adminSlice";
 
 const AdminHomePage = () => {
   const dispatch = useDispatch();
@@ -13,6 +22,11 @@ const AdminHomePage = () => {
     products,
     loading: productsLoading,
     error: productsError,
+  } = useSelector((state) => state.adminProducts);
+  const {
+    trendingProducts,
+    loading: trendingProductsLoading,
+    error: trendingProductsError,
   } = useSelector((state) => state.adminProducts);
   const {
     orders,
@@ -26,14 +40,27 @@ const AdminHomePage = () => {
     loading: customDesignsLoading,
     error: customDesignsError,
   } = useSelector((state) => state.adminCustomDesign);
+  const {
+    users,
+    loading: usersLoading,
+    error: usersError,
+  } = useSelector((state) => state.admin);
 
   useEffect(() => {
     dispatch(fetchAdminProducts());
+    dispatch(fetchAdminTrendingProducts());
     dispatch(fetchAllOrders());
     dispatch(fetchAllDesigns());
+    dispatch(fetchUsers());
   }, [dispatch]);
 
-  if (productsLoading || ordersLoading || customDesignsLoading) {
+  if (
+    productsLoading ||
+    ordersLoading ||
+    customDesignsLoading ||
+    trendingProductsLoading ||
+    usersLoading
+  ) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -41,7 +68,13 @@ const AdminHomePage = () => {
     );
   }
 
-  if (productsError || ordersError || customDesignsError) {
+  if (
+    productsError ||
+    ordersError ||
+    customDesignsError ||
+    trendingProductsError ||
+    usersError
+  ) {
     return (
       <div className="max-w-7xl mx-auto p-4">
         <div
@@ -52,6 +85,10 @@ const AdminHomePage = () => {
           {productsError && <p>Products: {productsError}</p>}
           {ordersError && <p>Orders: {ordersError}</p>}
           {customDesignsError && <p>Custom Designs: {customDesignsError}</p>}
+          {trendingProductsError && (
+            <p>Trending Products: {trendingProductsError}</p>
+          )}
+          {usersError && <p>Users: {usersError}</p>}
         </div>
       </div>
     );
@@ -76,93 +113,147 @@ const AdminHomePage = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6">
-        {/* Revenue Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs sm:text-sm font-medium text-gray-500">
-                Total Revenue
-              </p>
-              <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
-                Rs.
-                {totalSales.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </h3>
+      <div className="mb-6">
+        {/* First Row - 4 cards */}
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-3 sm:mb-6">
+          {/* Revenue Card */}
+          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs sm:text-sm font-medium text-gray-500">
+                  Total Revenue
+                </p>
+                <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
+                  Rs.
+                  {totalSales.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </h3>
+              </div>
+              <div className="p-2 sm:p-3 ml-2 lg:mt-0 rounded-lg bg-blue-100 text-blue-600">
+                <span className="text-xl sm:text-2xl font-bold">LKR</span>
+              </div>
             </div>
-            <div className="p-2 sm:p-3 ml-2 lg:mt-0 rounded-lg bg-blue-100 text-blue-600">
-              <span className="text-xl sm:text-2xl font-bold">LKR</span>
+          </div>
+
+          {/* Orders Card */}
+          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs sm:text-sm font-medium text-gray-500">
+                  Total Orders
+                </p>
+                <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
+                  {totalOrders}
+                </h3>
+                <Link
+                  to="/admin/orders"
+                  className="text-xs text-blue-600 hover:underline mt-1 inline-block"
+                >
+                  View all orders
+                </Link>
+              </div>
+              <div className="p-2 sm:p-3 rounded-lg bg-green-100 text-green-600">
+                <FiShoppingCart className="text-xl sm:text-2xl" />
+              </div>
+            </div>
+          </div>
+
+          {/* Products Card */}
+          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs sm:text-sm font-medium text-gray-500">
+                  Total Products
+                </p>
+                <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
+                  {products.length}
+                </h3>
+                <Link
+                  to="/admin/products"
+                  className="text-xs text-blue-600 hover:underline mt-1 inline-block"
+                >
+                  Manage products
+                </Link>
+              </div>
+              <div className="p-2 sm:p-3 rounded-lg bg-purple-100 text-purple-600">
+                <FiPackage className="text-xl sm:text-2xl" />
+              </div>
+            </div>
+          </div>
+
+          {/* Custom Orders Card */}
+          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs sm:text-sm font-medium text-gray-500">
+                  Total Custom Orders
+                </p>
+                <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
+                  {customDesigns.length}
+                </h3>
+                <Link
+                  to="/admin/custom-orders"
+                  className="text-xs text-blue-600 hover:underline mt-1 inline-block"
+                >
+                  Manage custom orders
+                </Link>
+              </div>
+              <div className="p-2 sm:p-3 rounded-lg bg-orange-100 text-orange-600">
+                <FaTshirt className="text-xl sm:text-2xl" />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Orders Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs sm:text-sm font-medium text-gray-500">
-                Total Orders
-              </p>
-              <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
-                {totalOrders}
-              </h3>
-              <Link
-                to="/admin/orders"
-                className="text-xs text-blue-600 hover:underline mt-1 inline-block"
-              >
-                View all orders
-              </Link>
+        {/* Second Row - 2 cards centered */}
+        <div className="flex justify-center">
+          <div className="grid lg:grid-cols-2 sm:grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-6 max-w-2xl">
+            {/* Trending Products Card */}
+            <div className="bg-white p-6 sm:px-9 sm:py-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs sm:text-sm font-medium text-gray-500">
+                    Total Trending Products
+                  </p>
+                  <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
+                    {trendingProducts.length}
+                  </h3>
+                  <Link
+                    to="/admin/trendings"
+                    className="text-xs text-blue-600 hover:underline mt-1 inline-block"
+                  >
+                    Manage trendings
+                  </Link>
+                </div>
+                <div className="p-2 sm:p-3 rounded-lg bg-yellow-100 text-yellow-600">
+                  <FiTrendingUp className="text-xl sm:text-2xl" />
+                </div>
+              </div>
             </div>
-            <div className="p-2 sm:p-3 rounded-lg bg-green-100 text-green-600">
-              <FiShoppingCart className="text-xl sm:text-2xl" />
-            </div>
-          </div>
-        </div>
 
-        {/* Products Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs sm:text-sm font-medium text-gray-500">
-                Total Products
-              </p>
-              <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
-                {products.length}
-              </h3>
-              <Link
-                to="/admin/products"
-                className="text-xs text-blue-600 hover:underline mt-1 inline-block"
-              >
-                Manage products
-              </Link>
-            </div>
-            <div className="p-2 sm:p-3 rounded-lg bg-purple-100 text-purple-600">
-              <FiPackage className="text-xl sm:text-2xl" />
-            </div>
-          </div>
-        </div>
-
-        {/* Custom Orders Card */}
-        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs sm:text-sm font-medium text-gray-500">
-                Total Custom Orders
-              </p>
-              <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
-                {customDesigns.length}
-              </h3>
-              <Link
-                to="/admin/custom-orders"
-                className="text-xs text-blue-600 hover:underline mt-1 inline-block"
-              >
-                Manage custom orders
-              </Link>
-            </div>
-            <div className="p-2 sm:p-3 rounded-lg bg-orange-100 text-orange-600">
-              <FaTshirt className="text-xl sm:text-2xl" />
+            {/* Users Card */}
+            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs sm:text-sm font-medium text-gray-500">
+                    Total Users
+                  </p>
+                  <h3 className="text-lg sm:text-2xl font-bold mt-1 text-gray-800">
+                    {users.length}
+                  </h3>
+                  <Link
+                    to="/admin/users"
+                    className="text-xs text-blue-600 hover:underline mt-1 inline-block"
+                  >
+                    Manage users
+                  </Link>
+                </div>
+                <div className="p-2 sm:p-3 rounded-lg bg-pink-100 text-pink-600">
+                  <FiUser className="text-xl sm:text-2xl" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
