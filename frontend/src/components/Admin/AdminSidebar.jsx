@@ -71,6 +71,21 @@ const AdminSidebar = () => {
           <span>Users</span>
         </NavLink>
 
+        {/* Trendings */}
+        <NavLink
+          to="/admin/trendings"
+          className={({ isActive }) =>
+            `flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              isActive
+                ? "bg-blue-600 text-white shadow-md"
+                : "text-gray-300 hover:bg-gray-700"
+            }`
+          }
+        >
+          <FaChartLine className="text-lg" />
+          <span>Trendings</span>
+        </NavLink>
+
         {/* Products */}
         <NavLink
           to="/admin/products"

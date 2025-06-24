@@ -1,21 +1,16 @@
-import { useEffect, useState } from "react";
-import { MdUpdate, MdDelete } from "react-icons/md";
+import { useState } from "react";
+import { MdAdd, MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  fetchProductDetails,
-  updateProduct,
-} from "../../redux/slices/productSlice";
+import { useNavigate } from "react-router-dom";
+import { createTrendingProduct } from "../../redux/slices/adminProductSlice";
 import axios from "axios";
-import { toast } from "sonner";
+import { toast } from "sonner"; // Import toast notification
 
-const EditProductPage = () => {
+const AddNewTrendingProduct = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams();
-  const { selectedProduct, loading, error } = useSelector(
-    (state) => state.products
-  );
+  const { user } = useSelector((state) => state.auth);
+  const { loading, error } = useSelector((state) => state.adminProducts);
 
   const [productData, setProductData] = useState({
     name: "",
@@ -44,30 +39,31 @@ const EditProductPage = () => {
       height: 0,
     },
     weight: 0,
+    user: user?._id,
   });
 
   const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState("basic"); // For mobile tabs navigation
 
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchProductDetails(id));
-    }
-  }, [dispatch, id]);
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    );
 
-  useEffect(() => {
-    if (selectedProduct) {
-      setProductData({
-        ...selectedProduct,
-        dimensions: selectedProduct.dimensions || {
-          length: 0,
-          width: 0,
-          height: 0,
-        },
-        tags: selectedProduct.tags || [],
-      });
-    }
-  }, [selectedProduct]);
+  if (error)
+    return (
+      <div className="w-full px-4 sm:max-w-7xl sm:mx-auto p-4 sm:p-6">
+        <div
+          className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded"
+          role="alert"
+        >
+          <p className="font-bold">Error</p>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -124,22 +120,22 @@ const EditProductPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateProduct({ id, productData }))
+    dispatch(createTrendingProduct(productData))
       .unwrap()
       .then(() => {
-        toast.success("Product updated successfully!", {
+        toast.success("Trending product added successfully!", {
           style: {
-            background: "#ecfdf5",
-            color: "#065f46",
-            border: "1px solid #6ee7b7",
+            background: "#f3e8ff",
+            color: "#581c87",
+            border: "1px solid #c084fc",
             borderRadius: "8px",
             padding: "16px",
           },
         });
-        navigate("/admin/products");
+        navigate("/admin/trendings");
       })
       .catch((err) => {
-        toast.error("Failed to update product!", {
+        toast.error("Failed to add trending product!", {
           style: {
             background: "#fef2f2",
             color: "#b91c1c",
@@ -174,7 +170,7 @@ const EditProductPage = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`px-3 py-2 text-sm font-medium rounded-lg whitespace-nowrap ${
                 activeTab === tab.id
-                  ? "bg-blue-600 text-white"
+                  ? "bg-purple-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -186,38 +182,43 @@ const EditProductPage = () => {
     );
   };
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="max-w-6xl mx-auto p-6">
-        <div
-          className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded"
-          role="alert"
-        >
-          <p className="font-bold">Error</p>
-          <p>{error}</p>
-        </div>
-      </div>
-    );
-
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+    <div className="w-full px-4 sm:max-w-7xl sm:mx-auto py-4 sm:py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 sm:mb-0">
-          Edit Product
-        </h2>
+        <div className="flex items-center mb-3 sm:mb-0">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">
+            Add New Trending Product
+          </h2>
+          <span className="ml-3 px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold rounded-full">
+            🔥 TRENDING
+          </span>
+        </div>
         <button
-          onClick={() => navigate("/admin/products")}
+          onClick={() => navigate("/admin/trendings")}
           className="text-sm text-gray-600 hover:text-gray-800"
         >
-          ← Back to Products
+          ← Back to Trendings
         </button>
+      </div>
+
+      {/* Trending Product Info Banner */}
+      <div className="bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-200 rounded-lg p-4 mb-6">
+        <div className="flex items-start">
+          <div className="flex-shrink-0">
+            <span className="text-2xl">🔥</span>
+          </div>
+          <div className="ml-3">
+            <h3 className="text-sm font-medium text-purple-800">
+              Creating a Trending Product
+            </h3>
+            <div className="mt-2 text-sm text-purple-700">
+              <p>
+                This product will be automatically marked as trending and will
+                appear in the trending products section on website.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Mobile tab selector */}
@@ -247,7 +248,7 @@ const EditProductPage = () => {
                     name="name"
                     value={productData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                     required
                   />
                 </div>
@@ -259,7 +260,7 @@ const EditProductPage = () => {
                   <textarea
                     name="description"
                     value={productData.description}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                     rows={4}
                     onChange={handleChange}
                     required
@@ -282,7 +283,7 @@ const EditProductPage = () => {
                         onChange={handleChange}
                         min="0"
                         step="0.01"
-                        className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                         required
                       />
                     </div>
@@ -303,7 +304,7 @@ const EditProductPage = () => {
                         onChange={handleChange}
                         min="0"
                         step="0.01"
-                        className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                       />
                     </div>
                   </div>
@@ -319,7 +320,7 @@ const EditProductPage = () => {
                       name="sku"
                       value={productData.sku}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                       required
                     />
                   </div>
@@ -334,7 +335,7 @@ const EditProductPage = () => {
                       value={productData.countInStock}
                       onChange={handleChange}
                       min="0"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                       required
                     />
                   </div>
@@ -359,7 +360,7 @@ const EditProductPage = () => {
                     name="category"
                     value={productData.category}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
                     <option value="">Select Category</option>
@@ -380,7 +381,7 @@ const EditProductPage = () => {
                     name="brand"
                     value={productData.brand}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                   />
                 </div>
 
@@ -393,7 +394,7 @@ const EditProductPage = () => {
                     name="collections"
                     value={productData.collections}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                   />
                 </div>
 
@@ -406,7 +407,7 @@ const EditProductPage = () => {
                     name="material"
                     value={productData.material}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                   />
                 </div>
 
@@ -418,7 +419,7 @@ const EditProductPage = () => {
                     name="gender"
                     value={productData.gender}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                   >
                     <option value="">Select Gender</option>
                     <option value="Men">Men</option>
@@ -454,7 +455,7 @@ const EditProductPage = () => {
                           .map((size) => size.trim()),
                       })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                     required
                   />
                 </div>
@@ -475,7 +476,7 @@ const EditProductPage = () => {
                           .map((color) => color.trim()),
                       })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                     required
                   />
                 </div>
@@ -496,7 +497,7 @@ const EditProductPage = () => {
                           .map((tag) => tag.trim()),
                       })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                   />
                 </div>
               </div>
@@ -519,10 +520,10 @@ const EditProductPage = () => {
                     Upload Images (Multiple)
                   </label>
                   <div className="flex items-center justify-center w-full">
-                    <label className="flex flex-col w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50">
-                      <div className="flex flex-col items-center justify-center pt-7">
+                    <label className="flex flex-col w-full h-28 sm:h-32 border-2 border-dashed border-purple-300 rounded-lg cursor-pointer hover:bg-purple-50">
+                      <div className="flex flex-col items-center justify-center pt-5 sm:pt-7">
                         <svg
-                          className="w-8 h-8 text-gray-400"
+                          className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -535,7 +536,7 @@ const EditProductPage = () => {
                             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                           />
                         </svg>
-                        <p className="pt-1 text-sm text-gray-600">
+                        <p className="pt-1 text-xs sm:text-sm text-purple-600">
                           Click to upload or drag and drop
                         </p>
                       </div>
@@ -548,9 +549,9 @@ const EditProductPage = () => {
                     </label>
                   </div>
                   {uploading && (
-                    <div className="mt-2 text-sm text-blue-600 flex items-center">
+                    <div className="mt-2 text-sm text-purple-600 flex items-center">
                       <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600"
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-purple-600"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -583,7 +584,7 @@ const EditProductPage = () => {
                       <img
                         src={image.url}
                         alt={image.altText || "Product image"}
-                        className="w-full h-32 object-cover"
+                        className="w-full h-24 sm:h-32 object-cover"
                       />
                       <button
                         type="button"
@@ -619,7 +620,7 @@ const EditProductPage = () => {
                       onChange={handleDimensionChange}
                       min="0"
                       step="0.1"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                     />
                   </div>
                   <div>
@@ -633,7 +634,7 @@ const EditProductPage = () => {
                       onChange={handleDimensionChange}
                       min="0"
                       step="0.1"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                     />
                   </div>
                   <div>
@@ -647,7 +648,7 @@ const EditProductPage = () => {
                       onChange={handleDimensionChange}
                       min="0"
                       step="0.1"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                     />
                   </div>
                 </div>
@@ -668,7 +669,7 @@ const EditProductPage = () => {
                     }
                     min="0"
                     step="0.01"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                   />
                 </div>
               </div>
@@ -692,7 +693,7 @@ const EditProductPage = () => {
                     name="metaTitle"
                     value={productData.metaTitle}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                   />
                 </div>
 
@@ -703,7 +704,7 @@ const EditProductPage = () => {
                   <textarea
                     name="metaDescription"
                     value={productData.metaDescription}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                     rows={3}
                     onChange={handleChange}
                   />
@@ -718,7 +719,7 @@ const EditProductPage = () => {
                     name="metaKeywords"
                     value={productData.metaKeywords}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
                   />
                 </div>
               </div>
@@ -733,6 +734,21 @@ const EditProductPage = () => {
                   Status
                 </h3>
 
+                {/* Trending Status - Always True */}
+                <div className="flex items-center mb-4 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">🔥</span>
+                    <div>
+                      <span className="block text-sm font-medium text-purple-800">
+                        Trending Product
+                      </span>
+                      <span className="text-xs text-purple-600">
+                        This product will be marked as trending automatically
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="flex items-center mb-4">
                   <input
                     type="checkbox"
@@ -745,7 +761,7 @@ const EditProductPage = () => {
                         isFeatured: e.target.checked,
                       })
                     }
-                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
                   />
                   <label
                     htmlFor="isFeatured"
@@ -767,7 +783,7 @@ const EditProductPage = () => {
                         isPublished: e.target.checked,
                       })
                     }
-                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
                   />
                   <label
                     htmlFor="isPublished"
@@ -784,17 +800,17 @@ const EditProductPage = () => {
           <div className="p-4 sm:px-6 sm:py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 sticky bottom-0">
             <button
               type="button"
-              onClick={() => navigate("/admin/products")}
-              className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              onClick={() => navigate("/admin/trendings")}
+              className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
-              <MdUpdate className="-ml-1 mr-2 h-5 w-5" />
-              Update Product
+              <MdAdd className="-ml-1 mr-2 h-5 w-5" />
+              Add Trending Product
             </button>
           </div>
         </form>
@@ -803,4 +819,4 @@ const EditProductPage = () => {
   );
 };
 
-export default EditProductPage;
+export default AddNewTrendingProduct;
