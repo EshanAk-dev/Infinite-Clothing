@@ -6,7 +6,8 @@ import {
   FaTshirt,
   FaUser,
   FaHome,
-  FaChartLine
+  FaChartLine,
+  FaTachometerAlt
 } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -52,7 +53,7 @@ const AdminSidebar = () => {
             }`
           }
         >
-          <FaChartLine className="text-lg" />
+          <FaTachometerAlt className="text-lg" />
           <span>Dashboard</span>
         </NavLink>
 
