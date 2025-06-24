@@ -14,6 +14,7 @@ import {
   fetchAdminTrendingProducts,
   deleteProduct,
 } from "../../redux/slices/adminProductSlice";
+import FashionTrendsChatbot from "./FashionTrendsChatbot";
 
 const TrendingsManagement = () => {
   const dispatch = useDispatch();
@@ -231,6 +232,10 @@ const TrendingsManagement = () => {
             <span>Add New Trending Product</span>
           </Link>
         </div>
+      </div>
+      <div className="mb-4 text-purple-700 font-medium flex items-center gap-2">
+        <span>💡</span>
+        <span>Use the AI-Chatbot below to get ideas for trending products!</span>
       </div>
 
       {showFilters && (
@@ -521,6 +526,8 @@ const TrendingsManagement = () => {
           </nav>
         </div>
       )}
+
+      <FashionTrendsChatbot />
     </div>
   );
 }
