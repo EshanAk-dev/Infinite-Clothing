@@ -27,10 +27,10 @@ const Home = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    // Always show popup after 1.5 seconds when Home mounts
+    // Always show popup after 1 second when Home mounts
     const timer = setTimeout(() => {
       setShowTrendingPopup(true);
-    }, 1500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
