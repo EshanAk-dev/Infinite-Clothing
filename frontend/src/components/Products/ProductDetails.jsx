@@ -17,6 +17,9 @@ import {
   ArrowLeft,
   Truck,
   RefreshCw,
+  ChevronLeft,
+  ChevronRight,
+  TrendingUp,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -28,6 +31,7 @@ const ProductDetails = ({ productId }) => {
   );
   const { user, guestId } = useSelector((state) => state.auth);
   const [mainImage, setMainImage] = useState("");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -47,6 +51,7 @@ const ProductDetails = ({ productId }) => {
       setSelectedSize("");
       setSelectedColor("");
       setQuantity(1);
+      setCurrentImageIndex(0);
     }
   }, [dispatch, productFetchId]);
 
@@ -54,8 +59,44 @@ const ProductDetails = ({ productId }) => {
   useEffect(() => {
     if (selectedProduct?.images?.length > 0) {
       setMainImage(selectedProduct.images[0].url);
+      setCurrentImageIndex(0);
     }
   }, [selectedProduct]);
+
+  // Handle image navigation
+  const handleImageNavigation = (direction) => {
+    if (!selectedProduct?.images?.length) return;
+
+    let newIndex;
+    if (direction === "next") {
+      newIndex =
+        currentImageIndex < selectedProduct.images.length - 1
+          ? currentImageIndex + 1
+          : 0;
+    } else {
+      newIndex =
+        currentImageIndex > 0
+          ? currentImageIndex - 1
+          : selectedProduct.images.length - 1;
+    }
+
+    setCurrentImageIndex(newIndex);
+    setMainImage(selectedProduct.images[newIndex].url);
+  };
+
+  // Handle keyboard navigation for images
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === "ArrowLeft") {
+        handleImageNavigation("prev");
+      } else if (e.key === "ArrowRight") {
+        handleImageNavigation("next");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [currentImageIndex, selectedProduct]);
 
   // Handle quantity changes
   const handleQuantityChange = (action) => {
@@ -95,19 +136,20 @@ const ProductDetails = ({ productId }) => {
       });
   };
 
-  if (loading) return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="flex justify-center items-center h-64"
-    >
+  if (loading)
+    return (
       <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-        className="rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
-      ></motion.div>
-    </motion.div>
-  );
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex justify-center items-center h-64"
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+          className="rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
+        ></motion.div>
+      </motion.div>
+    );
 
   if (error) {
     return (
@@ -195,9 +237,12 @@ const ProductDetails = ({ productId }) => {
                 {selectedProduct.images.map((image, index) => (
                   <motion.button
                     key={index}
-                    onClick={() => setMainImage(image.url)}
+                    onClick={() => {
+                      setMainImage(image.url);
+                      setCurrentImageIndex(index);
+                    }}
                     className={`w-16 h-16 xl:w-20 xl:h-20 rounded-lg xl:rounded-xl overflow-hidden border-2 transition-all ${
-                      mainImage === image.url
+                      currentImageIndex === index
                         ? "border-indigo-500 shadow-md"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
@@ -216,7 +261,7 @@ const ProductDetails = ({ productId }) => {
               {/* Main Image */}
               <div className="flex-1">
                 <motion.div
-                  className="relative aspect-square bg-gray-50 rounded-xl overflow-hidden"
+                  className="relative aspect-square bg-gray-50 rounded-xl overflow-hidden group"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
@@ -225,14 +270,67 @@ const ProductDetails = ({ productId }) => {
                   <img
                     src={mainImage}
                     alt={selectedProduct.name}
-                    className={`w-full h-full object-contain transition-all duration-300 ${
+                    className={`w-full h-full object-contain transition-all duration-300 cursor-zoom-in ${
                       isImageZoomed ? "scale-110" : "scale-100"
                     }`}
                   />
 
+                  {/* Trending Badge */}
+                  {selectedProduct.isTrending && (
+                    <motion.div
+                      initial={{ scale: 0, rotate: -10 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs sm:text-sm font-bold px-2 py-1 sm:px-3 sm:py-2 rounded-full flex items-center gap-1 shadow-lg"
+                    >
+                      <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span>TRENDING</span>
+                    </motion.div>
+                  )}
+
+                  {/* Discount Badge */}
                   {discountPercentage > 0 && (
-                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-red-500 text-white text-xs sm:text-sm font-medium px-2 py-1 sm:px-3 sm:py-1 rounded-full">
+                    <div
+                      className={`absolute top-3 right-3 sm:top-4 sm:right-4 bg-red-500 text-white text-xs sm:text-sm font-medium px-2 py-1 sm:px-3 sm:py-1 rounded-full ${
+                        selectedProduct.isTrending ? "mt-12 sm:mt-14" : ""
+                      }`}
+                    >
                       -{discountPercentage}%
+                    </div>
+                  )}
+
+                  {/* Navigation Arrows - Only show if more than 1 image */}
+                  {selectedProduct.images.length > 1 && (
+                    <>
+                      <motion.button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleImageNavigation("prev");
+                        }}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
+                      </motion.button>
+
+                      <motion.button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleImageNavigation("next");
+                        }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
+                      </motion.button>
+                    </>
+                  )}
+
+                  {/* Image Counter */}
+                  {selectedProduct.images.length > 1 && (
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+                      {currentImageIndex + 1} / {selectedProduct.images.length}
                     </div>
                   )}
                 </motion.div>
@@ -242,9 +340,12 @@ const ProductDetails = ({ productId }) => {
                   {selectedProduct.images.map((image, index) => (
                     <motion.button
                       key={index}
-                      onClick={() => setMainImage(image.url)}
+                      onClick={() => {
+                        setMainImage(image.url);
+                        setCurrentImageIndex(index);
+                      }}
                       className={`flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 ${
-                        mainImage === image.url
+                        currentImageIndex === index
                           ? "border-indigo-500 shadow-sm"
                           : "border-gray-200"
                       }`}
@@ -267,9 +368,21 @@ const ProductDetails = ({ productId }) => {
             <div>
               {/* Brand & Name */}
               <div className="mb-4 sm:mb-6">
-                <h3 className="text-sm font-medium text-indigo-600 mb-1">
-                  {selectedProduct.brand || "Premium Collection"}
-                </h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="text-sm font-medium text-indigo-600">
+                    {selectedProduct.brand || "Premium Collection"}
+                  </h3>
+                  {selectedProduct.isTrending && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="flex items-center gap-1 bg-gradient-to-r from-orange-100 to-red-100 text-orange-600 text-xs font-medium px-2 py-1 rounded-full"
+                    >
+                      <TrendingUp className="w-3 h-3" />
+                      <span>Trending</span>
+                    </motion.div>
+                  )}
+                </div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                   {selectedProduct.name}
                 </h1>

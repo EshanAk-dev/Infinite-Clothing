@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import {
-  MessageCircle,
   Send,
   Minimize2,
   Maximize2,
@@ -185,7 +184,7 @@ Need help setting up your API key? Visit: https://aistudio.google.com/app/apikey
   };
 
   const quickQuestions = [
-    "What colors are trending now?",
+    "What are new trendings in Sri Lanka?",
     "Latest spring 2025 trends",
     "Sustainable fashion tips",
     "Budget-friendly outfit ideas",
