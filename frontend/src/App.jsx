@@ -34,6 +34,7 @@ import NotFound from "./pages/NotFound";
 import TrendingsManagement from "./components/Admin/TrendingsManagement";
 import AddNewTrendingProduct from "./components/Admin/AddNewTrendingProduct";
 import EditTrendingProductPage from "./components/Admin/EditTrendingProductPage";
+import TrendingProductsPage from "./components/Products/TrendingProductsPage";
 
 const App = () => {
   return (
@@ -71,6 +72,7 @@ const App = () => {
             <Route path="customize-t-shirts" element={<TShirtCustomizer />} />
             <Route path="/my-custom-designs" element={<MyCustomDesigns />} />
             <Route path="/my-custom-designs/:id" element={<CustomDesign />} />
+            <Route path="/trendings" element={<TrendingProductsPage />} />
           </Route>
 
           {/* Admin Section */}

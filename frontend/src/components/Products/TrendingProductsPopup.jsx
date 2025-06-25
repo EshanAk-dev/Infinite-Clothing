@@ -151,7 +151,7 @@ const TrendingProductsPopup = ({ isOpen, onClose }) => {
                   🔥 TRENDING NOW
                 </h2>
                 <p className="text-lg opacity-90 drop-shadow-sm">
-                  Don't miss out on these hot products!
+                  Don&apos;t miss out on these hot products!
                 </p>
               </motion.div>
               
@@ -218,7 +218,7 @@ const TrendingProductsPopup = ({ isOpen, onClose }) => {
                       >
                         <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col group">
                           {/* Product image */}
-                          <div className="relative pt-[125%] overflow-hidden">
+                          <div className="relative pt-[100%] overflow-hidden">
                             <Link to={`/product/${product._id}`} onClick={onClose}>
                               <img
                                 src={product.images[0]?.url}
@@ -302,7 +302,7 @@ const TrendingProductsPopup = ({ isOpen, onClose }) => {
                   className="text-center mt-6"
                 >
                   <Link
-                    to="/collections/all?trending=true"
+                    to="/trendings"
                     onClick={onClose}
                     className="inline-block px-8 py-3 bg-white text-gray-900 font-semibold rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
