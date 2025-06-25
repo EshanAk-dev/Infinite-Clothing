@@ -110,9 +110,10 @@ const TrendingProductsPage = () => {
 
           {/* Trending Badge */}
           <div className="absolute top-2 left-2 md:top-3 md:left-3 bg-gradient-to-r from-orange-400 to-red-500 text-white text-xs font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full shadow-md flex items-center gap-1">
-            <FiTrendingUp className="text-xs" />
-            <span className="hidden md:inline">TRENDING</span>
-            <span className="md:hidden">🔥</span>
+            <span className="hidden md:inline">🔥 TRENDING</span>
+            <span className="md:hidden">
+              <FiTrendingUp className="text-xs" />
+            </span>
           </div>
 
           {/* Discount Badge */}
@@ -179,22 +180,25 @@ const TrendingProductsPage = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-red-500 via-pink-500 to-purple-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-10 sm:py-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <FiTrendingUp className="text-4xl" />
-              <h1 className="text-4xl md:text-6xl font-bold">
-                🔥 Trending Products
+            <div className="flex flex-col xs:flex-row items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <FiTrendingUp className="text-3xl sm:text-4xl mb-1 xs:mb-0" />
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight">
+                <span role="img" aria-label="fire">
+                  🔥
+                </span>{" "}
+                Trending Products
               </h1>
             </div>
-            <p className="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto">
-              Discover the hottest products everyone&apos;s talking about. Don&apos;t miss
-              out on these trending items!
+            <p className="text-base sm:text-xl md:text-2xl opacity-90 max-w-xs sm:max-w-3xl mx-auto px-2">
+              Discover the hottest products everyone&apos;s talking about.
+              Don&apos;t miss out on these trending items!
             </p>
           </motion.div>
         </div>

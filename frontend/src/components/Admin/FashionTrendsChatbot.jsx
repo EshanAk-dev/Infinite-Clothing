@@ -284,7 +284,7 @@ Need help setting up your API key? Visit: https://aistudio.google.com/app/apikey
           onClick={() => setIsOpen(true)}
           className="relative bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl animate-bounce"
         >
-          {/* Use Sparkles icon for a more attractive look */}
+          {/* Sparkles icon */}
           <Sparkles size={32} className="drop-shadow-lg" />
           {/* AI Badge */}
           <span className="absolute top-1 -right-1 bg-yellow-400 text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow">
@@ -459,9 +459,9 @@ Need help setting up your API key? Visit: https://aistudio.google.com/app/apikey
                   <button
                     onClick={handleSendMessage}
                     disabled={!inputMessage.trim() || isTyping}
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-xl transition-all duration-200"
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-3 rounded-xl transition-all duration-200"
                   >
-                    <Send size={18} />
+                    <Send size={20} />
                   </button>
                 </div>
               </div>
