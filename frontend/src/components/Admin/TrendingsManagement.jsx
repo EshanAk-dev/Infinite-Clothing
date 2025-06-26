@@ -76,7 +76,9 @@ const TrendingsManagement = () => {
   }, [dispatch]);
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this trending product?")) {
+    if (
+      window.confirm("Are you sure you want to delete this trending product?")
+    ) {
       dispatch(deleteProduct(id));
       toast.success("Trending product deleted successfully!", {
         style: {
@@ -212,11 +214,9 @@ const TrendingsManagement = () => {
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
             Trending Products Management
           </h2>
-          <p className="text-gray-600 mt-1">
-            Manage your trending products
-          </p>
+          <p className="text-gray-600 mt-1">Manage your trending products</p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto justify-end">
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg transition-all duration-300 w-full sm:w-auto justify-center"
@@ -233,9 +233,24 @@ const TrendingsManagement = () => {
           </Link>
         </div>
       </div>
-      <div className="mb-4 text-purple-700 font-medium flex items-center gap-2">
-        <span>💡</span>
-        <span>Use the AI-Chatbot below to get ideas for trending products!</span>
+      <div className="mb-4">
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 flex flex-col sm:flex-row justify-between sm:items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">💡</span>
+            <span className="text-purple-700 font-medium text-sm sm:text-base">
+              Use <span className="font-semibold">View Trending Analytics</span>{" "}
+              & <span className="font-semibold">AI-Chatbot</span> below to get
+              ideas for trending products!
+            </span>
+          </div>
+          <Link
+            to="/admin/trendings/analytics"
+            className="mt-2 sm:mt-0 flex items-center text-xs sm:text-sm gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:bg-purple-700 px-4 sm:px-5 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 w-full sm:w-auto justify-center"
+          >
+            <MdVisibility className="text-lg sm:text-xl" />
+            <span>View Trending Analytics</span>
+          </Link>
+        </div>
       </div>
 
       {showFilters && (
@@ -530,6 +545,6 @@ const TrendingsManagement = () => {
       <FashionTrendsChatbot />
     </div>
   );
-}
+};
 
 export default TrendingsManagement;

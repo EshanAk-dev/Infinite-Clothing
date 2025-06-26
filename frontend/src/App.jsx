@@ -35,6 +35,7 @@ import TrendingsManagement from "./components/Admin/TrendingsManagement";
 import AddNewTrendingProduct from "./components/Admin/AddNewTrendingProduct";
 import EditTrendingProductPage from "./components/Admin/EditTrendingProductPage";
 import TrendingProductsPage from "./components/Products/TrendingProductsPage";
+import TrendingsAnalytics from "./components/Admin/TrendingsAnalytics";
 
 const App = () => {
   return (
@@ -99,6 +100,7 @@ const App = () => {
               element={<AdminCustomOrderDetails />}
             />
             <Route path="trendings" element={<TrendingsManagement />} />
+            <Route path="trendings/analytics" element={<TrendingsAnalytics />} />
             <Route path="trendings/new" element={<AddNewTrendingProduct />} />
             <Route path="trendings/:id/edit" element={<EditTrendingProductPage />} />
           </Route>
