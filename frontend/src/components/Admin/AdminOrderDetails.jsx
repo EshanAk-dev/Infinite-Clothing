@@ -1,16 +1,86 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import {
+  updateOrderStatus,
+  deleteOrder,
+} from "../../redux/slices/adminOrderSlice";
 import { fetchOrderDetails } from "../../redux/slices/orderSlice";
+import { toast } from "sonner";
+import { MdDelete } from "react-icons/md";
 
 const AdminOrderDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { orderDetails, loading, error } = useSelector((state) => state.orders);
+
+  // Listen for status update success from adminOrders slice
+  const adminOrders = useSelector((state) => state.adminOrders);
 
   useEffect(() => {
     dispatch(fetchOrderDetails(id));
   }, [dispatch, id]);
+
+  // Refetch order details after successful status update
+  useEffect(() => {
+    if (adminOrders && adminOrders.orders && adminOrders.orders.length > 0) {
+      const updatedOrder = adminOrders.orders.find((order) => order._id === id);
+      if (updatedOrder) {
+        dispatch(fetchOrderDetails(id));
+      }
+    }
+    // eslint-disable-next-line
+  }, [adminOrders.orders]);
+
+  const handleStatusChange = (status) => {
+    dispatch(updateOrderStatus({ id, status })).then((action) => {
+      if (!action.error) {
+        toast.success("Order status updated successfully!", {
+          style: {
+            background: "#ecfdf5",
+            color: "#065f46",
+            border: "1px solid #6ee7b7",
+            borderRadius: "8px",
+            padding: "16px",
+          },
+        });
+      }
+    });
+  };
+
+  const handleDeleteOrder = () => {
+    if (window.confirm("Are you sure you want to delete this order?")) {
+      dispatch(deleteOrder(id));
+      toast.success("Order deleted successfully!", {
+        style: {
+          background: "#ecfdf5",
+          color: "#065f46",
+          border: "1px solid #6ee7b7",
+          borderRadius: "8px",
+          padding: "16px",
+        },
+      });
+      navigate("/admin/orders");
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Processing":
+        return "bg-yellow-100 text-yellow-800";
+      case "Shipped":
+        return "bg-blue-100 text-blue-800";
+      case "Out_for_Delivery":
+        return "bg-teal-100 text-teal-800";
+      case "Delivered":
+        return "bg-green-100 text-green-800";
+      case "Cancelled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
 
   if (loading)
     return (
@@ -77,12 +147,21 @@ const AdminOrderDetails = () => {
             Manage and view order information
           </p>
         </div>
-        <Link
-          to="/admin/orders"
-          className="mt-4 sm:mt-0 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
-        >
-          Back to Orders
-        </Link>
+        <div className="flex gap-2 mt-4 sm:mt-0">
+          <Link
+            to="/admin/orders"
+            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Back to Orders
+          </Link>
+          <button
+            onClick={handleDeleteOrder}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            <MdDelete className="mr-2 h-5 w-5" />
+            Delete Order
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -151,32 +230,41 @@ const AdminOrderDetails = () => {
                   "Payment Pending"
                 )}
               </span>
-              <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                  orderDetails.isDelivered
-                    ? "bg-green-100 text-green-800"
-                    : "bg-blue-100 text-blue-800"
-                }`}
-              >
-                {orderDetails.isDelivered ? (
-                  <>
-                    <svg
-                      className="h-4 w-4 mr-1"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+              <div className="flex items-center">
+                <span className="mr-2 text-sm text-gray-700">Status:</span>
+                <select
+                  value={orderDetails.status}
+                  onChange={(e) => handleStatusChange(e.target.value)}
+                  className={`text-sm ${getStatusColor(
+                    orderDetails.status
+                  )} rounded-md px-3 py-1 focus:ring-blue-500 focus:border-blue-500 border-transparent`}
+                >
+                  <option
+                    value="Processing"
+                    className="bg-yellow-100 text-yellow-800"
+                  >
+                    Processing
+                  </option>
+                  <option value="Shipped" className="bg-blue-100 text-blue-800">
+                    Shipped
+                  </option>
+                  <option
+                    value="Out_for_Delivery"
+                    className="bg-teal-100 text-teal-800"
+                  >
+                    Out for Delivery
+                  </option>
+                  <option
+                    value="Delivered"
+                    className="bg-green-100 text-green-800"
+                  >
                     Delivered
-                  </>
-                ) : (
-                  "In Transit"
-                )}
-              </span>
+                  </option>
+                  <option value="Cancelled" className="bg-red-100 text-red-800">
+                    Cancelled
+                  </option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
