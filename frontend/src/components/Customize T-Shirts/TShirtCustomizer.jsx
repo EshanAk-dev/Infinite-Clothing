@@ -145,13 +145,12 @@ const TShirtCustomizer = () => {
           scale: 1,
           rotation: 0,
           opacity: 1,
+          originalFile: file, // Store the original file
         };
-
         setDesigns((prev) => ({
           ...prev,
           [view]: [...prev[view], newDesign],
         }));
-
         // Select the newly added design
         setSelectedDesignId(newDesign.id);
       };
@@ -296,7 +295,6 @@ const TShirtCustomizer = () => {
     }
 
     const canvas = canvasRef.current;
-
     // Temporarily disable grid and selection frame
     const previousShowGrid = showGrid;
     const previousSelectedDesignId = selectedDesignId;
@@ -332,6 +330,22 @@ const TShirtCustomizer = () => {
         setTimeout(() => resolve(canvas.toDataURL("image/png")), 100);
       });
 
+      // Collect all original design files
+      const originalDesignFiles = {};
+      ["front", "back", "rightArm", "leftArm"].forEach((viewType) => {
+        originalDesignFiles[viewType] = designs[viewType]
+          .filter((design) => design.originalFile)
+          .map((design) => ({
+            file: design.originalFile,
+            name: design.name,
+            id: design.id,
+            position: design.position,
+            scale: design.scale,
+            rotation: design.rotation,
+            opacity: design.opacity,
+          }));
+      });
+
       try {
         await dispatch(
           saveCustomDesign({
@@ -341,6 +355,7 @@ const TShirtCustomizer = () => {
             backImageData,
             rightArmImageData,
             leftArmImageData,
+            originalDesignFiles, // Pass original files
             shippingAddress,
             quantity,
             price: 2000, // Default price from the model

@@ -7,9 +7,11 @@ import {
   MdLocalShipping,
   MdCheckCircle,
   MdClose,
+  MdFileDownload,
 } from "react-icons/md";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { toast } from "sonner";
+import JSZip from "jszip";
 import {
   fetchDesignDetailsAdmin,
   updateDesignStatus,
@@ -25,6 +27,7 @@ const AdminCustomOrderDetails = () => {
   const [popupImage, setPopupImage] = useState(null);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const scrollRef = useRef(null);
 
   const {
@@ -107,6 +110,97 @@ const AdminCustomOrderDetails = () => {
     dispatch(updateDesignStatus({ id, status }));
   };
 
+  const downloadOriginalImages = async () => {
+    if (!design || !design.designs) {
+      toast.error("No design data available for download");
+      return;
+    }
+
+    setIsDownloading(true);
+    const zip = new JSZip();
+    const folder = zip.folder(
+      `Custom_Order_${design._id.slice(-8)}_Original_Images`
+    );
+
+    try {
+      const downloadPromises = [];
+      let imageCount = 0;
+
+      // Helper function to download and add image to zip
+      const addImageToZip = async (url, fileName) => {
+        if (!url) return;
+
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error(`Failed to fetch ${fileName}`);
+
+          const blob = await response.blob();
+          const extension = url.split(".").pop().split("?")[0] || "jpg";
+          folder.file(`${fileName}.${extension}`, blob);
+          imageCount++;
+        } catch (error) {
+          console.error(`Error downloading ${fileName}:`, error);
+          toast.error(`Failed to download ${fileName}`);
+        }
+      };
+
+      // Download original images from each design view
+      const views = ["front", "back", "leftArm", "rightArm"];
+
+      for (const view of views) {
+        const viewDesigns = design.designs[view];
+        if (viewDesigns && viewDesigns.length > 0) {
+          for (let i = 0; i < viewDesigns.length; i++) {
+            const designElement = viewDesigns[i];
+            if (designElement.originalImageUrl) {
+              const fileName = `${view}_${i + 1}_${
+                designElement.name || "design"
+              }`;
+              downloadPromises.push(
+                addImageToZip(designElement.originalImageUrl, fileName)
+              );
+            }
+          }
+        }
+      }
+
+      // Wait for all downloads to complete
+      await Promise.all(downloadPromises);
+
+      if (imageCount === 0) {
+        toast.error("No original images found to download");
+        setIsDownloading(false);
+        return;
+      }
+
+      // Generate and download the zip file
+      const content = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(content);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Custom_Order_${design._id.slice(-8)}_Original_Images.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast.success(`Downloaded ${imageCount} original images successfully!`, {
+        style: {
+          background: "#ecfdf5",
+          color: "#065f46",
+          border: "1px solid #6ee7b7",
+          borderRadius: "8px",
+          padding: "16px",
+        },
+      });
+    } catch (error) {
+      console.error("Error creating zip file:", error);
+      toast.error("Failed to create download file");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "Processing":
@@ -146,6 +240,18 @@ const AdminCustomOrderDetails = () => {
       setCanScrollLeft(leftScroll > 0);
       setCanScrollRight(rightScrollable);
     }
+  };
+
+  // Check if there are any original images to download
+  const hasOriginalImages = () => {
+    if (!design || !design.designs) return false;
+
+    const views = ["front", "back", "leftArm", "rightArm"];
+    return views.some(
+      (view) =>
+        design.designs[view] &&
+        design.designs[view].some((element) => element.originalImageUrl)
+    );
   };
 
   if (loading)
@@ -213,7 +319,17 @@ const AdminCustomOrderDetails = () => {
           Back to Orders
         </Link>
 
-        <div className="flex space-x-3">
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+          {hasOriginalImages() && (
+            <button
+              onClick={downloadOriginalImages}
+              disabled={isDownloading}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <MdFileDownload className="mr-2 h-5 w-5" />
+              {isDownloading ? "Downloading..." : "Download Original Design Images"}
+            </button>
+          )}
           <button
             onClick={handleDeleteDesign}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
@@ -467,7 +583,7 @@ const AdminCustomOrderDetails = () => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z"
                       />
                     </svg>
                   }

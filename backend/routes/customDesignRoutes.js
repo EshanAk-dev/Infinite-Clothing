@@ -22,17 +22,13 @@ const upload = multer({ storage });
 router.post(
   "/",
   protect,
-  upload.fields([
-    { name: "frontDesignImage", maxCount: 1 },
-    { name: "backDesignImage", maxCount: 1 },
-    { name: "leftArmDesignImage", maxCount: 1 },
-    { name: "rightArmDesignImage", maxCount: 1 },
-  ]),
+  upload.any(), // Change to upload.any() to handle dynamic fields
   async (req, res) => {
     try {
       const {
         color,
         designs,
+        originalDesignFiles,
         shippingAddress,
         quantity = 1,
         price = 2000,
@@ -40,23 +36,35 @@ router.post(
 
       const user = req.user._id;
 
+      // Find the main design images
+      const frontDesignImage = req.files.find(
+        (f) => f.fieldname === "frontDesignImage"
+      );
+      const backDesignImage = req.files.find(
+        (f) => f.fieldname === "backDesignImage"
+      );
+      const leftArmDesignImage = req.files.find(
+        (f) => f.fieldname === "leftArmDesignImage"
+      );
+      const rightArmDesignImage = req.files.find(
+        (f) => f.fieldname === "rightArmDesignImage"
+      );
+
       if (
-        !req.files.frontDesignImage ||
-        !req.files.backDesignImage ||
-        !req.files.leftArmDesignImage ||
-        !req.files.rightArmDesignImage
+        !frontDesignImage ||
+        !backDesignImage ||
+        !leftArmDesignImage ||
+        !rightArmDesignImage
       ) {
-        return res
-          .status(400)
-          .json({
-            message: "Front, back, left arm, and right arm images are required",
-          });
+        return res.status(400).json({
+          message: "Front, back, left arm, and right arm images are required",
+        });
       }
 
       // Calculate total price
       const totalPrice = price * quantity;
 
-      // Upload front image to Cloudinary
+      // Upload main design images (existing code)
       const frontResult = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: "custom-designs" },
@@ -68,10 +76,9 @@ router.post(
             }
           }
         );
-        stream.end(req.files.frontDesignImage[0].buffer);
+        stream.end(frontDesignImage.buffer);
       });
 
-      // Upload back image to Cloudinary
       const backResult = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: "custom-designs" },
@@ -83,10 +90,9 @@ router.post(
             }
           }
         );
-        stream.end(req.files.backDesignImage[0].buffer);
+        stream.end(backDesignImage.buffer);
       });
 
-      // Upload left arm image to Cloudinary
       const leftArmResult = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: "custom-designs" },
@@ -98,10 +104,9 @@ router.post(
             }
           }
         );
-        stream.end(req.files.leftArmDesignImage[0].buffer);
+        stream.end(leftArmDesignImage.buffer);
       });
 
-      // Upload right arm image to Cloudinary
       const rightArmResult = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: "custom-designs" },
@@ -113,14 +118,56 @@ router.post(
             }
           }
         );
-        stream.end(req.files.rightArmDesignImage[0].buffer);
+        stream.end(rightArmDesignImage.buffer);
       });
+
+      // Upload original design files
+      const parsedDesigns = JSON.parse(designs);
+      const parsedOriginalFiles = JSON.parse(originalDesignFiles);
+
+      for (const viewType of ["front", "back", "rightArm", "leftArm"]) {
+        if (parsedOriginalFiles[viewType]) {
+          for (let i = 0; i < parsedOriginalFiles[viewType].length; i++) {
+            const originalFile = req.files.find(
+              (f) => f.fieldname === `originalDesign_${viewType}_${i}`
+            );
+
+            if (originalFile) {
+              const uploadResult = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                  { folder: "original-designs" },
+                  (error, result) => {
+                    if (result) {
+                      resolve(result);
+                    } else {
+                      reject(error);
+                    }
+                  }
+                );
+                stream.end(originalFile.buffer);
+              });
+
+              // Find the corresponding design and add URLs
+              const designIndex = parsedDesigns[viewType].findIndex(
+                (d) => d.id === parsedOriginalFiles[viewType][i].id
+              );
+
+              if (designIndex !== -1) {
+                parsedDesigns[viewType][designIndex].originalImageUrl =
+                  uploadResult.secure_url;
+                parsedDesigns[viewType][designIndex].originalCloudinaryId =
+                  uploadResult.public_id;
+              }
+            }
+          }
+        }
+      }
 
       // Create new custom design
       const customDesign = new CustomDesign({
         user,
         color,
-        designs: JSON.parse(designs),
+        designs: parsedDesigns,
         frontImageUrl: frontResult.secure_url,
         frontCloudinaryId: frontResult.public_id,
         backImageUrl: backResult.secure_url,
