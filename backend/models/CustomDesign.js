@@ -23,6 +23,8 @@ const customDesignSchema = new mongoose.Schema(
           scale: Number,
           rotation: Number,
           opacity: Number,
+          originalImageUrl: String,
+          originalCloudinaryId: String,
         },
       ],
       back: [
@@ -36,6 +38,8 @@ const customDesignSchema = new mongoose.Schema(
           scale: Number,
           rotation: Number,
           opacity: Number,
+          originalImageUrl: String,
+          originalCloudinaryId: String,
         },
       ],
       leftArm: [
@@ -49,6 +53,8 @@ const customDesignSchema = new mongoose.Schema(
           scale: Number,
           rotation: Number,
           opacity: Number,
+          originalImageUrl: String,
+          originalCloudinaryId: String,
         },
       ],
       rightArm: [
@@ -62,6 +68,8 @@ const customDesignSchema = new mongoose.Schema(
           scale: Number,
           rotation: Number,
           opacity: Number,
+          originalImageUrl: String,
+          originalCloudinaryId: String,
         },
       ],
     },

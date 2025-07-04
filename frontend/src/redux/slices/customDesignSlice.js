@@ -12,6 +12,7 @@ export const saveCustomDesign = createAsyncThunk(
       backImageData,
       rightArmImageData,
       leftArmImageData,
+      originalDesignFiles,
       shippingAddress,
       quantity = 1,
       price = 2000,
@@ -43,8 +44,19 @@ export const saveCustomDesign = createAsyncThunk(
           leftArmBlob,
           "left-arm-design.png"
         );
+
+      // Add original design files
+      ['front', 'back', 'rightArm', 'leftArm'].forEach(viewType => {
+        if (originalDesignFiles[viewType]) {
+          originalDesignFiles[viewType].forEach((design, index) => {
+            formData.append(`originalDesign_${viewType}_${index}`, design.file, design.name);
+          });
+        }
+      });
+
       formData.append("color", color);
       formData.append("designs", JSON.stringify(designs));
+      formData.append("originalDesignFiles", JSON.stringify(originalDesignFiles));
       formData.append("shippingAddress", JSON.stringify(shippingAddress));
       formData.append("quantity", quantity);
       formData.append("price", price);
