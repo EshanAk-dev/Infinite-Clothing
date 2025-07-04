@@ -7,6 +7,8 @@ import {
 } from "../../redux/slices/customDesignSlice";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import DeleteConfirmationModal from "../../components/Common/DeleteConfirmationModal";
+import { useDeleteConfirmation } from "../../hooks/useDeleteConfirmation";
 
 const MyCustomDesigns = () => {
   const dispatch = useDispatch();
@@ -15,6 +17,14 @@ const MyCustomDesigns = () => {
   const { designs, loading, error } = useSelector(
     (state) => state.customDesign
   );
+
+  const {
+    isModalOpen,
+    deleteConfig,
+    openDeleteModal,
+    closeDeleteModal,
+    setLoading,
+  } = useDeleteConfirmation();
 
   useEffect(() => {
     if (!user) {
@@ -25,11 +35,33 @@ const MyCustomDesigns = () => {
   }, [user, navigate, dispatch]);
 
   const handleDelete = (designId) => {
-    if (window.confirm("Are you sure you want to delete this design?")) {
-      dispatch(deleteUserDesign(designId));
-      toast.success("Design deleted successfully");
-    }
-    dispatch(fetchUserDesigns());
+    openDeleteModal({
+      title: "Delete Design",
+      message:
+        "Are you sure you want to delete this design? This action cannot be undone.",
+      itemName: `#${designId.slice(-8)}`,
+      confirmText: "Delete Design",
+      onConfirm: async () => {
+        setLoading(true);
+        try {
+          await dispatch(deleteUserDesign(designId));
+          toast.success("Design deleted successfully", {
+            style: {
+              background: "#ecfdf5",
+              color: "#065f46",
+              border: "1px solid #6ee7b7",
+              borderRadius: "8px",
+              padding: "16px",
+            },
+          });
+        } catch (error) {
+          toast.error("Failed to delete design.");
+        } finally {
+          setLoading(false);
+          dispatch(fetchUserDesigns());
+        }
+      },
+    });
   };
 
   const formatDate = (dateString) => {
@@ -58,22 +90,22 @@ const MyCustomDesigns = () => {
     <div className="bg-slate-50 min-h-screen pb-16">
       {/* Hero Section with Gradient Background */}
       <div className="bg-gradient-to-br from-black via-gray-700 to-white text-white">
-  <div className="max-w-7xl mx-auto px-4 py-16 md:py-24">
-    <motion.div
-      className="max-w-3xl mx-auto text-center"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <h1 className="text-4xl md:text-5xl font-bold">
-        My Custom Designs
-      </h1>
-      <p className="mt-4 text-lg text-gray-200">
-        Your personalized t-shirt collection, ready to wear
-      </p>
-    </motion.div>
-  </div>
-</div>
+        <div className="max-w-7xl mx-auto px-4 py-16 md:py-24">
+          <motion.div
+            className="max-w-3xl mx-auto text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-4xl md:text-5xl font-bold">
+              My Custom Designs
+            </h1>
+            <p className="mt-4 text-lg text-gray-200">
+              Your personalized t-shirt collection, ready to wear
+            </p>
+          </motion.div>
+        </div>
+      </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 -mt-8">
@@ -139,11 +171,38 @@ const MyCustomDesigns = () => {
                     />
                     <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-all duration-300"></div>
 
+                    {/* Order Status Badge - Left Side */}
+                    <div className="absolute top-4 left-4">
+                      <span
+                        className={`px-3 py-1 text-xs font-medium rounded-full border shadow-sm ${
+                          design.status === "Processing"
+                            ? "bg-yellow-100 text-yellow-800 border-yellow-200"
+                            : design.status === "Approved"
+                            ? "bg-green-100 text-green-800 border-green-200"
+                            : design.status === "Rejected"
+                            ? "bg-red-100 text-red-800 border-red-200"
+                            : design.status === "Out for Delivery"
+                            ? "bg-orange-100 text-orange-800 border-orange-200"
+                            : design.status === "Shipped"
+                            ? "bg-blue-100 text-blue-800 border-blue-200"
+                            : design.status === "Delivered"
+                            ? "bg-purple-100 text-purple-800 border-purple-200"
+                            : design.status === "Cancelled"
+                            ? "bg-gray-100 text-gray-800 border-gray-200"
+                            : "bg-gray-100 text-gray-800 border-gray-200"
+                        }`}
+                      >
+                        {design.status || "Processing"}
+                      </span>
+                    </div>
+
                     {/* Floating badge with design count */}
                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow-md">
                       <span className="text-sm font-medium text-indigo-700">
                         {design.designs.front.length +
-                          design.designs.back.length + design.designs.rightArm.length + design.designs.leftArm.length}{" "}
+                          design.designs.back.length +
+                          design.designs.rightArm.length +
+                          design.designs.leftArm.length}{" "}
                         elements
                       </span>
                     </div>
@@ -278,6 +337,17 @@ const MyCustomDesigns = () => {
           </motion.div>
         )}
       </div>
+      <DeleteConfirmationModal
+        isOpen={isModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={deleteConfig.onConfirm}
+        title={deleteConfig.title}
+        message={deleteConfig.message}
+        itemName={deleteConfig.itemName}
+        confirmText={deleteConfig.confirmText}
+        cancelText={deleteConfig.cancelText}
+        isLoading={deleteConfig.isLoading}
+      />
     </div>
   );
 };

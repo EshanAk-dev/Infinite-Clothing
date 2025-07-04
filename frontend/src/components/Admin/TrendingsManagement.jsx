@@ -15,6 +15,8 @@ import {
   deleteProduct,
 } from "../../redux/slices/adminProductSlice";
 import FashionTrendsChatbot from "./FashionTrendsChatbot";
+import DeleteConfirmationModal from "../../components/Common/DeleteConfirmationModal";
+import { useDeleteConfirmation } from "../../hooks/useDeleteConfirmation";
 
 const TrendingsManagement = () => {
   const dispatch = useDispatch();
@@ -30,6 +32,9 @@ const TrendingsManagement = () => {
   const [skuFilter, setSkuFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Delete confirmation modal state
+  const { isModalOpen, deleteConfig, openDeleteModal, closeDeleteModal, setLoading } = useDeleteConfirmation();
 
   // Apply filters to trending products
   const filteredProducts = trendingProducts.filter((product) => {
@@ -75,21 +80,33 @@ const TrendingsManagement = () => {
     dispatch(fetchAdminTrendingProducts());
   }, [dispatch]);
 
-  const handleDelete = (id) => {
-    if (
-      window.confirm("Are you sure you want to delete this trending product?")
-    ) {
-      dispatch(deleteProduct(id));
-      toast.success("Trending product deleted successfully!", {
-        style: {
-          background: "#ecfdf5",
-          color: "#065f46",
-          border: "1px solid #6ee7b7",
-          borderRadius: "8px",
-          padding: "16px",
-        },
-      });
-    }
+  // Replace handleDelete with modal logic
+  const handleDelete = (id, name) => {
+    openDeleteModal({
+      title: "Delete Trending Product",
+      message: "Are you sure you want to delete this trending product? This action cannot be undone.",
+      itemName: name,
+      confirmText: "Delete Product",
+      onConfirm: async () => {
+        setLoading(true);
+        try {
+          await dispatch(deleteProduct(id));
+          toast.success("Trending product deleted successfully!", {
+            style: {
+              background: "#ecfdf5",
+              color: "#065f46",
+              border: "1px solid #6ee7b7",
+              borderRadius: "8px",
+              padding: "16px",
+            },
+          });
+        } catch (error) {
+          toast.error("Failed to delete trending product.");
+        } finally {
+          setLoading(false);
+        }
+      }
+    });
   };
 
   const clearFilters = () => {
@@ -196,7 +213,7 @@ const TrendingsManagement = () => {
             <MdEdit className="h-5 w-5" />
           </Link>
           <button
-            onClick={() => handleDelete(product._id)}
+            onClick={() => handleDelete(product._id, product.name)}
             className="text-red-600 hover:text-red-900 p-2 rounded-md hover:bg-red-50 transition-colors"
             title="Delete"
           >
@@ -429,7 +446,7 @@ const TrendingsManagement = () => {
                           <MdEdit className="h-5 w-5" />
                         </Link>
                         <button
-                          onClick={() => handleDelete(product._id)}
+                          onClick={() => handleDelete(product._id, product.name)}
                           className="text-red-600 hover:text-red-900 p-2 rounded-md hover:bg-red-50 transition-colors"
                           title="Delete"
                         >
@@ -543,6 +560,17 @@ const TrendingsManagement = () => {
       )}
 
       <FashionTrendsChatbot />
+      <DeleteConfirmationModal
+        isOpen={isModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={deleteConfig.onConfirm}
+        title={deleteConfig.title}
+        message={deleteConfig.message}
+        itemName={deleteConfig.itemName}
+        confirmText={deleteConfig.confirmText}
+        cancelText={deleteConfig.cancelText}
+        isLoading={deleteConfig.isLoading}
+      />
     </div>
   );
 };

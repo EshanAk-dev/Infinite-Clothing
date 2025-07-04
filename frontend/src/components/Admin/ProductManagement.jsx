@@ -14,6 +14,8 @@ import {
   deleteProduct,
   fetchAdminProducts,
 } from "../../redux/slices/adminProductSlice";
+import DeleteConfirmationModal from "../../components/Common/DeleteConfirmationModal";
+import { useDeleteConfirmation } from "../../hooks/useDeleteConfirmation";
 
 const ProductManagement = () => {
   const dispatch = useDispatch();
@@ -29,6 +31,13 @@ const ProductManagement = () => {
   const [skuFilter, setSkuFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const {
+    isModalOpen,
+    deleteConfig,
+    openDeleteModal,
+    closeDeleteModal,
+    setLoading,
+  } = useDeleteConfirmation();
 
   // Apply filters to products
   const filteredProducts = products.filter((product) => {
@@ -74,19 +83,33 @@ const ProductManagement = () => {
     dispatch(fetchAdminProducts());
   }, [dispatch]);
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      dispatch(deleteProduct(id));
-      toast.success("Product deleted successfully!", {
-        style: {
-          background: "#ecfdf5",
-          color: "#065f46",
-          border: "1px solid #6ee7b7",
-          borderRadius: "8px",
-          padding: "16px",
-        },
-      });
-    }
+  const handleDelete = (id, name) => {
+    openDeleteModal({
+      title: "Delete Product",
+      message:
+        "Are you sure you want to delete this product? This action cannot be undone.",
+      itemName: name,
+      confirmText: "Delete Product",
+      onConfirm: async () => {
+        setLoading(true);
+        try {
+          await dispatch(deleteProduct(id));
+          toast.success("Product deleted successfully!", {
+            style: {
+              background: "#ecfdf5",
+              color: "#065f46",
+              border: "1px solid #6ee7b7",
+              borderRadius: "8px",
+              padding: "16px",
+            },
+          });
+        } catch (error) {
+          toast.error("Failed to delete product.");
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
 
   const clearFilters = () => {
@@ -193,7 +216,7 @@ const ProductManagement = () => {
             <MdEdit className="h-5 w-5" />
           </Link>
           <button
-            onClick={() => handleDelete(product._id)}
+            onClick={() => handleDelete(product._id, product.name)}
             className="text-red-600 hover:text-red-900 p-2 rounded-md hover:bg-red-50 transition-colors"
             title="Delete"
           >
@@ -407,7 +430,9 @@ const ProductManagement = () => {
                           <MdEdit className="h-5 w-5" />
                         </Link>
                         <button
-                          onClick={() => handleDelete(product._id)}
+                          onClick={() =>
+                            handleDelete(product._id, product.name)
+                          }
                           className="text-red-600 hover:text-red-900 p-2 rounded-md hover:bg-red-50 transition-colors"
                           title="Delete"
                         >
@@ -519,6 +544,17 @@ const ProductManagement = () => {
           </nav>
         </div>
       )}
+      <DeleteConfirmationModal
+        isOpen={isModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={deleteConfig.onConfirm}
+        title={deleteConfig.title}
+        message={deleteConfig.message}
+        itemName={deleteConfig.itemName}
+        confirmText={deleteConfig.confirmText}
+        cancelText={deleteConfig.cancelText}
+        isLoading={deleteConfig.isLoading}
+      />
     </div>
   );
 };

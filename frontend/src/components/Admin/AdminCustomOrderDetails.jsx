@@ -19,6 +19,8 @@ import {
   resetAdminDesignState,
 } from "../../redux/slices/adminCustomDesignSlice";
 import DesignSidePreview from "../Customize T-Shirts/DesignSidePreview";
+import DeleteConfirmationModal from "../../components/Common/DeleteConfirmationModal";
+import { useDeleteConfirmation } from "../../hooks/useDeleteConfirmation";
 
 const AdminCustomOrderDetails = () => {
   const { id } = useParams();
@@ -40,6 +42,8 @@ const AdminCustomOrderDetails = () => {
   const { user } = useSelector((state) => state.auth);
 
   const [statusUpdating, setStatusUpdating] = useState(false);
+
+  const { isModalOpen, deleteConfig, openDeleteModal, closeDeleteModal, setLoading } = useDeleteConfirmation();
 
   useEffect(() => {
     if (!user || user.role !== "admin") {
@@ -96,13 +100,32 @@ const AdminCustomOrderDetails = () => {
   }, [deleteSuccess, navigate]);
 
   const handleDeleteDesign = () => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this custom design order?"
-      )
-    ) {
-      dispatch(deleteDesignAdmin(id));
-    }
+    openDeleteModal({
+      title: "Delete Custom Design Order",
+      message: "Are you sure you want to delete this custom design order? This action cannot be undone.",
+      itemName: `#${id.slice(-8)}`,
+      confirmText: "Delete Order",
+      onConfirm: async () => {
+        setLoading(true);
+        try {
+          await dispatch(deleteDesignAdmin(id));
+          toast.success("Custom order deleted successfully!", {
+            style: {
+              background: "#ecfdf5",
+              color: "#065f46",
+              border: "1px solid #6ee7b7",
+              borderRadius: "8px",
+              padding: "16px",
+            },
+          });
+          navigate("/admin/custom-orders");
+        } catch (error) {
+          toast.error("Failed to delete custom design order.");
+        } finally {
+          setLoading(false);
+        }
+      }
+    });
   };
 
   const handleStatusChange = (status) => {
@@ -679,6 +702,18 @@ const AdminCustomOrderDetails = () => {
           </button>
         )}
       </div>
+
+      <DeleteConfirmationModal
+        isOpen={isModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={deleteConfig.onConfirm}
+        title={deleteConfig.title}
+        message={deleteConfig.message}
+        itemName={deleteConfig.itemName}
+        confirmText={deleteConfig.confirmText}
+        cancelText={deleteConfig.cancelText}
+        isLoading={deleteConfig.isLoading}
+      />
     </div>
   );
 };

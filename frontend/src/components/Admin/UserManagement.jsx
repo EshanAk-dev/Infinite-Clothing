@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MdDelete, MdAdd, MdSearch, MdFilterAlt } from "react-icons/md"; // Add MdFilterAlt
+import { MdDelete, MdAdd, MdSearch, MdFilterAlt } from "react-icons/md";
 import { X } from 'lucide-react';
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -9,6 +9,8 @@ import {
   updateUser,
 } from "../../redux/slices/adminSlice";
 import { useNavigate } from "react-router-dom";
+import DeleteConfirmationModal from "../../components/Common/DeleteConfirmationModal";
+import { useDeleteConfirmation } from "../../hooks/useDeleteConfirmation";
 
 const UserManagement = () => {
   const dispatch = useDispatch();
@@ -16,6 +18,9 @@ const UserManagement = () => {
 
   const { user: currentUser } = useSelector((state) => state.auth);
   const { users, loading, error } = useSelector((state) => state.admin);
+
+  // Delete confirmation modal
+  const { isModalOpen, deleteConfig, openDeleteModal, closeDeleteModal, setLoading } = useDeleteConfirmation();
 
   useEffect(() => {
     if (currentUser && currentUser.role !== "admin") {
@@ -102,10 +107,25 @@ const UserManagement = () => {
     dispatch(updateUser({ id: userId, role: newRole }));
   };
 
-  const handleDeleteUser = (userId) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      dispatch(deleteUser(userId));
-    }
+  const handleDeleteUser = (userId, userName) => {
+    openDeleteModal({
+      title: "Delete User",
+      message: "Are you sure you want to delete this user? This action will permanently remove the user from the system.",
+      itemName: userName,
+      confirmText: "Delete User",
+      onConfirm: async () => {
+        setLoading(true);
+        try {
+          await dispatch(deleteUser(userId));
+          // You can add a success toast here if needed
+        } catch (error) {
+          console.error("Error deleting user:", error);
+          // Handle error
+        } finally {
+          setLoading(false);
+        }
+      }
+    });
   };
 
   const renderMobileCards = () => {
@@ -168,7 +188,7 @@ const UserManagement = () => {
         </div>
         <div className="px-4 pb-4 flex justify-end gap-2">
           <button
-            onClick={() => handleDeleteUser(user._id)}
+            onClick={() => handleDeleteUser(user._id, user.name)}
             className="text-red-600 hover:text-red-900 p-2 rounded-md hover:bg-red-50 transition-colors"
             title="Delete"
           >
@@ -452,7 +472,7 @@ const UserManagement = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
-                        onClick={() => handleDeleteUser(user._id)}
+                        onClick={() => handleDeleteUser(user._id, user.name)}
                         className="text-red-600 hover:text-red-900 p-2 rounded-md hover:bg-red-50 transition-colors"
                         title="Delete"
                       >
@@ -498,6 +518,7 @@ const UserManagement = () => {
           </table>
         </div>
       </div>
+      
       {/* Pagination */}
       {filteredUsers.length > 0 && (
         <div className="flex justify-center mt-6 overflow-x-auto pb-2">
@@ -563,6 +584,19 @@ const UserManagement = () => {
           </nav>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={isModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={deleteConfig.onConfirm}
+        title={deleteConfig.title}
+        message={deleteConfig.message}
+        itemName={deleteConfig.itemName}
+        confirmText={deleteConfig.confirmText}
+        cancelText={deleteConfig.cancelText}
+        isLoading={deleteConfig.isLoading}
+      />
     </div>
   );
 };

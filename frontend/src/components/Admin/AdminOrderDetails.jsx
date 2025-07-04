@@ -8,12 +8,21 @@ import {
 import { fetchOrderDetails } from "../../redux/slices/orderSlice";
 import { toast } from "sonner";
 import { MdDelete } from "react-icons/md";
+import DeleteConfirmationModal from "../../components/Common/DeleteConfirmationModal";
+import { useDeleteConfirmation } from "../../hooks/useDeleteConfirmation";
 
 const AdminOrderDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { orderDetails, loading, error } = useSelector((state) => state.orders);
+  const {
+    isModalOpen,
+    deleteConfig,
+    openDeleteModal,
+    closeDeleteModal,
+    setLoading,
+  } = useDeleteConfirmation();
 
   // Listen for status update success from adminOrders slice
   const adminOrders = useSelector((state) => state.adminOrders);
@@ -50,19 +59,33 @@ const AdminOrderDetails = () => {
   };
 
   const handleDeleteOrder = () => {
-    if (window.confirm("Are you sure you want to delete this order?")) {
-      dispatch(deleteOrder(id));
-      toast.success("Order deleted successfully!", {
-        style: {
-          background: "#ecfdf5",
-          color: "#065f46",
-          border: "1px solid #6ee7b7",
-          borderRadius: "8px",
-          padding: "16px",
-        },
-      });
-      navigate("/admin/orders");
-    }
+    openDeleteModal({
+      title: "Delete Order",
+      message:
+        "Are you sure you want to delete this order? This action cannot be undone.",
+      itemName: `#${id.slice(-8)}`,
+      confirmText: "Delete Order",
+      onConfirm: async () => {
+        setLoading(true);
+        try {
+          await dispatch(deleteOrder(id));
+          toast.success("Order deleted successfully!", {
+            style: {
+              background: "#ecfdf5",
+              color: "#065f46",
+              border: "1px solid #6ee7b7",
+              borderRadius: "8px",
+              padding: "16px",
+            },
+          });
+          navigate("/admin/orders");
+        } catch (error) {
+          toast.error("Failed to delete order.");
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
 
   const getStatusColor = (status) => {
@@ -546,6 +569,17 @@ const AdminOrderDetails = () => {
           </div>
         </div>
       </div>
+      <DeleteConfirmationModal
+        isOpen={isModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={deleteConfig.onConfirm}
+        title={deleteConfig.title}
+        message={deleteConfig.message}
+        itemName={deleteConfig.itemName}
+        confirmText={deleteConfig.confirmText}
+        cancelText={deleteConfig.cancelText}
+        isLoading={deleteConfig.isLoading}
+      />
     </div>
   );
 };
