@@ -158,8 +158,8 @@ const AdminCustomOrderDetails = () => {
           if (!response.ok) throw new Error(`Failed to fetch ${fileName}`);
 
           const blob = await response.blob();
-          const extension = url.split(".").pop().split("?")[0] || "jpg";
-          folder.file(`${fileName}.${extension}`, blob);
+          // const extension = url.split(".").pop().split("?")[0] || "jpg";
+          folder.file(`${fileName}`, blob);
           imageCount++;
         } catch (error) {
           console.error(`Error downloading ${fileName}:`, error);
